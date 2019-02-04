@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using MountPRG.StateManager;
+using MountPRG.GameStates;
+
 namespace MountPRG
 {
     /// <summary>
@@ -12,10 +15,58 @@ namespace MountPRG
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        GameStateManager gameStateManager;
+        ITitleIntroState titleIntroState;
+        IMainMenuState mainMenuState;
+        IGamePlayState gamePlayState;
+
+        static Rectangle screenRectangle;
+
+        public SpriteBatch SpriteBatch
+        {
+            get { return spriteBatch; }
+        }
+
+        public static Rectangle ScreenRectangle
+        {
+            get { return screenRectangle; }
+        }
+
+        public ITitleIntroState TitleIntroState
+        {
+            get { return titleIntroState; }
+        }
+
+        public IMainMenuState MainMenuState
+        {
+            get { return mainMenuState; }
+        }
+
+        public IGamePlayState GamePlayState
+        {
+            get { return gamePlayState; }
+        }
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+
+            screenRectangle = new Rectangle(0, 0, 1024, 720);
+
+            graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
+            graphics.PreferredBackBufferHeight = ScreenRectangle.Height;
+
+            gameStateManager = new GameStateManager(this);
+            Components.Add(gameStateManager);
+
+            titleIntroState = new TitleIntroState(this);
+            mainMenuState = new MainMenuState(this);
+            gamePlayState = new GamePlayState(this);
+
+            gameStateManager.ChangeState((GamePlayState)gamePlayState, PlayerIndex.One);
+
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -26,7 +77,7 @@ namespace MountPRG
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            Components.Add(new InputManager(this));
 
             base.Initialize();
         }
@@ -73,7 +124,7 @@ namespace MountPRG
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
 
