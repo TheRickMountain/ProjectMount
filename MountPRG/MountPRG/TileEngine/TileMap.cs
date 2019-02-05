@@ -22,8 +22,6 @@ namespace MountPRG.TileEngine
 
         List<TileLayer> mapLayers = new List<TileLayer>();
 
-        CollisionLayer collisionLayer;
-
         int mapWidth;
         int mapHeight;
 
@@ -34,42 +32,28 @@ namespace MountPRG.TileEngine
             get { return tileSet; }
         }
 
-        public void SetGroundLayer(int x, int y, int tile)
-        {
-            SetGroundLayer(x, y, tile, CollisionType.Passable);
-        }
-
-        public void SetGroundLayer(int x, int y, int tile, CollisionType type)
+        public void SetGroundLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
         {
             groundLayer.SetTile(x, y, tile);
-            collisionLayer.SetCollider(x, y, type);
+            CollisionLayer.SetCollider(x, y, type);
         }
 
-        public void SetEdgeLayer(int x, int y, int tile)
-        {
-            SetEdgeLayer(x, y, tile, CollisionType.Passable);
-        }
-
-        public void SetEdgeLayer(int x, int y, int tile, CollisionType type)
+        public void SetEdgeLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
         {
             edgeLayer.SetTile(x, y, tile);
-            collisionLayer.SetCollider(x, y, type);
+            CollisionLayer.SetCollider(x, y, type);
         }
 
-        public void SetBuildingLayer(int x, int y, int tile)
-        {
-            SetBuildingLayer(x, y, tile, CollisionType.Passable);
-        }
-
-        public void SetBuildingLayer(int x, int y, int tile, CollisionType type)
+        public void SetBuildingLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
         {
             buildingLayer.SetTile(x, y, tile);
-            collisionLayer.SetCollider(x, y, type);
+            CollisionLayer.SetCollider(x, y, type);
         }
 
         public CollisionLayer CollisionLayer
         {
-            get { return collisionLayer; }
+            get;
+            private set;
         }
 
         public int MapWidth
@@ -107,7 +91,7 @@ namespace MountPRG.TileEngine
             mapWidth = groundLayer.Width;
             mapHeight = groundLayer.Height;
 
-            collisionLayer = new CollisionLayer(this);
+            CollisionLayer = new CollisionLayer(this);
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)

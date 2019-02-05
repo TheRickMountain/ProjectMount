@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MountPRG.TileEngine;
 using MountPRG.Entities;
 using MountPRG.Components;
+using MountPRG.GUISystem;
 
 namespace MountPRG.GameStates
 {
@@ -26,6 +27,8 @@ namespace MountPRG.GameStates
         private TileMap tileMap;
         private Player player;
 
+        private GUIManager guiManager;
+
         private List<Entity> entities = new List<Entity>();
 
         private List<Collider> colliders = new List<Collider>();
@@ -40,6 +43,8 @@ namespace MountPRG.GameStates
             engine = Engine.GetInstance(16, 16);
             camera = new Camera();
 
+            guiManager = new GUIManager(GameRef);
+
             TileSet tileSet = new TileSet(content.Load<Texture2D>(@"tileset"), Engine.TileWidth, Engine.TileHeight);
 
             TileLayer groundLayer = new TileLayer(50, 50, 0);
@@ -52,12 +57,16 @@ namespace MountPRG.GameStates
 
             tileMap = new TileMap(tileSet, groundLayer, edgeLayer, buildingLayer);
 
-            tileMap.SetGroundLayer(5, 5, TileMap.STONE_BLOCK_1, CollisionType.Impassable);
+            tileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1, CollisionType.Impassable);
+            tileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2, CollisionType.Impassable);
+            tileMap.SetEdgeLayer(5, 3, TileMap.STONE_BLOCK_1, CollisionType.Impassable);
+            tileMap.SetEdgeLayer(6, 3, TileMap.STONE_BLOCK_2, CollisionType.Impassable);
 
             player = new Player(GameRef);
             player.Position.X = 8;
             player.Position.Y = 8;
             AddEntity(player);
+
 
             base.Initialize();
         }
@@ -79,6 +88,8 @@ namespace MountPRG.GameStates
 
             CheckCollision();
 
+            guiManager.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -96,6 +107,12 @@ namespace MountPRG.GameStates
                 entity.Draw(GameRef.SpriteBatch);
 
             base.Draw(gameTime);
+
+            GameRef.SpriteBatch.End();
+
+            GameRef.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+
+            guiManager.Draw(GameRef.SpriteBatch);
 
             GameRef.SpriteBatch.End();
         }

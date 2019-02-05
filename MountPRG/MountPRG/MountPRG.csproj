@@ -54,6 +54,9 @@
     <Compile Include="GameStates\GamePlayState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\TitleIntroState.cs" />
+    <Compile Include="GUISystem\GUIManager.cs" />
+    <Compile Include="GUISystem\IGUI.cs" />
+    <Compile Include="GUISystem\Slot.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
