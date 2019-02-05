@@ -19,6 +19,7 @@ namespace MountPRG.TileEngine
         TileLayer groundLayer;
         TileLayer edgeLayer;
         TileLayer buildingLayer;
+        TileLayer entityLayer;
 
         List<TileLayer> mapLayers = new List<TileLayer>();
 
@@ -56,6 +57,11 @@ namespace MountPRG.TileEngine
             private set;
         }
 
+        public TileLayer EntityLayer
+        {
+            get { return entityLayer; }
+        }
+
         public int MapWidth
         {
             get { return mapWidth; }
@@ -76,13 +82,14 @@ namespace MountPRG.TileEngine
             get { return mapHeight * Engine.TileHeight; }
         }
 
-        public TileMap(TileSet tileSet, TileLayer groundLayer, TileLayer edgeLayer, TileLayer buildingLayer)
+        public TileMap(TileSet tileSet, TileLayer groundLayer, TileLayer edgeLayer, TileLayer buildingLayer, TileLayer entityLayer)
         {
             this.tileSet = tileSet;
 
             this.groundLayer = groundLayer;
             this.edgeLayer = edgeLayer;
             this.buildingLayer = buildingLayer;
+            this.entityLayer = entityLayer;
 
             mapLayers.Add(groundLayer);
             mapLayers.Add(edgeLayer);

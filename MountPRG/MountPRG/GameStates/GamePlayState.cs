@@ -26,6 +26,7 @@ namespace MountPRG.GameStates
         private Camera camera;
         private TileMap tileMap;
         private Player player;
+        Stick stick;
 
         private GUIManager guiManager;
 
@@ -55,7 +56,9 @@ namespace MountPRG.GameStates
             TileLayer buildingLayer = new TileLayer(50, 50, -1);
             buildingLayer.Visible = false;
 
-            tileMap = new TileMap(tileSet, groundLayer, edgeLayer, buildingLayer);
+            TileLayer entityLayer = new TileLayer(50, 50, -1);
+
+            tileMap = new TileMap(tileSet, groundLayer, edgeLayer, buildingLayer, entityLayer);
 
             tileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1, CollisionType.Impassable);
             tileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2, CollisionType.Impassable);
@@ -67,6 +70,10 @@ namespace MountPRG.GameStates
             player.Position.Y = 8;
             AddEntity(player);
 
+            
+            AddEntity(stick = new Stick(GameRef));
+            stick.Position.X = Engine.ToWorldPosX(10);
+            stick.Position.Y = Engine.ToWorldPosY(7);
 
             base.Initialize();
         }
@@ -125,6 +132,18 @@ namespace MountPRG.GameStates
             entities.Add(entity);
         }
 
+        public void AddEntityToWorld(Entity entity)
+        {
+            AddEntity(entity);
+            tileMap.EntityLayer.SetTile((int)entity.Position.X / Engine.TileWidth, (int)entity.Position.Y / Engine.TileHeight, entity.Id);
+        }
+
+        public Point MousePicker(int x, int y)
+        {
+            return new Point(
+                (int)(((x + camera.Position.X) / camera.Zoom) / Engine.TileWidth), 
+                (int)(((y + camera.Position.Y) / camera.Zoom) / Engine.TileHeight));
+        }
 
         public void CheckCollision()
         {

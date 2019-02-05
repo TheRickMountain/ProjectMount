@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+
 namespace MountPRG.TileEngine
 {
     public class Engine
@@ -40,6 +43,16 @@ namespace MountPRG.TileEngine
         {
             xCell = (int)xPos / TileWidth;
             yCell = (int)yPos / TileHeight;
+        }
+
+        public static int ToWorldPosX(int x)
+        {
+            return x * TileWidth;
+        }
+
+        public static int ToWorldPosY(int y)
+        {
+            return y * TileHeight;
         }
 
     }

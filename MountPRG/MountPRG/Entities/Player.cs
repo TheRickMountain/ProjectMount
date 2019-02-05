@@ -20,7 +20,7 @@ namespace MountPRG.Entities
         private Vector2 origin;
 
 
-        public Player(Game game) : base(game)
+        public Player(Game game) : base(game, -1)
         {
             Position = new Vector2(0, 0);
             texture = game.Content.Load<Texture2D>(@"human");
