@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MountPRG.TileEngine;
 using MountPRG.Entities;
+using MountPRG.Components;
 
 namespace MountPRG.GameStates
 {
@@ -23,6 +24,11 @@ namespace MountPRG.GameStates
         private Engine engine;
         private Camera camera;
         private TileMap tileMap;
+        private Player player;
+
+        private List<Entity> entities = new List<Entity>();
+
+        private List<Collider> colliders = new List<Collider>();
 
         public GamePlayState(Game game) : base(game)
         {
@@ -34,24 +40,24 @@ namespace MountPRG.GameStates
             engine = Engine.GetInstance(16, 16);
             camera = new Camera();
 
-            TileSet tileSet = new TileSet(256 / 16, 256 / 16, Engine.TileWidth, Engine.TileHeight);
-            tileSet.Texture = content.Load<Texture2D>(@"tileset");
+            TileSet tileSet = new TileSet(content.Load<Texture2D>(@"tileset"), Engine.TileWidth, Engine.TileHeight);
 
             TileLayer groundLayer = new TileLayer(50, 50, 0);
-            groundLayer.SetTile(7, 7, 1);
-            groundLayer.SetTile(8, 7, 1);
 
             TileLayer edgeLayer = new TileLayer(50, 50, -1);
-            edgeLayer.Visible = false;
+            edgeLayer.Visible = true;
 
             TileLayer buildingLayer = new TileLayer(50, 50, -1);
             buildingLayer.Visible = false;
 
             tileMap = new TileMap(tileSet, groundLayer, edgeLayer, buildingLayer);
 
-            //tileMap.CollisionLayer.SetCollider(7, 7, CollisionType.Impassable);
+            tileMap.SetGroundLayer(5, 5, TileMap.STONE_BLOCK_1, CollisionType.Impassable);
 
-            camera.ToggleCameraMode();
+            player = new Player(GameRef);
+            player.Position.X = 8;
+            player.Position.Y = 8;
+            AddEntity(player);
 
             base.Initialize();
         }
@@ -64,7 +70,14 @@ namespace MountPRG.GameStates
         public override void Update(GameTime gameTime)
         {
             camera.Update(gameTime);
+
+            foreach (Entity entity in entities)
+                entity.Update(gameTime);
+
+            camera.LockToSprite(player);
             camera.LockToMap(tileMap);
+
+            CheckCollision();
 
             base.Update(gameTime);
         }
@@ -79,10 +92,72 @@ namespace MountPRG.GameStates
 
             tileMap.Draw(GameRef.SpriteBatch, camera);
 
+            foreach (Entity entity in entities)
+                entity.Draw(GameRef.SpriteBatch);
+
             base.Draw(gameTime);
 
             GameRef.SpriteBatch.End();
         }
 
+        public void AddEntity(Entity entity)
+        {
+            if (entity.HasComponent<Collider>())
+                colliders.Add(entity.GetComponent<Collider>());
+
+            entities.Add(entity);
+        }
+
+
+        public void CheckCollision()
+        {
+            foreach (Collider collider in colliders)
+            {
+                Entity entity = collider.Entity;
+
+                int cellX;
+                int cellY;
+                Engine.VectorToCell(entity.Position.X, entity.Position.Y, out cellX, out cellY);
+
+                for (int x = cellX - 1; x <= cellX + 1; x++)
+                {
+                    for (int y = cellY - 1; y <= cellY + 1; y++)
+                    {
+                        switch (tileMap.CollisionLayer.GetCollider(x, y))
+                        {
+                            case (int)CollisionType.None:
+                            case (int)CollisionType.Passable:
+                                continue;
+                        }
+
+                        float deltaX = (x * Engine.TileWidth + Engine.TileWidth / 2) - (entity.Position.X + collider.OffsetX);
+                        float deltaY = (y * Engine.TileHeight + Engine.TileHeight / 2) - (entity.Position.Y + collider.OffsetY);
+
+                        float intersectX = Math.Abs(deltaX) - ((Engine.TileWidth / 2) + (collider.Width / 2));
+                        float intersectY = Math.Abs(deltaY) - ((Engine.TileHeight / 2) + (collider.Height / 2));
+
+                        if (intersectX < 0.0f && intersectY < 0.0f)
+                        {
+
+                            if (intersectX > intersectY)
+                            {
+                                if (deltaX > 0.0f)
+                                    entity.Position += new Vector2(intersectX, 0);
+                                else
+                                    entity.Position += new Vector2(-intersectX, 0);
+                            }
+                            else
+                            {
+                                if (deltaY > 0.0f)
+                                    entity.Position += new Vector2(0, intersectY);
+                                else
+                                    entity.Position += new Vector2(0, -intersectY);
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }

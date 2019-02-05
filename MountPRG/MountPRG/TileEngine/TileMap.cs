@@ -12,6 +12,10 @@ namespace MountPRG.TileEngine
 {
     public class TileMap
     {
+        public const int GRASS = 0;
+        public const int STONE_BLOCK_1 = 1;
+        public const int STONE_BLOCK_2 = 2;
+
         TileLayer groundLayer;
         TileLayer edgeLayer;
         TileLayer buildingLayer;
@@ -28,25 +32,39 @@ namespace MountPRG.TileEngine
         public TileSet TileSet
         {
             get { return tileSet; }
-            set { tileSet = value; }
         }
 
-        public TileLayer GroundLayer
+        public void SetGroundLayer(int x, int y, int tile)
         {
-            get { return groundLayer; }
-            set { groundLayer = value; }
+            SetGroundLayer(x, y, tile, CollisionType.Passable);
         }
 
-        public TileLayer EdgeLayer
+        public void SetGroundLayer(int x, int y, int tile, CollisionType type)
         {
-            get { return edgeLayer; }
-            set { edgeLayer = value; }
+            groundLayer.SetTile(x, y, tile);
+            collisionLayer.SetCollider(x, y, type);
         }
 
-        public TileLayer BuildingLayer
+        public void SetEdgeLayer(int x, int y, int tile)
         {
-            get { return buildingLayer; }
-            set { buildingLayer = value; }
+            SetEdgeLayer(x, y, tile, CollisionType.Passable);
+        }
+
+        public void SetEdgeLayer(int x, int y, int tile, CollisionType type)
+        {
+            edgeLayer.SetTile(x, y, tile);
+            collisionLayer.SetCollider(x, y, type);
+        }
+
+        public void SetBuildingLayer(int x, int y, int tile)
+        {
+            SetBuildingLayer(x, y, tile, CollisionType.Passable);
+        }
+
+        public void SetBuildingLayer(int x, int y, int tile, CollisionType type)
+        {
+            buildingLayer.SetTile(x, y, tile);
+            collisionLayer.SetCollider(x, y, type);
         }
 
         public CollisionLayer CollisionLayer

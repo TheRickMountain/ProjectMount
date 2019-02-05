@@ -16,7 +16,7 @@ namespace MountPRG.TileEngine
         private int tileWidth;
         private int tileHeight;
 
-        private Texture2D image;
+        private Texture2D texture;
         private string imageName;
         private Rectangle[] sourceRectangles;
 
@@ -42,8 +42,7 @@ namespace MountPRG.TileEngine
 
         public Texture2D Texture
         {
-            get { return image; }
-            set { image = value; }
+            get { return texture; }
         }
 
         public string TextureName
@@ -57,12 +56,15 @@ namespace MountPRG.TileEngine
             get { return (Rectangle[])sourceRectangles.Clone(); }
         }
 
-        public TileSet(int tilesWide, int tilesHigh, int tileWidth, int tileHeight)
+        public TileSet(Texture2D texture, int tileWidth, int tileHeight)
         {
+            this.texture = texture;
+
             this.tileWidth = tileWidth;
             this.tileHeight = tileHeight;
-            this.tilesWide = tilesWide;
-            this.tilesHigh = tilesHigh;
+
+            this.tilesWide = texture.Width / tileWidth;
+            this.tilesHigh = texture.Height / tileHeight;
 
             sourceRectangles = new Rectangle[TilesWide * TilesHigh];
 

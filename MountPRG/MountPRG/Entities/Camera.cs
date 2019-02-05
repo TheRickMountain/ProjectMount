@@ -88,13 +88,13 @@ namespace MountPRG.Entities
             }
         }
 
-        /*public void LockToSprite(Character character)
+        public void LockToSprite(Player player)
         {
-            position.X += (character.Position.X * zoom
+            position.X += (player.Position.X * zoom
                 - (Game1.ScreenRectangle.Width / 2) - position.X) * .1f;
-            position.Y += (character.Position.Y * zoom
+            position.Y += (player.Position.Y * zoom
                 - (Game1.ScreenRectangle.Height / 2) - position.Y) * .1f;
-        }*/
+        }
 
         public void ToggleCameraMode()
         {

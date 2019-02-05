@@ -44,8 +44,11 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\Collider.cs" />
+    <Compile Include="Components\Component.cs" />
     <Compile Include="Entities\Camera.cs" />
     <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Entities\Player.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameStates\BaseGameState.cs" />
     <Compile Include="GameStates\GamePlayState.cs" />
