@@ -50,6 +50,7 @@
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\Stick.cs" />
+    <Compile Include="Entities\Stone.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameStates\BaseGameState.cs" />
     <Compile Include="GameStates\GamePlayState.cs" />
@@ -57,7 +58,10 @@
     <Compile Include="GameStates\TitleIntroState.cs" />
     <Compile Include="GUISystem\GUIManager.cs" />
     <Compile Include="GUISystem\IGUI.cs" />
+    <Compile Include="GUISystem\Inventory.cs" />
+    <Compile Include="GUISystem\ProgressBar.cs" />
     <Compile Include="GUISystem\Slot.cs" />
+    <Compile Include="GUISystem\TimeSystem.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

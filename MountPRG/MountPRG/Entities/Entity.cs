@@ -13,24 +13,16 @@ namespace MountPRG.Entities
     public abstract class Entity : IComparable<Entity>
     {
 
-        public int Id
-        {
-            get;
-            protected set;
-        }
-
-        public static int STICK = 0;
-
         protected Game GameRef;
 
+        public Texture2D Texture;
         public Vector2 Position;
 
         protected readonly List<Component> components = new List<Component>();
 
-        public Entity(Game game, int id)
+        public Entity(Game game)
         {
             GameRef = game;
-            Id = id;
         }
 
         public abstract void Update(GameTime gameTime);

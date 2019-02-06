@@ -15,16 +15,13 @@ namespace MountPRG.Entities
     public class Player : Entity
     {
 
-        
-        private Texture2D texture;
         private float speed;
         private Vector2 origin;
 
-
-        public Player(Game game) : base(game, -1)
+        public Player(Game game) : base(game)
         {
             Position = new Vector2(0, 0);
-            texture = game.Content.Load<Texture2D>(@"human");
+            Texture = game.Content.Load<Texture2D>(@"human");
             speed = 60;
             origin = new Vector2(8, 8);
             AddComponent(new Collider(16, 8, 0, 4));
@@ -56,14 +53,14 @@ namespace MountPRG.Entities
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, 
-                new Rectangle((int)(Position.X - origin.X), (int)(Position.Y - origin.Y), texture.Width, texture.Height), Color.White);
+            spriteBatch.Draw(Texture, 
+                new Rectangle((int)(Position.X - origin.X), (int)(Position.Y - origin.Y), Texture.Width, Texture.Height), Color.White);
         }
 
         public void LockToMap(TileMap map)
         {
             Position.X = MathHelper.Clamp(Position.X, origin.X, map.WidthInPixels - origin.X);
-            Position.Y = MathHelper.Clamp(Position.Y, origin.Y, map.HeightInPixels - (texture.Width - origin.Y));
+            Position.Y = MathHelper.Clamp(Position.Y, origin.Y, map.HeightInPixels - (Texture.Width - origin.Y));
         }
     }
 }

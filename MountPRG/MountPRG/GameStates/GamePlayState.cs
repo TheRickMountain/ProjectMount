@@ -60,6 +60,8 @@ namespace MountPRG.GameStates
 
 
             AddEntityToWorld(new Stick(GameRef), 10, 7);
+            AddEntityToWorld(new Stick(GameRef), 6, 5);
+            AddEntityToWorld(new Stone(GameRef), 10, 10);
 
             base.Initialize();
         }
@@ -87,9 +89,11 @@ namespace MountPRG.GameStates
             {
                 Point point = MousePicker(InputManager.GetX(), InputManager.GetY());
                 if (tileMap.GetEdgeLayer().HasEntity(point.X, point.Y))
-                {         
-                    entities.Remove(tileMap.GetEdgeLayer().GetEntity(point.X, point.Y));
-                    tileMap.GetEdgeLayer().RemoveEntity(point.X, point.Y);
+                {
+                    Entity entity = tileMap.GetEdgeLayer().GetEntity(point.X, point.Y);
+                    guiManager.AddItem(entity);
+                    entities.Remove(entity);
+                    tileMap.GetEdgeLayer().RemoveEntity(point.X, point.Y); 
                 }
             }
 

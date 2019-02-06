@@ -8,12 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG.Entities
 {
-    public class Stick : Entity
+    public class Stone : Entity
     {
 
-        public Stick(Game game) : base(game)
+        public Stone(Game game) : base(game)
         {
-            Texture = game.Content.Load<Texture2D>(@"stick");
+            Texture = game.Content.Load<Texture2D>(@"stone");
         }
 
         public override void Update(GameTime gameTime)
@@ -25,6 +25,6 @@ namespace MountPRG.Entities
         {
             spriteBatch.Draw(Texture, new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height), Color.White);
         }
-        
+
     }
 }

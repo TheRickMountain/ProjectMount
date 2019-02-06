@@ -59,6 +59,18 @@ namespace MountPRG.GUISystem
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, dest, Color.White);
+            if (HasItem)
+                spriteBatch.Draw(item.Texture, dest, Color.White);
+        }
+
+        public void AddItem(Entity entity)
+        {
+            if(entity != null)
+            {
+                this.item = entity;
+                HasItem = true;
+            }
+            
         }
 
     }
