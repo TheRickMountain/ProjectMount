@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MountPRG.Components;
+using MountPRG.TileEngine;
 
 namespace MountPRG.Entities
 {
@@ -57,6 +58,12 @@ namespace MountPRG.Entities
         {
             spriteBatch.Draw(texture, 
                 new Rectangle((int)(Position.X - origin.X), (int)(Position.Y - origin.Y), texture.Width, texture.Height), Color.White);
+        }
+
+        public void LockToMap(TileMap map)
+        {
+            Position.X = MathHelper.Clamp(Position.X, origin.X, map.WidthInPixels - origin.X);
+            Position.Y = MathHelper.Clamp(Position.Y, origin.Y, map.HeightInPixels - (texture.Width - origin.Y));
         }
     }
 }

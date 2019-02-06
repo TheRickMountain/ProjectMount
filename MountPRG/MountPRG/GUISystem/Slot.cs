@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MountPRG.Entities;
 
 namespace MountPRG.GUISystem
 {
@@ -13,6 +14,14 @@ namespace MountPRG.GUISystem
 
         private Texture2D texture;
         private Rectangle dest;
+
+        private Entity item;
+
+        public bool HasItem
+        {
+            get;
+            private set;
+        }
 
         public int PositionX
         {

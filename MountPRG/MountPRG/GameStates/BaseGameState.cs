@@ -32,8 +32,6 @@ namespace MountPRG.GameStates
 
         protected override void LoadContent()
         {
-            Console.WriteLine(this.GetType());
-
             base.LoadContent();
         }
 

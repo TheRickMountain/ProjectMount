@@ -18,8 +18,6 @@ namespace MountPRG.TileEngine
 
         TileLayer groundLayer;
         TileLayer edgeLayer;
-        TileLayer buildingLayer;
-        TileLayer entityLayer;
 
         List<TileLayer> mapLayers = new List<TileLayer>();
 
@@ -33,33 +31,10 @@ namespace MountPRG.TileEngine
             get { return tileSet; }
         }
 
-        public void SetGroundLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
-        {
-            groundLayer.SetTile(x, y, tile);
-            CollisionLayer.SetCollider(x, y, type);
-        }
-
-        public void SetEdgeLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
-        {
-            edgeLayer.SetTile(x, y, tile);
-            CollisionLayer.SetCollider(x, y, type);
-        }
-
-        public void SetBuildingLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
-        {
-            buildingLayer.SetTile(x, y, tile);
-            CollisionLayer.SetCollider(x, y, type);
-        }
-
         public CollisionLayer CollisionLayer
         {
             get;
             private set;
-        }
-
-        public TileLayer EntityLayer
-        {
-            get { return entityLayer; }
         }
 
         public int MapWidth
@@ -82,23 +57,43 @@ namespace MountPRG.TileEngine
             get { return mapHeight * Engine.TileHeight; }
         }
 
-        public TileMap(TileSet tileSet, TileLayer groundLayer, TileLayer edgeLayer, TileLayer buildingLayer, TileLayer entityLayer)
+        public TileMap(TileSet tileSet, int mapWidth, int mapHeight)
         {
             this.tileSet = tileSet;
 
-            this.groundLayer = groundLayer;
-            this.edgeLayer = edgeLayer;
-            this.buildingLayer = buildingLayer;
-            this.entityLayer = entityLayer;
+            groundLayer = new TileLayer(mapWidth, mapHeight, GRASS);
+
+            edgeLayer = new TileLayer(mapWidth, mapHeight, -1);
 
             mapLayers.Add(groundLayer);
             mapLayers.Add(edgeLayer);
-            mapLayers.Add(buildingLayer);
 
-            mapWidth = groundLayer.Width;
-            mapHeight = groundLayer.Height;
+            this.mapWidth = mapWidth;
+            this.mapHeight = mapHeight;
 
             CollisionLayer = new CollisionLayer(this);
+        }
+
+        public TileLayer GetGroundLayer()
+        {
+            return groundLayer;
+        }
+
+        public void SetGroundLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
+        {
+            groundLayer.SetTile(x, y, tile);
+            CollisionLayer.SetCollider(x, y, type);
+        }
+
+        public TileLayer GetEdgeLayer()
+        {
+            return edgeLayer;
+        }
+
+        public void SetEdgeLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
+        {
+            edgeLayer.SetTile(x, y, tile);
+            CollisionLayer.SetCollider(x, y, type);
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
@@ -129,6 +124,7 @@ namespace MountPRG.TileEngine
 
             foreach (TileLayer layer in mapLayers)
             {
+               
                 if (!layer.Visible)
                     continue;
 
@@ -138,7 +134,7 @@ namespace MountPRG.TileEngine
 
                     for (int x = min.X; x < max.X; x++)
                     {
-                        tileIndex = layer.GetTile(x, y);
+                        tileIndex = layer.GetTile(x, y).Id;
 
                         if (tileIndex == -1)
                             continue;

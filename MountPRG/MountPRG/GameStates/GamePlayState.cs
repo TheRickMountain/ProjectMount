@@ -26,7 +26,6 @@ namespace MountPRG.GameStates
         private Camera camera;
         private TileMap tileMap;
         private Player player;
-        Stick stick;
 
         private GUIManager guiManager;
 
@@ -46,19 +45,8 @@ namespace MountPRG.GameStates
 
             guiManager = new GUIManager(GameRef);
 
-            TileSet tileSet = new TileSet(content.Load<Texture2D>(@"tileset"), Engine.TileWidth, Engine.TileHeight);
-
-            TileLayer groundLayer = new TileLayer(50, 50, 0);
-
-            TileLayer edgeLayer = new TileLayer(50, 50, -1);
-            edgeLayer.Visible = true;
-
-            TileLayer buildingLayer = new TileLayer(50, 50, -1);
-            buildingLayer.Visible = false;
-
-            TileLayer entityLayer = new TileLayer(50, 50, -1);
-
-            tileMap = new TileMap(tileSet, groundLayer, edgeLayer, buildingLayer, entityLayer);
+            tileMap = new TileMap(
+                new TileSet(content.Load<Texture2D>(@"tileset"), Engine.TileWidth, Engine.TileHeight), 50, 50);
 
             tileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1, CollisionType.Impassable);
             tileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2, CollisionType.Impassable);
@@ -66,14 +54,12 @@ namespace MountPRG.GameStates
             tileMap.SetEdgeLayer(6, 3, TileMap.STONE_BLOCK_2, CollisionType.Impassable);
 
             player = new Player(GameRef);
-            player.Position.X = 8;
-            player.Position.Y = 8;
+            player.Position.X = 8 + Engine.ToWorldPosX(8);
+            player.Position.Y = 8 + Engine.ToWorldPosY(10);
             AddEntity(player);
 
-            
-            AddEntity(stick = new Stick(GameRef));
-            stick.Position.X = Engine.ToWorldPosX(10);
-            stick.Position.Y = Engine.ToWorldPosY(7);
+
+            AddEntityToWorld(new Stick(GameRef), 10, 7);
 
             base.Initialize();
         }
@@ -90,10 +76,22 @@ namespace MountPRG.GameStates
             foreach (Entity entity in entities)
                 entity.Update(gameTime);
 
+            player.LockToMap(tileMap);
+
             camera.LockToSprite(player);
             camera.LockToMap(tileMap);
 
             CheckCollision();
+
+            if(InputManager.MousePressed(MouseInput.LeftButton))
+            {
+                Point point = MousePicker(InputManager.GetX(), InputManager.GetY());
+                if (tileMap.GetEdgeLayer().HasEntity(point.X, point.Y))
+                {         
+                    entities.Remove(tileMap.GetEdgeLayer().GetEntity(point.X, point.Y));
+                    tileMap.GetEdgeLayer().RemoveEntity(point.X, point.Y);
+                }
+            }
 
             guiManager.Update(gameTime);
 
@@ -132,10 +130,16 @@ namespace MountPRG.GameStates
             entities.Add(entity);
         }
 
-        public void AddEntityToWorld(Entity entity)
+        public void AddEntityToWorld(Entity entity, int x, int y)
         {
-            AddEntity(entity);
-            tileMap.EntityLayer.SetTile((int)entity.Position.X / Engine.TileWidth, (int)entity.Position.Y / Engine.TileHeight, entity.Id);
+            tileMap.GetEdgeLayer().SetEntity(x, y, entity);
+
+            entity.Position.X = Engine.ToWorldPosX(x);
+            entity.Position.Y = Engine.ToWorldPosX(y);
+
+            Console.WriteLine(tileMap.GetEdgeLayer().GetEntity(x, y));
+
+            entities.Add(entity);
         }
 
         public Point MousePicker(int x, int y)
