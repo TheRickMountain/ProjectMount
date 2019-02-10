@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="Components\Collider.cs" />
     <Compile Include="Components\Component.cs" />
+    <Compile Include="Entities\Berry.cs" />
+    <Compile Include="Entities\Bush.cs" />
     <Compile Include="Entities\Camera.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\Player.cs" />

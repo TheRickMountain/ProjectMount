@@ -17,6 +17,9 @@ namespace MountPRG.Entities
 
         public Texture2D Texture;
         public Vector2 Position;
+        public bool IsGatherable;
+        public bool IsBush;
+        public bool IsEatable;
 
         protected readonly List<Component> components = new List<Component>();
 

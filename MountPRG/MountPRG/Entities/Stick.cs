@@ -14,6 +14,7 @@ namespace MountPRG.Entities
         public Stick(Game game) : base(game)
         {
             Texture = game.Content.Load<Texture2D>(@"stick");
+            IsGatherable = true;
         }
 
         public override void Update(GameTime gameTime)

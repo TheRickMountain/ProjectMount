@@ -8,13 +8,13 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG.Entities
 {
-    public class Stone : Entity
+    public class Berry : Entity
     {
 
-        public Stone(Game game) : base(game)
+        public Berry(Game game) : base(game)
         {
-            Texture = game.Content.Load<Texture2D>(@"stone");
-            IsGatherable = true;
+            Texture = game.Content.Load<Texture2D>(@"berry");
+            IsEatable = true;
         }
 
         public override void Update(GameTime gameTime)

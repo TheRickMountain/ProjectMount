@@ -63,6 +63,10 @@ namespace MountPRG.GameStates
             AddEntityToWorld(new Stick(GameRef), 6, 5);
             AddEntityToWorld(new Stone(GameRef), 10, 10);
 
+            AddEntityToWorld(new Bush(GameRef), 12, 12);
+            AddEntityToWorld(new Bush(GameRef), 15, 14);
+            AddEntityToWorld(new Bush(GameRef), 13, 18);
+
             base.Initialize();
         }
 
@@ -91,9 +95,18 @@ namespace MountPRG.GameStates
                 if (tileMap.GetEdgeLayer().HasEntity(point.X, point.Y))
                 {
                     Entity entity = tileMap.GetEdgeLayer().GetEntity(point.X, point.Y);
-                    guiManager.AddItem(entity);
-                    entities.Remove(entity);
-                    tileMap.GetEdgeLayer().RemoveEntity(point.X, point.Y); 
+                    if(entity.IsBush)
+                    {
+                        if(((Bush)entity).HasBerries)
+                        {
+                            guiManager.AddItem(((Bush)entity).GetBerry());
+                        }
+                    }
+                    else if (entity.IsGatherable && guiManager.AddItem(entity))
+                    {
+                        entities.Remove(entity);
+                        tileMap.GetEdgeLayer().RemoveEntity(point.X, point.Y);
+                    }
                 }
             }
 

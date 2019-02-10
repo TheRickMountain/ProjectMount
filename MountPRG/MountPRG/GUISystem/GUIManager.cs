@@ -73,9 +73,17 @@ namespace MountPRG.GUISystem
                 e.Draw(spriteBatch);
         }
 
-        public void AddItem(Entity entity)
+        public bool AddItem(Entity entity)
         {
-            slots[0].AddItem(entity);
+            foreach(Slot slot in slots)
+            {
+                if(!slot.HasItem)
+                {
+                    slot.AddItem(entity);
+                    return true;
+                }
+            }
+            return false;
         }
 
     }
