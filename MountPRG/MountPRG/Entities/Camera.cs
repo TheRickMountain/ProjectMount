@@ -6,41 +6,22 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
-using MountPRG.TileEngine;
-
-namespace MountPRG.Entities
+namespace MountPRG
 {
     public enum CameraMode { Free, Follow }
 
     public class Camera
     {
-        private Vector2 position;
-        private float speed;
-        private float zoom;
-        private CameraMode mode;
+        public Vector2 Position;
 
-        public Vector2 Position
-        {
-            get { return position; }
-            private set { position = value; }
-        }
+        public float Speed = 150f;
+        public float Zoom = 2f;
+        public CameraMode Mode = CameraMode.Free;
 
-        public float Speed
-        {
-            get { return speed; }
-            set { speed = value; }
-        }
-
-        public float Zoom
-        {
-            get { return zoom; }
-        }
-
-        public CameraMode CameraMode
-        {
-            get { return mode; }
-        }
+        private Texture2D selectorTexture;
+        private Rectangle selectorDestination;
 
         public Camera() : this(Vector2.Zero)
         {
@@ -49,92 +30,109 @@ namespace MountPRG.Entities
 
         public Camera(Vector2 position)
         {
-            speed = 50f;
-            zoom = 2f;
             Position = position;
-            mode = CameraMode.Follow;
+            selectorTexture = GamePlayState.SelectorTexture;
+            selectorDestination = new Rectangle(0, 0, selectorTexture.Width, selectorTexture.Height);
+        }
+
+        public int GetCellX()
+        {
+            return (int)(((InputManager.GetX() + Position.X) / Zoom) / Engine.TileWidth);
+        }
+
+        public int GetCellY()
+        {
+            return (int)(((InputManager.GetY() + Position.Y) / Zoom) / Engine.TileHeight);
         }
 
         public void Update(GameTime gameTime)
         {
-            if (mode == CameraMode.Follow)
+            if (Mode == CameraMode.Follow)
                 return;
 
             Vector2 motion = Vector2.Zero;
 
             if (InputManager.KeyDown(Keys.A))
-                motion.X = -speed;
+                motion.X = -Speed;
             else if (InputManager.KeyDown(Keys.D))
-                motion.X = speed;
+                motion.X = Speed;
 
             if (InputManager.KeyDown(Keys.W))
-                motion.Y = -speed;
+                motion.Y = -Speed;
             else if (InputManager.KeyDown(Keys.S))
-                motion.Y = speed;
+                motion.Y = Speed;
 
             if (motion != Vector2.Zero)
             {
                 motion.Normalize();
-                position += motion * speed * zoom * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Position += motion * Speed * Zoom * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
+
+            selectorDestination.X = GetCellX() * Engine.TileWidth;
+            selectorDestination.Y = GetCellY() * Engine.TileHeight; 
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(selectorTexture, selectorDestination, Color.White);
         }
 
         public Matrix Transformation
         {
             get
             {
-                return Matrix.CreateScale(zoom) *
+                return Matrix.CreateScale(Zoom) *
                 Matrix.CreateTranslation(new Vector3(-(int)Position.X, -(int)Position.Y, 0f));
             }
         }
 
-        public void LockToSprite(Player player)
+        public void LockToEntity(Entity entity)
         {
-            position.X += (player.Position.X * zoom
-                - (Game1.ScreenRectangle.Width / 2) - position.X) * .1f;
-            position.Y += (player.Position.Y * zoom
-                - (Game1.ScreenRectangle.Height / 2) - position.Y) * .1f;
+            Position.X += (entity.X * Zoom
+                - (Game1.ScreenRectangle.Width / 2) - Position.X) * .1f;
+            Position.Y += (entity.Y * Zoom
+                - (Game1.ScreenRectangle.Height / 2) - Position.Y) * .1f;
         }
 
         public void ToggleCameraMode()
         {
-            mode = (mode == CameraMode.Follow ? CameraMode.Free : CameraMode.Follow);
+            Mode = (Mode == CameraMode.Follow ? CameraMode.Free : CameraMode.Follow);
         }
 
         public void LockToMap(TileMap map)
         {
-            position.X = MathHelper.Clamp(position.X,
-                0, map.WidthInPixels * zoom - Game1.ScreenRectangle.Width);
-            position.Y = MathHelper.Clamp(position.Y,
-                0, map.HeightInPixels * zoom - Game1.ScreenRectangle.Height);
+            Position.X = MathHelper.Clamp(Position.X,
+                0, map.WidthInPixels * Zoom - Game1.ScreenRectangle.Width);
+            Position.Y = MathHelper.Clamp(Position.Y,
+                0, map.HeightInPixels * Zoom - Game1.ScreenRectangle.Height);
         }
 
         public void ZoomIn()
         {
-            zoom += 0.25f;
+            Zoom += 0.25f;
 
-            if (zoom > 2.5f)
-                zoom = 2.5f;
+            if (Zoom > 2.5f)
+                Zoom = 2.5f;
 
-            Vector2 newPosition = Position * zoom;
+            Vector2 newPosition = Position * Zoom;
             SnapToPosition(newPosition);
         }
 
         public void ZoomOut()
         {
-            zoom -= 0.25f;
+            Zoom -= 0.25f;
 
-            if (zoom < 0.5f)
-                zoom = 0.5f;
+            if (Zoom < 0.5f)
+                Zoom = 0.5f;
 
-            Vector2 newPosition = Position * zoom;
+            Vector2 newPosition = Position * Zoom;
             SnapToPosition(newPosition);
         }
 
         private void SnapToPosition(Vector2 newPosition)
         {
-            position.X = newPosition.X - Game1.ScreenRectangle.Width / 2;
-            position.Y = newPosition.Y - Game1.ScreenRectangle.Height / 2;
+            Position.X = newPosition.X - Game1.ScreenRectangle.Width / 2;
+            Position.Y = newPosition.Y - Game1.ScreenRectangle.Height / 2;
         }
 
     }

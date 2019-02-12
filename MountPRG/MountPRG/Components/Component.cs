@@ -4,23 +4,42 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using MountPRG.Entities;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace MountPRG.Components
+namespace MountPRG
 {
     public abstract class Component
     {
 
-        private Entity entity;
+        public Entity Entity { get; private set; }
+        public bool Active;
+        public bool Visible;
 
-        public Entity Entity
+        public Component(bool active, bool visible)
         {
-            get { return entity; }
+            Active = active;
+            Visible = visible;
         }
 
-        public void Initialize(Entity entity)
+        public virtual void Added(Entity entity)
         {
-            this.entity = entity;
+            Entity = entity;
+        }
+
+        public virtual void Removed(Entity entity)
+        { 
+            Entity = null;
+        }
+
+        public virtual void Update(float dt)
+        {
+
+        }
+
+        public virtual void Render(SpriteBatch spriteBatch)
+        {
+
         }
 
     }

@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using MountPRG.StateManager;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
-namespace MountPRG.GameStates
+namespace MountPRG
 {
     public interface IMainMenuState : IGameState
     {

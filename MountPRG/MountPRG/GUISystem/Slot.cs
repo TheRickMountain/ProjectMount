@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MountPRG.Entities;
 
-namespace MountPRG.GUISystem
+namespace MountPRG
 {
     public class Slot : IGUI
     {
@@ -15,7 +14,7 @@ namespace MountPRG.GUISystem
         private Texture2D texture;
         private Rectangle dest;
 
-        private Entity item;
+        //private Entity item;
 
         public bool HasItem
         {
@@ -59,15 +58,15 @@ namespace MountPRG.GUISystem
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, dest, Color.White);
-            if (HasItem)
-                spriteBatch.Draw(item.Texture, dest, Color.White);
+            //if (HasItem)
+                //spriteBatch.Draw(item.Texture, dest, Color.White);
         }
 
         public void AddItem(Entity entity)
         {
             if(entity != null)
             {
-                this.item = entity;
+               // this.item = entity;
                 HasItem = true;
             }
             

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 
-namespace MountPRG.StateManager
+namespace MountPRG
 {
     public interface IStateManager
     {

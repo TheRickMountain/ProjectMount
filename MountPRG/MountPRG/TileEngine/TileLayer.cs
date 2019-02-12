@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using MountPRG.Entities;
+using Microsoft.Xna.Framework;
 
-namespace MountPRG.TileEngine
+
+namespace MountPRG
 {
     public struct Tile
     {
         public int Id { get; set; }
         public Entity Entity { get; set; }
+        public Color Color { get; set; }
     }
 
     public class TileLayer
@@ -46,7 +48,10 @@ namespace MountPRG.TileEngine
 
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
+                {
                     tiles[y * width + x].Id = fill;
+                    tiles[y * width + x].Color = Color.White;
+                }
         }
 
         public Tile GetTile(int x, int y)
@@ -89,6 +94,11 @@ namespace MountPRG.TileEngine
         public bool HasEntity(int x, int y)
         {
             return tiles[y * width + x].Entity != null;
+        }
+
+        public void SetColor(int x, int y, Color color)
+        {
+            tiles[y * width + x].Color = color;
         }
 
     }

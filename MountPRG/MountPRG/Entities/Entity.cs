@@ -6,65 +6,66 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MountPRG.Components;
 
-namespace MountPRG.Entities
+namespace MountPRG
 {
-    public abstract class Entity : IComparable<Entity>
+    public abstract class Entity
     {
-
-        protected Game GameRef;
-
-        public Texture2D Texture;
+        public bool Active = true;
+        public bool Visible = true;
         public Vector2 Position;
-        public bool IsGatherable;
-        public bool IsBush;
-        public bool IsEatable;
 
-        protected readonly List<Component> components = new List<Component>();
+        public ComponentList Components { get; private set; }
 
-        public Entity(Game game)
+        public float X
         {
-            GameRef = game;
+            get { return Position.X; }
+            set { Position.X = value; }
         }
 
-        public abstract void Update(GameTime gameTime);
-
-
-        public abstract void Draw(SpriteBatch spriteBatch);
-
-        public T GetComponent<T>() where T : Component
+        public float Y
         {
-            foreach (Component component in components)
-                if (component is T)
-                    return component as T;
-
-            return null;
+            get { return Position.Y; }
+            set { Position.Y = value; }
         }
 
-        public void AddComponent(Component component)
-        {
-            component.Initialize(this);
-            components.Add(component);
+        public Entity(Vector2 position)
+        {    
+            Position = position;
+            Components = new ComponentList(this);
         }
 
-        public void RemoveComponent(Component component)
+        public Entity() 
+            : this(Vector2.Zero)
         {
-            components.Remove(component);
+
         }
 
-        public bool HasComponent<T>() where T : Component
+        public virtual void Update(float dt)
         {
-            foreach (Component component in components)
-                if (component is T)
-                    return true;
-
-            return false;
+            Components.Update(dt);
         }
 
-        public int CompareTo(Entity other)
+
+        public virtual void Render(SpriteBatch spriteBatch)
         {
-            throw new NotImplementedException();
+            Components.Render(spriteBatch);
         }
+
+        public void Add(Component component)
+        {
+            Components.Add(component);
+        }
+
+        public void Remove(Component component)
+        {
+            Components.Remove(component);
+        }
+
+        public T Get<T>() where T : Component
+        {
+            return Components.Get<T>();
+        }
+
     }
 }

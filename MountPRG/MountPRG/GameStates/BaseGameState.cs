@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
-using MountPRG.StateManager;
 
-namespace MountPRG.GameStates
+namespace MountPRG
 {
     public class BaseGameState : GameState
     {

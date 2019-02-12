@@ -2,9 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using MountPRG.StateManager;
-using MountPRG.GameStates;
-
 namespace MountPRG
 {
     /// <summary>

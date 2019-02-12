@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MountPRG.GUISystem
+namespace MountPRG
 {
     public interface IGUI
     {

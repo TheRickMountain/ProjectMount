@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using MountPRG.Entities;
 
-namespace MountPRG.TileEngine
+namespace MountPRG
 {
     public class TileMap
     {
@@ -122,9 +121,10 @@ namespace MountPRG.TileEngine
             Rectangle destination = new Rectangle(0, 0, Engine.TileWidth, Engine.TileHeight);
             int tileIndex;
 
-            foreach (TileLayer layer in mapLayers)
+            for(int i = 0; i < mapLayers.Count; i++)
             {
-               
+                TileLayer layer = mapLayers[i];
+
                 if (!layer.Visible)
                     continue;
 
@@ -145,7 +145,7 @@ namespace MountPRG.TileEngine
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[tileIndex],
-                            Color.White);
+                            layer.GetTile(x, y).Color);
                     }
                 }
             }
