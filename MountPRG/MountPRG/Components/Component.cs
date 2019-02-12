@@ -32,6 +32,11 @@ namespace MountPRG
             Entity = null;
         }
 
+        public virtual void Initialize()
+        {
+
+        }
+
         public virtual void Update(float dt)
         {
 

@@ -55,6 +55,7 @@ namespace MountPRG
         public void Add(Component component)
         {
             Components.Add(component);
+            component.Initialize();
         }
 
         public void Remove(Component component)

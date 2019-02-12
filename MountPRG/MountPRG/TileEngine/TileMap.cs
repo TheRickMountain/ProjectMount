@@ -30,12 +30,6 @@ namespace MountPRG
             get { return tileSet; }
         }
 
-        public CollisionLayer CollisionLayer
-        {
-            get;
-            private set;
-        }
-
         public int MapWidth
         {
             get { return mapWidth; }
@@ -69,8 +63,6 @@ namespace MountPRG
 
             this.mapWidth = mapWidth;
             this.mapHeight = mapHeight;
-
-            CollisionLayer = new CollisionLayer(this);
         }
 
         public TileLayer GetGroundLayer()
@@ -78,10 +70,9 @@ namespace MountPRG
             return groundLayer;
         }
 
-        public void SetGroundLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
+        public void SetGroundLayer(int x, int y, int tile)
         {
-            groundLayer.SetTile(x, y, tile);
-            CollisionLayer.SetCollider(x, y, type);
+            groundLayer.GetTile(x, y).Id = tile;
         }
 
         public TileLayer GetEdgeLayer()
@@ -89,10 +80,9 @@ namespace MountPRG
             return edgeLayer;
         }
 
-        public void SetEdgeLayer(int x, int y, int tile, CollisionType type = CollisionType.Passable)
+        public void SetEdgeLayer(int x, int y, int tile)
         {
-            edgeLayer.SetTile(x, y, tile);
-            CollisionLayer.SetCollider(x, y, type);
+            edgeLayer.GetTile(x, y).Id = tile;
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)

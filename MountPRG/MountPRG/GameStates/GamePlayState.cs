@@ -22,11 +22,15 @@ namespace MountPRG
 
         private bool paused;
         private Camera camera;
-        private TileMap tileMap;
+        public static TileMap TileMap;
 
         private GUIManager guiManager;
 
         private EntityList entities;
+
+        private PathTileGraph tileGraph;
+
+        private Settler settler;
 
         public GamePlayState(Game game) : base(game)
         {
@@ -42,15 +46,17 @@ namespace MountPRG
             Engine engine = Engine.GetInstance(16, 16);
             camera = new Camera();
 
-            tileMap = new TileMap(
+            TileMap = new TileMap(
                 new TileSet(TilesetTexture, Engine.TileWidth, Engine.TileHeight), 50, 50);
 
-            tileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1, CollisionType.Impassable);
-            tileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2, CollisionType.Impassable);
-            tileMap.SetEdgeLayer(5, 3, TileMap.STONE_BLOCK_1, CollisionType.Impassable);
-            tileMap.SetEdgeLayer(6, 3, TileMap.STONE_BLOCK_2, CollisionType.Impassable);
+            TileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1);
+            TileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2);
+            TileMap.SetEdgeLayer(5, 3, TileMap.STONE_BLOCK_1);
+            TileMap.SetEdgeLayer(6, 3, TileMap.STONE_BLOCK_2);
 
-            Settler settler = new Settler(new Vector2(Engine.ToWorldPosX(1), Engine.ToWorldPosY(5)));
+            tileGraph = new PathTileGraph(TileMap.GetGroundLayer());
+
+            settler = new Settler(new Vector2(Engine.ToWorldPosX(1), Engine.ToWorldPosY(5)));
             entities.Add(settler);
 
             guiManager = new GUIManager(GameRef);
@@ -66,12 +72,18 @@ namespace MountPRG
         public override void Update(GameTime gameTime)
         {
             camera.Update(gameTime);
-            camera.LockToMap(tileMap);
+            camera.LockToMap(TileMap);
 
             entities.UpdateList();
 
             if(!paused)
                 entities.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
+
+            if(InputManager.MousePressed(MouseInput.LeftButton))
+            {
+                settler.SetDestTile(TileMap.GetGroundLayer()
+                    .GetTile(camera.GetCellX(), camera.GetCellY()), tileGraph.Nodes, TileMap.GetGroundLayer());
+            }
 
             guiManager.Update(gameTime);
 
@@ -86,7 +98,7 @@ namespace MountPRG
                 SamplerState.PointClamp,
                 null, null, null, camera.Transformation);
 
-            tileMap.Draw(GameRef.SpriteBatch, camera);
+            TileMap.Draw(GameRef.SpriteBatch, camera);
 
             entities.Render(GameRef.SpriteBatch);
 

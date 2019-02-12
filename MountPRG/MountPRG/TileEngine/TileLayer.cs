@@ -8,11 +8,45 @@ using Microsoft.Xna.Framework;
 
 namespace MountPRG
 {
-    public struct Tile
+    public class Tile
     {
+        public int X { get; }
+        public int Y { get; }
         public int Id { get; set; }
         public Entity Entity { get; set; }
         public Color Color { get; set; }
+        public bool IsWalkable { get; set; }
+
+        public Tile(int x, int y)
+        {
+            X = x;
+            Y = y;
+            IsWalkable = true;
+        }
+
+        public float MovementCost
+        {
+            get { return IsWalkable ? 1.0f : 0.0f; }
+        }
+
+        public List<Tile> GetNeighbours(TileLayer tileLayer)
+        {
+            List<Tile> tiles = new List<Tile>();
+
+            for(int i = X - 1; i <= X + 1; i++)
+            {
+                for(int j = Y - 1; j <= Y + 1; j++)
+                {
+                    if (i == X && j == Y)
+                        continue;
+
+                    if(i >= 0 && j >= 0 && i < tileLayer.Width && j < tileLayer.Height)
+                        tiles.Add(tileLayer.GetTile(i, j));
+                }
+            }
+
+            return tiles;
+        }
     }
 
     public class TileLayer
@@ -49,8 +83,10 @@ namespace MountPRG
             for (int y = 0; y < height; y++)
                 for (int x = 0; x < width; x++)
                 {
-                    tiles[y * width + x].Id = fill;
-                    tiles[y * width + x].Color = Color.White;
+                    Tile tile = new Tile(x, y);
+                    tiles[y * width + x] = tile;
+                    tile.Id = fill;
+                    tile.Color = Color.White;
                 }
         }
 
@@ -63,42 +99,6 @@ namespace MountPRG
                 throw new Exception("Выход за пределы TileMap");
 
             return tiles[y * width + x];
-        }
-
-        public void SetTile(int x, int y, int tileIndex)
-        {
-            if (x < 0 || y < 0)
-                return;
-
-            if (x >= width || y >= height)
-                return;
-
-            tiles[y * width + x].Id = tileIndex;
-        }
-
-        public void SetEntity(int x, int y, Entity entity)
-        {
-            tiles[y * width + x].Entity = entity;
-        }
-
-        public Entity GetEntity(int x, int y)
-        {
-            return tiles[y * width + x].Entity;
-        }
-
-        public void RemoveEntity(int x, int y)
-        {
-            tiles[y * width + x].Entity = null;
-        }
-
-        public bool HasEntity(int x, int y)
-        {
-            return tiles[y * width + x].Entity != null;
-        }
-
-        public void SetColor(int x, int y, Color color)
-        {
-            tiles[y * width + x].Color = color;
         }
 
     }
