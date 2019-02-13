@@ -19,18 +19,22 @@ namespace MountPRG
         public static Texture2D SettlerTexture;
         public static Texture2D TilesetTexture;
         public static Texture2D SelectorTexture;
+        public static Texture2D SettlerAvatarTexture;
+        public static Texture2D SlotTexture;
 
         private bool paused;
         private Camera camera;
-        public static TileMap TileMap;
 
-        private GUIManager guiManager;
+        public static TileMap TileMap;
+        public PathTileGraph TileGraph;
 
         private EntityList entities;
 
-        private PathTileGraph tileGraph;
+        private GUIManager guiManager;
 
         private Settler settler;
+
+        private Settler selectedSettler;
 
         public GamePlayState(Game game) : base(game)
         {
@@ -42,6 +46,9 @@ namespace MountPRG
             SettlerTexture = content.Load<Texture2D>(@"human");
             TilesetTexture = content.Load<Texture2D>(@"tileset");
             SelectorTexture = content.Load<Texture2D>(@"selector");
+            SettlerAvatarTexture = content.Load<Texture2D>(@"settler_avatar");
+            SlotTexture = content.Load<Texture2D>(@"slot");
+
 
             Engine engine = Engine.GetInstance(16, 16);
             camera = new Camera();
@@ -49,12 +56,12 @@ namespace MountPRG
             TileMap = new TileMap(
                 new TileSet(TilesetTexture, Engine.TileWidth, Engine.TileHeight), 50, 50);
 
-            TileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1);
-            TileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2);
-            TileMap.SetEdgeLayer(5, 3, TileMap.STONE_BLOCK_1);
-            TileMap.SetEdgeLayer(6, 3, TileMap.STONE_BLOCK_2);
+            TileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1, false);
+            TileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2, false);
+            TileMap.SetEdgeLayer(5, 3, TileMap.STONE_BLOCK_1, false);
+            TileMap.SetEdgeLayer(6, 3, TileMap.STONE_BLOCK_2, false);
 
-            tileGraph = new PathTileGraph(TileMap.GetGroundLayer());
+            TileGraph = new PathTileGraph(TileMap.GetCollisionLayer());
 
             settler = new Settler(new Vector2(Engine.ToWorldPosX(1), Engine.ToWorldPosY(5)));
             entities.Add(settler);
@@ -79,10 +86,21 @@ namespace MountPRG
             if(!paused)
                 entities.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
 
-            if(InputManager.MousePressed(MouseInput.LeftButton))
+            if (InputManager.MousePressed(MouseInput.LeftButton))
             {
-                settler.SetDestTile(TileMap.GetGroundLayer()
-                    .GetTile(camera.GetCellX(), camera.GetCellY()), tileGraph.Nodes, TileMap.GetGroundLayer());
+                if (selectedSettler == null)
+                {
+                    if (settler.Get<Sprite>().Intersects(camera.GetX(), camera.GetY()))
+                    {
+                        selectedSettler = settler;
+                        guiManager.SetSelectedSettler(selectedSettler.Get<Avatar>());
+                    }
+                }
+                else
+                {
+                    selectedSettler.SetDestTile(TileMap.GetCollisionLayer()
+                        .GetTile(camera.GetCellX(), camera.GetCellY()), TileGraph.Nodes, TileMap.GetCollisionLayer());
+                }
             }
 
             guiManager.Update(gameTime);

@@ -45,6 +45,16 @@ namespace MountPRG
             return (int)(((InputManager.GetY() + Position.Y) / Zoom) / Engine.TileHeight);
         }
 
+        public int GetX()
+        {
+            return (int)((InputManager.GetX() + Position.X) / Zoom);
+        }
+
+        public int GetY()
+        {
+            return (int)((InputManager.GetY() + Position.Y) / Zoom);
+        }
+
         public void Update(GameTime gameTime)
         {
             if (Mode == CameraMode.Follow)

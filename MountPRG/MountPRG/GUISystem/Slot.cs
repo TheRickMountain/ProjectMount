@@ -12,9 +12,8 @@ namespace MountPRG
     {
 
         private Texture2D texture;
+        private Texture2D itemTexture;
         private Rectangle dest;
-
-        //private Entity item;
 
         public bool HasItem
         {
@@ -58,18 +57,20 @@ namespace MountPRG
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(texture, dest, Color.White);
-            //if (HasItem)
-                //spriteBatch.Draw(item.Texture, dest, Color.White);
+            if (HasItem)
+                spriteBatch.Draw(itemTexture, dest, Color.White);
         }
 
-        public void AddItem(Entity entity)
+        public void AddItem(Texture2D texture)
         {
-            if(entity != null)
-            {
-               // this.item = entity;
-                HasItem = true;
-            }
-            
+            itemTexture = texture;
+            HasItem = true;
+        }
+
+        public void RemoveItem()
+        {
+            itemTexture = null;
+            HasItem = false;
         }
 
     }

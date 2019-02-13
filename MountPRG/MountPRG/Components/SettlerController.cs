@@ -25,7 +25,7 @@ namespace MountPRG
 
         public override void Initialize()
         {
-            currTile = destTile = nextTile = GamePlayState.TileMap.GetGroundLayer()
+            currTile = destTile = nextTile = GamePlayState.TileMap.GetCollisionLayer()
                 .GetTile((int)(Entity.X / Engine.TileWidth), (int)(Entity.Y / Engine.TileHeight));
         }
 
@@ -58,13 +58,13 @@ namespace MountPRG
             Entity.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * Engine.TileHeight;
         }
 
-        public void SetDestTile(Tile tile, Dictionary<Tile, Node<Tile>> nodes, TileLayer layer)
+        public void SetDestTile(Tile tile, Dictionary<Tile, Node<Tile>> nodes, CollisionLayer collisionLayer)
         {
             if (tile.MovementCost == 1.0f)
             {
-                currTile = nextTile = layer.GetTile((int)(Entity.X / Engine.TileWidth), 
+                currTile = nextTile = collisionLayer.GetTile((int)(Entity.X / Engine.TileWidth), 
                     (int)(Entity.Y / Engine.TileHeight));
-                pathAStar = new PathAStar(currTile, tile, nodes, layer);
+                pathAStar = new PathAStar(currTile, tile, nodes, collisionLayer);
                 if (pathAStar.Length != -1)
                     destTile = tile;
                 else

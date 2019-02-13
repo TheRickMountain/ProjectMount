@@ -40,5 +40,14 @@ namespace MountPRG
             spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Origin, Effects, 0);
         }
 
+        public bool Intersects(int x, int y)
+        {
+            if (x >= Destination.X && x <= Destination.Right
+                && y >= Destination.Y && y <= Destination.Bottom)
+                return true;
+
+            return false;
+        }
+
     }
 }

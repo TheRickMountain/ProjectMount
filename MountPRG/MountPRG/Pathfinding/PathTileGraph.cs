@@ -10,15 +10,15 @@ namespace MountPRG
     {
         public Dictionary<Tile, Node<Tile>> Nodes;
 
-        public PathTileGraph(TileLayer tileLayer)
+        public PathTileGraph(CollisionLayer collisionLayer)
         {
             Nodes = new Dictionary<Tile, Node<Tile>>();
 
-            for(int x = 0; x < tileLayer.Width; x++)
+            for(int x = 0; x < collisionLayer.Width; x++)
             {
-                for(int y = 0; y < tileLayer.Height; y++)
+                for(int y = 0; y < collisionLayer.Height; y++)
                 {
-                    Tile t = tileLayer.GetTile(x, y);
+                    Tile t = collisionLayer.GetTile(x, y);
 
                     Node<Tile> n = new Node<Tile>();
                     n.data = t;

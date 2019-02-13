@@ -8,65 +8,21 @@ using Microsoft.Xna.Framework;
 
 namespace MountPRG
 {
-    public class Tile
-    {
-        public int X { get; }
-        public int Y { get; }
-        public int Id { get; set; }
-        public Entity Entity { get; set; }
-        public Color Color { get; set; }
-        public bool IsWalkable { get; set; }
-
-        public Tile(int x, int y)
-        {
-            X = x;
-            Y = y;
-            IsWalkable = true;
-        }
-
-        public float MovementCost
-        {
-            get { return IsWalkable ? 1.0f : 0.0f; }
-        }
-
-        public List<Tile> GetNeighbours(TileLayer tileLayer)
-        {
-            List<Tile> tiles = new List<Tile>();
-
-            for(int i = X - 1; i <= X + 1; i++)
-            {
-                for(int j = Y - 1; j <= Y + 1; j++)
-                {
-                    if (i == X && j == Y)
-                        continue;
-
-                    if(i >= 0 && j >= 0 && i < tileLayer.Width && j < tileLayer.Height)
-                        tiles.Add(tileLayer.GetTile(i, j));
-                }
-            }
-
-            return tiles;
-        }
-    }
-
     public class TileLayer
     {
 
-        private Tile[] tiles;
-
-        private int width;
-        private int height;
+        private int[] tiles;
 
         public int Width
         {
-            get { return width; }
-            private set { width = value; }
+            get;
+            private set;
         }
 
         public int Height
         {
-            get { return height; }
-            private set { height = value; }
+            get;
+            private set;
         }
 
         public bool Visible { get; set; }
@@ -76,29 +32,35 @@ namespace MountPRG
         {
             Visible = true;
 
-            tiles = new Tile[height * width];
-            this.width = width;
-            this.height = height;
+            tiles = new int[height * width];
+            Width = width;
+            Height = height;
 
-            for (int y = 0; y < height; y++)
-                for (int x = 0; x < width; x++)
-                {
-                    Tile tile = new Tile(x, y);
-                    tiles[y * width + x] = tile;
-                    tile.Id = fill;
-                    tile.Color = Color.White;
-                }
+            for (int y = 0; y < Height; y++)
+                for (int x = 0; x < Width; x++)
+                    tiles[y * Width + x] = fill;
         }
 
-        public Tile GetTile(int x, int y)
+        public int GetTile(int x, int y)
         {
             if (x < 0 || y < 0)
                 throw new Exception("Выход за пределы TileMap");
 
-            if (x >= width || y >= height)
+            if (x >= Width || y >= Height)
                 throw new Exception("Выход за пределы TileMap");
 
-            return tiles[y * width + x];
+            return tiles[y * Width + x];
+        }
+
+        public void SetTile(int x, int y, int id)
+        {
+            if (x < 0 || y < 0)
+                throw new Exception("Выход за пределы TileMap");
+
+            if (x >= Width || y >= Height)
+                throw new Exception("Выход за пределы TileMap");
+
+            tiles[y * Width + x] = id;
         }
 
     }

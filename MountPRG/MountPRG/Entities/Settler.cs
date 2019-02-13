@@ -17,12 +17,13 @@ namespace MountPRG
         {
             Add(new Sprite(GamePlayState.SettlerTexture, true));
             Add(new SettlerController());
+            Add(new Avatar(GamePlayState.SettlerAvatarTexture));
         }
 
-        public void SetDestTile(Tile tile, Dictionary<Tile, Node<Tile>> nodes, TileLayer layer)
+        public void SetDestTile(Tile tile, Dictionary<Tile, Node<Tile>> nodes, CollisionLayer collisionLayer)
         {
             SettlerController sc = Get<SettlerController>();
-            sc.SetDestTile(tile, nodes, layer);
+            sc.SetDestTile(tile, nodes, collisionLayer);
         }
 
     }

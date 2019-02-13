@@ -17,62 +17,62 @@ namespace MountPRG
 
         TileLayer groundLayer;
         TileLayer edgeLayer;
+        CollisionLayer collisionLayer;
 
         List<TileLayer> mapLayers = new List<TileLayer>();
 
-        int mapWidth;
-        int mapHeight;
-
-        TileSet tileSet;
-
         public TileSet TileSet
         {
-            get { return tileSet; }
+            get;
+            private set;
         }
 
         public int MapWidth
         {
-            get { return mapWidth; }
+            get;
+            private set;
         }
 
         public int MapHeight
         {
-            get { return mapHeight; }
+            get;
+            private set;
         }
 
         public int WidthInPixels
         {
-            get { return mapWidth * Engine.TileWidth; }
+            get { return MapWidth * Engine.TileWidth; }
         }
 
         public int HeightInPixels
         {
-            get { return mapHeight * Engine.TileHeight; }
+            get { return MapHeight * Engine.TileHeight; }
         }
 
         public TileMap(TileSet tileSet, int mapWidth, int mapHeight)
         {
-            this.tileSet = tileSet;
+            TileSet = tileSet;
+            MapWidth = mapWidth;
+            MapHeight = mapHeight;
 
-            groundLayer = new TileLayer(mapWidth, mapHeight, GRASS);
-
-            edgeLayer = new TileLayer(mapWidth, mapHeight, -1);
+            groundLayer = new TileLayer(MapWidth, MapHeight, GRASS);
+            edgeLayer = new TileLayer(MapWidth, MapHeight, -1);
 
             mapLayers.Add(groundLayer);
             mapLayers.Add(edgeLayer);
 
-            this.mapWidth = mapWidth;
-            this.mapHeight = mapHeight;
+            collisionLayer = new CollisionLayer(MapWidth, MapHeight);
         }
-
+     
         public TileLayer GetGroundLayer()
         {
             return groundLayer;
         }
 
-        public void SetGroundLayer(int x, int y, int tile)
+        public void SetGroundLayer(int x, int y, int id, bool walkable = true)
         {
-            groundLayer.GetTile(x, y).Id = tile;
+            groundLayer.SetTile(x, y, id);
+            collisionLayer.GetTile(x, y).IsWalkable = walkable;
         }
 
         public TileLayer GetEdgeLayer()
@@ -80,9 +80,15 @@ namespace MountPRG
             return edgeLayer;
         }
 
-        public void SetEdgeLayer(int x, int y, int tile)
+        public void SetEdgeLayer(int x, int y, int id, bool walkable = true)
         {
-            edgeLayer.GetTile(x, y).Id = tile;
+            edgeLayer.SetTile(x, y, id);
+            collisionLayer.GetTile(x, y).IsWalkable = walkable;
+        }
+
+        public CollisionLayer GetCollisionLayer()
+        {
+            return collisionLayer;
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
@@ -105,8 +111,8 @@ namespace MountPRG
 
             min.X = Math.Max(0, xCamPoint - 1);
             min.Y = Math.Max(0, yCamPoint - 1);
-            max.X = Math.Min(xViewPort + 1, mapWidth);
-            max.Y = Math.Min(yViewPort + 1, mapHeight);
+            max.X = Math.Min(xViewPort + 1, MapWidth);
+            max.Y = Math.Min(yViewPort + 1, MapHeight);
 
             Rectangle destination = new Rectangle(0, 0, Engine.TileWidth, Engine.TileHeight);
             int tileIndex;
@@ -124,7 +130,7 @@ namespace MountPRG
 
                     for (int x = min.X; x < max.X; x++)
                     {
-                        tileIndex = layer.GetTile(x, y).Id;
+                        tileIndex = layer.GetTile(x, y);
 
                         if (tileIndex == -1)
                             continue;
@@ -132,10 +138,10 @@ namespace MountPRG
                         destination.X = x * Engine.TileWidth;
 
                         spriteBatch.Draw(
-                            tileSet.Texture,
+                            TileSet.Texture,
                             destination,
-                            tileSet.SourceRectangles[tileIndex],
-                            layer.GetTile(x, y).Color);
+                            TileSet.SourceRectangles[tileIndex],
+                            Color.White);
                     }
                 }
             }
