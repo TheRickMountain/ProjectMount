@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class Inventory : IGUI
+    public class Chest : Entity
     {
-        
 
-        public void Update(GameTime gameTime)
+        public Chest()
+            : base()
         {
-            
+            Add(new Sprite(GamePlayState.ChestTexture, false));
+            Add(new Storage(3, 3));
         }
 
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            
-        }
     }
 }

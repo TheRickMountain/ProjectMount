@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class TimeSystem : IGUI
+    public class TimeSystemGUI : IGUI
     {
 
         private float currentTime;
@@ -22,7 +22,7 @@ namespace MountPRG
 
         private Rectangle arrowDestination;
 
-        public TimeSystem(Game game)
+        public TimeSystemGUI(Game game)
         {
             circle = game.Content.Load<Texture2D>(@"day_night");
             arrow = game.Content.Load<Texture2D>(@"arrow");

@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class Slot : IGUI
+    public class SlotGUI : IGUI
     {
 
         private Texture2D texture;
@@ -43,7 +43,7 @@ namespace MountPRG
             get { return dest.Height; }
         }
 
-        public Slot(Texture2D texture, int width, int height)
+        public SlotGUI(Texture2D texture, int width, int height)
         {
             this.texture = texture;
             dest = new Rectangle(0, 0, width, height);

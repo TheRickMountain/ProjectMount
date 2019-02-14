@@ -58,18 +58,18 @@ namespace MountPRG
             }
         }
 
-        internal void Update(float dt)
+        internal void Update(GameTime gameTime)
         {
             foreach (var component in components)
                 if (component.Active)
-                    component.Update(dt);
+                    component.Update(gameTime);
         }
 
         internal void Render(SpriteBatch spriteBatch)
         {
             foreach (var component in components)
                 if (component.Visible)
-                    component.Render(spriteBatch);
+                    component.Draw(spriteBatch);
         }
 
         public T Get<T>() where T : Component

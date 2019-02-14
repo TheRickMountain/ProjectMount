@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class ProgressBar : IGUI
+    public class ProgressBarGUI : IGUI
     {
         private Color color;
         private Texture2D texture;
@@ -55,7 +55,7 @@ namespace MountPRG
             }
         }
 
-        public ProgressBar(Game game, Color color)
+        public ProgressBarGUI(Game game, Color color)
         {
             this.color = color;
             texture = game.Content.Load<Texture2D>(@"progressBar");

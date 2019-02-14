@@ -18,7 +18,7 @@ namespace MountPRG
 
         public float Speed = 150f;
         public float Zoom = 2f;
-        public CameraMode Mode = CameraMode.Free;
+        public CameraMode Mode = CameraMode.Follow;
 
         private Texture2D selectorTexture;
         private Rectangle selectorDestination;
@@ -57,6 +57,9 @@ namespace MountPRG
 
         public void Update(GameTime gameTime)
         {
+            selectorDestination.X = GetCellX() * Engine.TileWidth;
+            selectorDestination.Y = GetCellY() * Engine.TileHeight;
+
             if (Mode == CameraMode.Follow)
                 return;
 
@@ -76,10 +79,7 @@ namespace MountPRG
             {
                 motion.Normalize();
                 Position += motion * Speed * Zoom * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }
-
-            selectorDestination.X = GetCellX() * Engine.TileWidth;
-            selectorDestination.Y = GetCellY() * Engine.TileHeight; 
+            }           
         }
 
         public void Draw(SpriteBatch spriteBatch)

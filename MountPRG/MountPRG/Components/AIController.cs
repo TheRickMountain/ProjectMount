@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Microsoft.Xna.Framework;
+
 namespace MountPRG
 {
-    public class SettlerController : Component
+    public class AIController : Component
     {
         private Tile currTile;
         private Tile nextTile;
@@ -17,7 +19,7 @@ namespace MountPRG
         private float movementPerc;
         private float speed = 2f;
 
-        public SettlerController()
+        public AIController()
             : base(true, false)
         {
             
@@ -29,7 +31,7 @@ namespace MountPRG
                 .GetTile((int)(Entity.X / Engine.TileWidth), (int)(Entity.Y / Engine.TileHeight));
         }
 
-        public override void Update(float dt)
+        public override void Update(GameTime gameTime)
         {
             if(currTile.Equals(destTile))
             {
@@ -42,7 +44,7 @@ namespace MountPRG
 
             float distToTravel = MathUtils.Distance(currTile.X, currTile.Y, nextTile.X, nextTile.Y);
 
-            float distThisFrame = speed * dt;
+            float distThisFrame = speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             float percThisFrame = distThisFrame / distToTravel;
 

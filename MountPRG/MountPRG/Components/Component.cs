@@ -37,12 +37,12 @@ namespace MountPRG
 
         }
 
-        public virtual void Update(float dt)
+        public virtual void Update(GameTime gameTime)
         {
 
         }
 
-        public virtual void Render(SpriteBatch spriteBatch)
+        public virtual void Draw(SpriteBatch spriteBatch)
         {
 
         }

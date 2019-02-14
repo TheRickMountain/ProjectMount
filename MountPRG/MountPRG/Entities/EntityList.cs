@@ -91,11 +91,11 @@ namespace MountPRG
             }
         }
 
-        internal void Update(float dt)
+        internal void Update(GameTime gameTime)
         {
             foreach (var entity in entities)
                 if (entity.Active)
-                    entity.Update(dt);
+                    entity.Update(gameTime);
         }
 
         public void Render(SpriteBatch spriteBatch)

@@ -12,19 +12,29 @@ namespace MountPRG
     {
         private List<IGUI> guiElements = new List<IGUI>();
 
-        private TimeSystem worldTime;
+        private TimeSystemGUI worldTime;
 
-        private Slot selectedSettler;
+        private SlotGUI selectedSettler;
+
+        private StorageGUI storage;
 
         public GUIManager(Game game)
         {
-            worldTime = new TimeSystem(game);
+            worldTime = new TimeSystemGUI(game);
 
             guiElements.Add(worldTime);
 
-            selectedSettler = new Slot(GamePlayState.SlotTexture, 48, 48);
+            selectedSettler = new SlotGUI(GamePlayState.SlotTexture, 48, 48);
             selectedSettler.PositionX = Game1.ScreenRectangle.Width - selectedSettler.Width - 5;
             selectedSettler.PositionY = Game1.ScreenRectangle.Height - selectedSettler.Height - 5;
+
+            storage = new StorageGUI();
+            storage.Width = 250;
+            storage.Height = 200;
+            storage.X = Game1.ScreenRectangle.Width / 2 - storage.Width / 2;
+            storage.Y = Game1.ScreenRectangle.Height / 2 - storage.Height / 2;
+
+            //guiElements.Add(storage);
         }
 
         public void Update(GameTime gameTime)

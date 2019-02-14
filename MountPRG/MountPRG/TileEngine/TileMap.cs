@@ -91,6 +91,31 @@ namespace MountPRG
             return collisionLayer;
         }
 
+        public bool AddEntity(int x, int y, Entity entity)
+        {
+            if (edgeLayer.GetTile(x, y) == STONE_BLOCK_1
+                || groundLayer.GetTile(x, y) == STONE_BLOCK_2)
+            {
+                Console.WriteLine("Tile " + x + " " + y + " has block");
+                return false;
+            }
+
+            if (collisionLayer.GetTile(x, y).Entity != null)
+            {
+                Console.WriteLine("Tile " + x + " " + y + " has entity");
+                return false;
+            }
+
+            collisionLayer.GetTile(x, y).Entity = entity;
+
+            return true;
+        }
+
+        public Entity GetEntity(int x, int y)
+        {
+            return collisionLayer.GetTile(x, y).Entity;
+        }
+
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
             int xCamPoint;

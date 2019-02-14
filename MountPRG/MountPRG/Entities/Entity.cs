@@ -41,9 +41,9 @@ namespace MountPRG
 
         }
 
-        public virtual void Update(float dt)
+        public virtual void Update(GameTime gameTime)
         {
-            Components.Update(dt);
+            Components.Update(gameTime);
         }
 
 

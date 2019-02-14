@@ -21,23 +21,26 @@ namespace MountPRG
         public SpriteEffects Effects = SpriteEffects.None;
 
         public Sprite(Texture2D texture, bool active)
+            : this(texture, texture.Width, texture.Height, active)
+        {
+        }
+
+        public Sprite(Texture2D texture, int width, int height, bool active)
             : base(active, true)
         {
             Texture = texture;
-            Destination = new Rectangle(0, 0, Texture.Width, Texture.Height);
+            Destination = new Rectangle(0, 0, width, height);
             Source = new Rectangle(0, 0, Texture.Width, Texture.Height);
         }
 
-        public override void Update(float dt)
+        public override void Draw(SpriteBatch spriteBatch)
         {
-
-            Destination.X = (int)Entity.X;
-            Destination.Y = (int)Entity.Y;
-        }
-
-        public override void Render(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Origin, Effects, 0);
+            if (Entity != null)
+            {
+                Destination.X = (int)(Entity.X - Origin.X);
+                Destination.Y = (int)(Entity.Y - Origin.Y);
+            }
+            spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);
         }
 
         public bool Intersects(int x, int y)

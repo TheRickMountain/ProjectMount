@@ -44,26 +44,33 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Components\AnimatedSprite.cs" />
     <Compile Include="Components\Avatar.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentList.cs" />
-    <Compile Include="Components\SettlerController.cs" />
+    <Compile Include="Components\AIController.cs" />
+    <Compile Include="Components\PlayerController.cs" />
     <Compile Include="Components\Sprite.cs" />
+    <Compile Include="Components\Storage.cs" />
+    <Compile Include="Entities\Chest.cs" />
+    <Compile Include="Entities\Wood.cs" />
     <Compile Include="Entities\Camera.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntityList.cs" />
-    <Compile Include="Entities\Settler.cs" />
+    <Compile Include="Entities\Player.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameStates\BaseGameState.cs" />
     <Compile Include="GameStates\GamePlayState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\TitleIntroState.cs" />
+    <Compile Include="GUISystem\ButtonGUI.cs" />
     <Compile Include="GUISystem\GUIManager.cs" />
     <Compile Include="GUISystem\IGUI.cs" />
-    <Compile Include="GUISystem\Inventory.cs" />
-    <Compile Include="GUISystem\ProgressBar.cs" />
-    <Compile Include="GUISystem\Slot.cs" />
-    <Compile Include="GUISystem\TimeSystem.cs" />
+    <Compile Include="GUISystem\Item.cs" />
+    <Compile Include="GUISystem\ProgressBarGUI.cs" />
+    <Compile Include="GUISystem\SlotGUI.cs" />
+    <Compile Include="GUISystem\StorageGUI.cs" />
+    <Compile Include="GUISystem\TimeSystemGUI.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Pathfinding\Heap.cs" />
     <Compile Include="Pathfinding\Node.cs" />
@@ -78,6 +85,7 @@
     <Compile Include="TileEngine\TileLayer.cs" />
     <Compile Include="TileEngine\TileMap.cs" />
     <Compile Include="TileEngine\TileSet.cs" />
+    <Compile Include="Utils\Animation.cs" />
     <Compile Include="Utils\MathUtils.cs" />
   </ItemGroup>
   <ItemGroup>
