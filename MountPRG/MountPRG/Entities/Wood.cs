@@ -15,6 +15,7 @@ namespace MountPRG
         public Wood()
         {
             Add(new Sprite(TextureBank.WoodTexture, false));
+            Depth = 0.5f;
         }
 
     }

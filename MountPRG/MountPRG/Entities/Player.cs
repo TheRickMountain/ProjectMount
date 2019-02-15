@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MountPRG
 {
   
-    public class Player : Entity
+    public class Player : Entity 
     {
         public Player(Vector2 position) : base(position)
         {
@@ -25,6 +25,7 @@ namespace MountPRG
             Add(sprite);
             Add(new PlayerController(sprite));
             Add(new Collider(16, 16, 0, -4));
+            Depth = 0.1f;
         }
 
     }

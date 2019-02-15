@@ -39,8 +39,13 @@ namespace MountPRG
             {
                 Destination.X = (int)(Entity.X - Origin.X);
                 Destination.Y = (int)(Entity.Y - Origin.Y);
+                spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, Entity.Depth);
             }
-            spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);
+            else
+            {
+                spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);
+            }
+            
         }
 
         public bool Intersects(int x, int y)

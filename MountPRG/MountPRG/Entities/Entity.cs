@@ -9,11 +9,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public abstract class Entity
+    public abstract class Entity : IComparable<Entity>
     {
         public bool Active = true;
         public bool Visible = true;
         public Vector2 Position;
+        public float Depth;
 
         public ComponentList Components { get; private set; }
 
@@ -68,5 +69,9 @@ namespace MountPRG
             return Components.Get<T>();
         }
 
+        public int CompareTo(Entity other)
+        {
+            return 0;
+        }
     }
 }

@@ -15,11 +15,7 @@ namespace MountPRG
         public const int STONE_BLOCK_1 = 1;
         public const int STONE_BLOCK_2 = 2;
 
-        TileLayer groundLayer;
-        TileLayer edgeLayer;
         CollisionLayer collisionLayer;
-
-        List<TileLayer> mapLayers = new List<TileLayer>();
 
         public TileSet TileSet
         {
@@ -55,35 +51,7 @@ namespace MountPRG
             MapWidth = mapWidth;
             MapHeight = mapHeight;
 
-            groundLayer = new TileLayer(MapWidth, MapHeight, GRASS);
-            edgeLayer = new TileLayer(MapWidth, MapHeight, -1);
-
-            mapLayers.Add(groundLayer);
-            mapLayers.Add(edgeLayer);
-
             collisionLayer = new CollisionLayer(MapWidth, MapHeight);
-        }
-     
-        public TileLayer GetGroundLayer()
-        {
-            return groundLayer;
-        }
-
-        public void SetGroundLayer(int x, int y, int id, bool walkable = true)
-        {
-            groundLayer.SetTile(x, y, id);
-            collisionLayer.GetTile(x, y).IsWalkable = walkable;
-        }
-
-        public TileLayer GetEdgeLayer()
-        {
-            return edgeLayer;
-        }
-
-        public void SetEdgeLayer(int x, int y, int id, bool walkable = true)
-        {
-            edgeLayer.SetTile(x, y, id);
-            collisionLayer.GetTile(x, y).IsWalkable = walkable;
         }
 
         public CollisionLayer GetCollisionLayer()
@@ -93,14 +61,14 @@ namespace MountPRG
 
         public bool AddEntity(int x, int y, Entity entity)
         {
-            if (edgeLayer.GetTile(x, y) == STONE_BLOCK_1
-                || groundLayer.GetTile(x, y) == STONE_BLOCK_2)
+            Tile tile = collisionLayer.GetTile(x, y);
+            if(tile.SecondLayerId != -1)
             {
                 Console.WriteLine("Tile " + x + " " + y + " has block");
                 return false;
             }
 
-            if (collisionLayer.GetTile(x, y).Entity != null)
+            if (tile.Entity != null)
             {
                 Console.WriteLine("Tile " + x + " " + y + " has entity");
                 return false;
@@ -124,6 +92,7 @@ namespace MountPRG
             int xViewPort;
             int yViewPort;
 
+            // Будет отображено только то что входит в область видимости камеры
             Engine.VectorToCell(camera.Position.X * (1 / camera.Zoom), camera.Position.Y * (1 / camera.Zoom), 
                 out xCamPoint, out yCamPoint);
             Engine.VectorToCell(
@@ -140,32 +109,38 @@ namespace MountPRG
             max.Y = Math.Min(yViewPort + 1, MapHeight);
 
             Rectangle destination = new Rectangle(0, 0, Engine.TileWidth, Engine.TileHeight);
-            int tileIndex;
+            int firstIndex;
+            int secondIndex;
 
-            for(int i = 0; i < mapLayers.Count; i++)
+            for (int y = min.Y; y < max.Y; y++)
             {
-                TileLayer layer = mapLayers[i];
+                destination.Y = y * Engine.TileHeight;
 
-                if (!layer.Visible)
-                    continue;
-
-                for (int y = min.Y; y < max.Y; y++)
+                for (int x = min.X; x < max.X; x++)
                 {
-                    destination.Y = y * Engine.TileHeight;
+                    // Сразу получаем Id двух текстур для отрисовки
+                    firstIndex = collisionLayer.GetTile(x, y).FirstLayerId;
+                    secondIndex = collisionLayer.GetTile(x, y).SecondLayerId;
 
-                    for (int x = min.X; x < max.X; x++)
+                    destination.X = x * Engine.TileWidth;
+
+                    // -1 говорит об отсутствии текстуры
+                    if (firstIndex != -1)
                     {
-                        tileIndex = layer.GetTile(x, y);
-
-                        if (tileIndex == -1)
-                            continue;
-
-                        destination.X = x * Engine.TileWidth;
 
                         spriteBatch.Draw(
                             TileSet.Texture,
                             destination,
-                            TileSet.SourceRectangles[tileIndex],
+                            TileSet.SourceRectangles[firstIndex],
+                            Color.White);
+                    }
+
+                    if(secondIndex != -1)
+                    {
+                        spriteBatch.Draw(
+                            TileSet.Texture,
+                            destination,
+                            TileSet.SourceRectangles[secondIndex],
                             Color.White);
                     }
                 }

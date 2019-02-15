@@ -41,10 +41,10 @@ namespace MountPRG
             TileMap = new TileMap(
                 new TileSet(TextureBank.TilesetTexture, Engine.TileWidth, Engine.TileHeight), 50, 50);
 
-            TileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1, false);
-            TileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2, false);
-            TileMap.SetEdgeLayer(5, 3, TileMap.STONE_BLOCK_1, false);
-            TileMap.SetEdgeLayer(6, 3, TileMap.STONE_BLOCK_2, false);
+            TileMap.GetCollisionLayer().SetTile(5, 4, TileMap.STONE_BLOCK_1, Layer.SECOND, false);
+            TileMap.GetCollisionLayer().SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.SECOND, false);
+            TileMap.GetCollisionLayer().SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.SECOND, false);
+            TileMap.GetCollisionLayer().SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.SECOND, false);
 
             TileGraph = new PathTileGraph(TileMap.GetCollisionLayer());
 
@@ -160,7 +160,7 @@ namespace MountPRG
                         if (intersectX < 0.0f && intersectY < 0.0f)
                         {
 
-                            if (intersectX < intersectY)
+                            if (intersectX <= intersectY)
                             {
                                 if (deltaY > 0.0f)
                                     entity.Position += new Vector2(0, intersectY);
