@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Components\AnimatedSprite.cs" />
     <Compile Include="Components\Avatar.cs" />
+    <Compile Include="Components\Collider.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentList.cs" />
     <Compile Include="Components\AIController.cs" />

@@ -86,6 +86,8 @@ namespace MountPRG
                 }
             }
 
+            CheckCollision();
+
             camera.LockToEntity(player);
             camera.LockToMap(TileMap);
 
@@ -131,29 +133,26 @@ namespace MountPRG
             }
         }
 
-        /*public void CheckCollision()
+        public void CheckCollision()
         {
-            foreach (Collider collider in colliders)
+            Collider collider = player.Get<Collider>();
+            Entity entity = player;
+
+            int cellX;
+            int cellY;
+            Engine.VectorToCell(entity.Position.X, entity.Position.Y, out cellX, out cellY);
+
+            for (int x = cellX - 1; x <= cellX + 1; x++)
             {
-                Entity entity = collider.Entity;
-
-                int cellX;
-                int cellY;
-                Engine.VectorToCell(entity.Position.X, entity.Position.Y, out cellX, out cellY);
-
-                for (int x = cellX - 1; x <= cellX + 1; x++)
+                for (int y = cellY - 1; y <= cellY + 1; y++)
                 {
-                    for (int y = cellY - 1; y <= cellY + 1; y++)
-                    {
-                        switch (tileMap.CollisionLayer.GetCollider(x, y))
-                        {
-                            case (int)CollisionType.None:
-                            case (int)CollisionType.Passable:
-                                continue;
-                        }
+                    if (x == cellX && y == cellY)
+                        continue;
 
-                        float deltaX = (x * Engine.TileWidth + Engine.TileWidth / 2) - (entity.Position.X + collider.OffsetX);
-                        float deltaY = (y * Engine.TileHeight + Engine.TileHeight / 2) - (entity.Position.Y + collider.OffsetY);
+                    if (!TileMap.GetCollisionLayer().GetTile(x, y).IsWalkable)
+                    {
+                        float deltaX = (x * Engine.TileWidth + Engine.TileWidth / 2) - (entity.X + collider.OffsetX);
+                        float deltaY = (y * Engine.TileHeight + Engine.TileHeight / 2) - (entity.Y + collider.OffsetY);
 
                         float intersectX = Math.Abs(deltaX) - ((Engine.TileWidth / 2) + (collider.Width / 2));
                         float intersectY = Math.Abs(deltaY) - ((Engine.TileHeight / 2) + (collider.Height / 2));
@@ -161,24 +160,24 @@ namespace MountPRG
                         if (intersectX < 0.0f && intersectY < 0.0f)
                         {
 
-                            if (intersectX > intersectY)
-                            {
-                                if (deltaX > 0.0f)
-                                    entity.Position += new Vector2(intersectX, 0);
-                                else
-                                    entity.Position += new Vector2(-intersectX, 0);
-                            }
-                            else
+                            if (intersectX < intersectY)
                             {
                                 if (deltaY > 0.0f)
                                     entity.Position += new Vector2(0, intersectY);
                                 else
                                     entity.Position += new Vector2(0, -intersectY);
                             }
+                            else
+                            {
+                                if (deltaX > 0.0f)
+                                    entity.Position += new Vector2(intersectX, 0);
+                                else
+                                    entity.Position += new Vector2(-intersectX, 0);
+                            }
                         }
                     }
                 }
             }
-        }*/
+        }
     }
 }

@@ -24,6 +24,7 @@ namespace MountPRG
             sprite.IsAnimating = true;
             Add(sprite);
             Add(new PlayerController(sprite));
+            Add(new Collider(16, 16, 0, -4));
         }
 
     }
