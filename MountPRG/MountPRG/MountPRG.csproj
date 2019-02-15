@@ -49,10 +49,12 @@
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentList.cs" />
     <Compile Include="Components\AIController.cs" />
+    <Compile Include="Components\Mineable.cs" />
     <Compile Include="Components\PlayerController.cs" />
     <Compile Include="Components\Sprite.cs" />
     <Compile Include="Components\Storage.cs" />
     <Compile Include="Entities\Chest.cs" />
+    <Compile Include="Entities\Tree.cs" />
     <Compile Include="Entities\Wood.cs" />
     <Compile Include="Entities\Camera.cs" />
     <Compile Include="Entities\Entity.cs" />
@@ -87,6 +89,7 @@
     <Compile Include="TileEngine\TileSet.cs" />
     <Compile Include="Utils\Animation.cs" />
     <Compile Include="Utils\MathUtils.cs" />
+    <Compile Include="Utils\TextureBank.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

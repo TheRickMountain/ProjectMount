@@ -27,7 +27,7 @@ namespace MountPRG
             : base(true, false)
         {
             this.sprite = sprite;
-            speed = 80f;
+            speed = 60f;
         }
 
         public override void Update(GameTime gameTime)

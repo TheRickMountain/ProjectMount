@@ -24,7 +24,7 @@ namespace MountPRG
 
             guiElements.Add(worldTime);
 
-            selectedSettler = new SlotGUI(GamePlayState.SlotTexture, 48, 48);
+            selectedSettler = new SlotGUI(TextureBank.SlotTexture, 48, 48);
             selectedSettler.PositionX = Game1.ScreenRectangle.Width - selectedSettler.Width - 5;
             selectedSettler.PositionY = Game1.ScreenRectangle.Height - selectedSettler.Height - 5;
 

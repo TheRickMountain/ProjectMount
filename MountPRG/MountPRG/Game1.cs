@@ -11,6 +11,7 @@ namespace MountPRG
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        bool foolscreen = false;
 
         GameStateManager gameStateManager;
         ITitleIntroState titleIntroState;
@@ -49,10 +50,25 @@ namespace MountPRG
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+            Window.Title = "PaleoMount";
+
             screenRectangle = new Rectangle(0, 0, 1024, 720);
 
-            graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
-            graphics.PreferredBackBufferHeight = ScreenRectangle.Height;
+            if (foolscreen)
+            {
+                graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                screenRectangle.Width = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+                screenRectangle.Height = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+                graphics.IsFullScreen = true;
+            }
+            else
+            {
+                graphics.PreferredBackBufferWidth = ScreenRectangle.Width;
+                graphics.PreferredBackBufferHeight = ScreenRectangle.Height;
+                graphics.IsFullScreen = false;
+            }
+
 
             gameStateManager = new GameStateManager(this);
             Components.Add(gameStateManager);
@@ -76,6 +92,9 @@ namespace MountPRG
         {
             Components.Add(new InputManager(this));
 
+            // Загрузка всех игровых текстур
+            TextureBank.CreateInstance(Content);
+
             base.Initialize();
         }
 
@@ -86,9 +105,7 @@ namespace MountPRG
         protected override void LoadContent()
         {
             // Create a new SpriteBatch, which can be used to draw textures.
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            spriteBatch = new SpriteBatch(GraphicsDevice);        
         }
 
         /// <summary>

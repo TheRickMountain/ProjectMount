@@ -16,18 +16,7 @@ namespace MountPRG
 
     public class GamePlayState : BaseGameState, IGamePlayState
     {
-        public static Texture2D SettlerTexture;
-        public static Texture2D TilesetTexture;
-        public static Texture2D SelectorTexture;
-        public static Texture2D SettlerAvatarTexture;
-        public static Texture2D SlotTexture;
-        public static Texture2D WoodTexture;
-        public static Texture2D ChestTexture;
-        public static Texture2D ProgressBarTexture;
-        public static Texture2D CrossTexture;
-        public static Texture2D CharactersTexture;
-
-        private bool paused;
+       private bool paused;
         private Camera camera;
 
         public static TileMap TileMap;
@@ -46,22 +35,11 @@ namespace MountPRG
 
         public override void Initialize()
         {
-            SettlerTexture = content.Load<Texture2D>(@"human");
-            TilesetTexture = content.Load<Texture2D>(@"tileset");
-            SelectorTexture = content.Load<Texture2D>(@"selector");
-            SettlerAvatarTexture = content.Load<Texture2D>(@"settler_avatar");
-            SlotTexture = content.Load<Texture2D>(@"slot");
-            WoodTexture = content.Load<Texture2D>(@"stick");
-            ChestTexture = content.Load<Texture2D>(@"chest");
-            ProgressBarTexture = content.Load<Texture2D>(@"progressBar");
-            CrossTexture = content.Load<Texture2D>(@"cross");
-            CharactersTexture = content.Load<Texture2D>(@"characters");
-
             Engine engine = Engine.GetInstance(16, 16);
             camera = new Camera();
 
             TileMap = new TileMap(
-                new TileSet(TilesetTexture, Engine.TileWidth, Engine.TileHeight), 50, 50);
+                new TileSet(TextureBank.TilesetTexture, Engine.TileWidth, Engine.TileHeight), 50, 50);
 
             TileMap.SetEdgeLayer(5, 4, TileMap.STONE_BLOCK_1, false);
             TileMap.SetEdgeLayer(5, 5, TileMap.STONE_BLOCK_2, false);
@@ -72,6 +50,7 @@ namespace MountPRG
 
             AddEntityToTileMap(8, 5, new Wood());
             AddEntityToTileMap(15, 10, new Chest());
+            AddEntityToTileMap(10, 15, new Tree());
 
             player = new Player(new Vector2(Engine.ToWorldPosX(1), Engine.ToWorldPosY(5)));
             entities.Add(player);

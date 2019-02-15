@@ -64,10 +64,10 @@ namespace MountPRG
 
         public StorageGUI()
         {
-            sprite = new Sprite(GamePlayState.ProgressBarTexture, false);
+            sprite = new Sprite(TextureBank.ProgressBarTexture, false);
             sprite.Color = Color.Gray;
 
-            closeButton = new ButtonGUI(GamePlayState.CrossTexture);
+            closeButton = new ButtonGUI(TextureBank.CrossTexture);
             closeButton.Width *= 2;
             closeButton.Height *= 2;
         }
