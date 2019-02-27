@@ -12,19 +12,24 @@ namespace MountPRG
     {
         private List<IGUI> guiElements = new List<IGUI>();
 
-        private DayNightSystemGUI worldTime;
-        private ActiveInventory activeInventory;
-        private static StorageGUI storageGUI;
+        private ItemDatabase itemDatabase;
+
+        private DayNightSystemGUI dayNightSystemGUI;
+        public static ActiveInventoryGUI ActiveInventoryGUI;
+        public static StorageGUI StorageGUI;
+        
 
         public GUIManager(Game game)
         {
-            worldTime = new DayNightSystemGUI(true);
-            activeInventory = new ActiveInventory(6, true);
-            storageGUI = new StorageGUI(false);
+            itemDatabase = new ItemDatabase();
 
-            guiElements.Add(worldTime);
-            guiElements.Add(activeInventory);
-            guiElements.Add(storageGUI);
+            dayNightSystemGUI = new DayNightSystemGUI(true);
+            ActiveInventoryGUI = new ActiveInventoryGUI(6, true);
+            StorageGUI = new StorageGUI(false);
+
+            guiElements.Add(dayNightSystemGUI);
+            guiElements.Add(ActiveInventoryGUI);
+            guiElements.Add(StorageGUI);
         }
 
         public void Update(GameTime gameTime)
@@ -44,16 +49,5 @@ namespace MountPRG
                     guiElements[i].Draw(spriteBatch);
             }
         }
-
-        public static void OpenStorage(Storage storage)
-        {
-            storageGUI.Open(storage);
-        }
-
-        public static void CloseStoarge()
-        {
-            storageGUI.Close();
-        }
-
     }
 }

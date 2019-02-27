@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace MountPRG
 {
-    public enum State
+    public enum PlayerState
     {
         IDLE,
         MOVE
@@ -28,9 +28,9 @@ namespace MountPRG
         private float speed = 4f;
 
         private AnimatedSprite sprite;
-        private State state = State.IDLE;
+        private PlayerState playerState = PlayerState.IDLE;
 
-        private bool inInventory;
+        private bool inStorage;
 
         public PlayerController(AnimatedSprite sprite)
             : base(true, false)
@@ -42,6 +42,8 @@ namespace MountPRG
         {
             currTile = destTile = nextTile = GamePlayState.TileMap
                 .GetTile((int)(Entity.X / TileMap.TILE_SIZE), (int)(Entity.Y / TileMap.TILE_SIZE));
+
+            GUIManager.ActiveInventoryGUI.AddItem(ItemDatabase.GetItemById(ItemDatabase.BERRY), 10);
         }
 
         public override void Update(GameTime gameTime)
@@ -49,59 +51,135 @@ namespace MountPRG
             // Пробуем открыть сундук если игрок рядом с ним
             if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                int x = GamePlayState.Camera.GetCellX();
-                int y = GamePlayState.Camera.GetCellY();
-                // Если игрок рядом с сундуком в одном из 4-х направлений
-                if(currTile.X == x - 1 || currTile.X == x + 1
-                    || currTile.Y == y - 1 || currTile.Y == y + 1)
+                if (!inStorage)
                 {
+                    int x = GamePlayState.Camera.GetCellX();
+                    int y = GamePlayState.Camera.GetCellY();
+
                     Tile tile = GamePlayState.TileMap.GetTile(x, y);
                     if (tile != null)
                     {
                         Entity entity = tile.Entity;
                         if (entity != null)
                         {
-                            if (entity.Get<Storage>() != null)
+                            // Если игрок рядом с предметом в одном из 4-х направлений, то открываем его
+                            if (currTile == GamePlayState.TileMap.GetTile(x - 1, y) ||
+                                    currTile == GamePlayState.TileMap.GetTile(x + 1, y) ||
+                                    currTile == GamePlayState.TileMap.GetTile(x, y - 1) ||
+                                    currTile == GamePlayState.TileMap.GetTile(x, y + 1))
                             {
-                                GUIManager.OpenStorage(entity.Get<Storage>());
-                                inInventory = true;
+                                // Открываем сундук
+                                if (entity.Get<Storage>() != null)
+                                {
+                                    GUIManager.StorageGUI.Open(entity.Get<Storage>());
+                                    inStorage = true;
+                                } // Подбираем предмет
+                                else if (entity.Get<Gatherable>() != null)
+                                {
+                                    if (GUIManager.ActiveInventoryGUI.AddItem(entity.Get<Gatherable>().Item, 1))
+                                    {
+                                        GamePlayState.TileMap.RemoveEntity(x, y);
+                                    }
+                                }
                             }
                         }
                     }
-                }   
+
+
+                }
+                else
+                {
+                    Slot actInvSlot = GUIManager.ActiveInventoryGUI.getSelectedSlot();
+                    Slot strSlot = GUIManager.StorageGUI.getSelectedSlot();
+                    if(actInvSlot != null && actInvSlot.HasItem)
+                    {
+                        GUIManager.StorageGUI.AddItem(actInvSlot.Item, actInvSlot.Count);
+                        actInvSlot.Clear();
+                    }
+                    else if(strSlot != null && strSlot.HasItem)
+                    {
+                        GUIManager.ActiveInventoryGUI.AddItem(strSlot.Item, strSlot.Count);
+                        strSlot.Clear();
+                    }
+
+                }
             }
 
             if (InputManager.GetMouseButtonDown(MouseInput.RightButton))
             {
-                if (!inInventory)
+                if (!inStorage)
                 {
-                    int x = GamePlayState.Camera.GetCellX();
-                    int y = GamePlayState.Camera.GetCellY();
-                    Tile tile = GamePlayState.TileMap.GetTile(x, y);
-                    if (tile != null && tile.IsWalkable)
+                    Slot actInvSlot = GUIManager.ActiveInventoryGUI.getSelectedSlot();
+                    if (actInvSlot != null)
                     {
-                        if (state == State.MOVE)
+                        if (actInvSlot.HasItem)
                         {
-                            newDestTile = tile;
-                        }
-                        else
-                        {
-                            SetDestTile(tile,
-                                    GamePlayState.TileMap.GetTileGraph().Nodes,
-                                    GamePlayState.TileMap);
+                            if (actInvSlot.Item.Consumable)
+                            {
+                                actInvSlot.Clear();
+                            }
                         }
                     }
-                } else
+                    else
+                    {
+                        int x = GamePlayState.Camera.GetCellX();
+                        int y = GamePlayState.Camera.GetCellY();
+                        Tile tile = GamePlayState.TileMap.GetTile(x, y);
+                        if (tile != null && tile.IsWalkable)
+                        {
+                            if (playerState == PlayerState.MOVE)
+                            {
+                                newDestTile = tile;
+                            }
+                            else
+                            {
+                                SetDestTile(tile,
+                                        GamePlayState.TileMap.GetTileGraph().Nodes,
+                                        GamePlayState.TileMap);
+                            }
+                        }
+                    }
+                }
+                else
                 {
-                    inInventory = false;
-                    GUIManager.CloseStoarge();
+                    /* Если было нажато правой кнопкой по инвентарю, то предмет из выделенного слота будет
+                     * съеден, если по инвентарю нажато не было, ты инвентарь закроется*/
+                    Slot actInvSlot = GUIManager.ActiveInventoryGUI.getSelectedSlot();
+                    Slot strSlot = GUIManager.StorageGUI.getSelectedSlot();
+                    if (actInvSlot != null)
+                    {
+                        if(actInvSlot.HasItem)
+                        {
+                            if (actInvSlot.Item.Consumable)
+                            {
+                                actInvSlot.Clear();
+                            }
+                        } 
+                    }
+                    else if (strSlot != null)
+                    {
+                        if (strSlot.HasItem)
+                        {
+                            if(strSlot.Item.Consumable)
+                            {
+                                strSlot.Clear();
+                            }      
+                        }
+                    }
+                    else
+                    {
+                        inStorage = false;
+                        GUIManager.StorageGUI.Close();
+                    }
+
+                    
                 }
             }
 
             if (currTile.Equals(destTile))
             {
                 pathAStar = null;
-                state = State.IDLE;
+                playerState = PlayerState.IDLE;
             }
 
             if (pathAStar != null)
@@ -136,10 +214,10 @@ namespace MountPRG
                 Entity.X = MathUtils.Lerp(currTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
                 Entity.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
 
-                state = State.MOVE;
+                playerState = PlayerState.MOVE;
             }
 
-            if (state == State.IDLE)
+            if (playerState == PlayerState.IDLE)
                 sprite.ResetAnimation();
         }
 

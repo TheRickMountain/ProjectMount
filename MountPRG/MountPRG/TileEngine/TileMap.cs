@@ -63,8 +63,9 @@ namespace MountPRG
     public class TileMap
     {
         public const int GRASS = 0;
-        public const int STONE_BLOCK_1 = 1;
-        public const int STONE_BLOCK_2 = 2;
+        public const int GRASS_FLOWER = 1;
+        public const int STONE_BLOCK_1 = 2;
+        public const int STONE_BLOCK_2 = 3;
 
         public const int TILE_SIZE = 16;
 
@@ -98,10 +99,21 @@ namespace MountPRG
             Height = height;
 
             tiles = new Tile[height * width];
-            
-            for(int x = 0; x < width; x++)
-                for(int y = 0; y < height; y++)
-                    tiles[y * Width + x] = new Tile(x, y, GRASS, -1, this);
+
+            int tmp = 0;
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    tmp = MyRandom.Range(1, 10);
+                    if (tmp == 10)
+                        tmp = GRASS_FLOWER;
+                    else
+                        tmp = GRASS;
+                    
+                    tiles[y * Width + x] = new Tile(x, y, tmp, -1, this);
+                }
+            }
 
             tileGraph = new PathTileGraph(this);
         }
@@ -177,6 +189,21 @@ namespace MountPRG
             }
 
             return false;
+        }
+
+        public void RemoveEntity(int x, int y)
+        {
+            Tile tile = GetTile(x, y);
+
+            if (tile != null)
+            {
+                if (tile.Entity != null)
+                {
+                    GamePlayState.Entities.Remove(tile.Entity);
+                    tile.Entity = null;
+                    tile.IsWalkable = true;
+                }
+            }
         }
 
         public Entity GetEntity(int x, int y)

@@ -30,7 +30,7 @@ namespace MountPRG
 
         public GamePlayState(Game game) : base(game)
         {
-            Entities = new EntityList();
+            
         }
 
         public override void Initialize()
@@ -39,6 +39,10 @@ namespace MountPRG
 
             TileMap= new TileMap(50, 50, new TileSet(TextureBank.TilesetTexture));
 
+            guiManager = new GUIManager(GameRef);
+
+            Entities = new EntityList();
+
             TileMap.SetTile(5, 4, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
             TileMap.SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
             TileMap.SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
@@ -46,12 +50,11 @@ namespace MountPRG
 
             AddEntityToTileMap(15, 10, new Chest());
             AddEntityToTileMap(10, 15, new Tree());
-            AddEntityToTileMap(8, 5, new Wood());
+            AddEntityToTileMap(15, 16, new Wood());
+            AddEntityToTileMap(15, 17, new Stone());
 
             player = new Player(Engine.ToWorldPos(15), Engine.ToWorldPos(15));
-            Entities.Add(player);
-
-            guiManager = new GUIManager(GameRef);
+            Entities.Add(player);   
 
             Characters = new List<Entity>();
             Characters.Add(player);
@@ -105,11 +108,6 @@ namespace MountPRG
             guiManager.Draw(GameRef.SpriteBatch);
 
             GameRef.SpriteBatch.End();
-        }
-
-        public void SortEntity(Entity entity)
-        {
-
         }
 
         public void AddEntityToTileMap(int x, int y, Entity entity)

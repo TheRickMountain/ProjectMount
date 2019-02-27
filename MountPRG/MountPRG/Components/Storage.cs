@@ -39,6 +39,8 @@ namespace MountPRG
             Columns = columns;
             Items = new int[rows * columns];
             Count = new int[rows * columns];
+            MathUtils.Populate(Items, -1);
+            MathUtils.Populate(Count, 0);
         }
 
     }

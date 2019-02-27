@@ -31,5 +31,13 @@ namespace MountPRG
             return (int)(rad * (180.0f / Math.PI));
         }
 
+        public static void Populate(int[] arr, int value)
+        {
+            for (int i = 0; i < arr.Length; i++)
+            {
+                arr[i] = value;
+            }
+        }
+
     }
 }

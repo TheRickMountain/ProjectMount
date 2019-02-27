@@ -16,11 +16,15 @@ namespace MountPRG
         public static Texture2D SelectorTexture;
         public static Texture2D SlotTexture;
         public static Texture2D WoodTexture;
+        public static Texture2D StoneTexture;
         public static Texture2D ChestTexture;
         public static Texture2D CharactersTexture;
         public static Texture2D TreeTexture;
         public static Texture2D DayNightCircleTexture;
         public static Texture2D DayNightArrowTexture;
+        public static Texture2D BerryTexture;
+
+        public static SpriteFont Font;
 
         public static void CreateInstance(ContentManager content)
         {
@@ -33,11 +37,15 @@ namespace MountPRG
             SelectorTexture = content.Load<Texture2D>(@"selector");
             SlotTexture = content.Load<Texture2D>(@"slot");
             WoodTexture = content.Load<Texture2D>(@"stick");
+            StoneTexture = content.Load<Texture2D>(@"stone");
             ChestTexture = content.Load<Texture2D>(@"chest");
             CharactersTexture = content.Load<Texture2D>(@"characters");
             TreeTexture = content.Load<Texture2D>(@"tree");
             DayNightCircleTexture = content.Load<Texture2D>(@"day_night");
             DayNightArrowTexture = content.Load<Texture2D>(@"arrow");
+            BerryTexture = content.Load<Texture2D>(@"berry");
+
+            Font = content.Load<SpriteFont>(@"mountFont");
         }
 
     }

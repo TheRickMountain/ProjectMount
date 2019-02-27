@@ -10,39 +10,57 @@ namespace MountPRG
 {
     public class Slot : IGUI
     {
+        public Item Item
+        {
+            get; private set;
+        }
 
-        private Texture2D background;
-        private Rectangle dest;
+        public int Count
+        {
+            get; private set;
+        }
+
+        private Texture2D backgroundTexture;
+        private Rectangle backgroundDest;
+
+        private Texture2D itemTexture;
+
+        public bool HasItem
+        {
+            get; private set;
+        }
 
         public float X
         {
-            get { return dest.X; }
-            set { dest.X = (int)value; }
+            get { return backgroundDest.X; }
+            set { backgroundDest.X = (int)value; }
         }
 
         public float Y
         {
-            get { return dest.Y; }
-            set { dest.Y = (int)value; }
+            get { return backgroundDest.Y; }
+            set { backgroundDest.Y = (int)value; }
         }
 
         public float Width
         {
-            get { return dest.Width; }
-            set { dest.Width = (int)value; }
+            get { return backgroundDest.Width; }
+            set { backgroundDest.Width = (int)value; }
         }
 
         public float Height
         {
-            get { return dest.Height; }
-            set { dest.Height = (int)value; }
+            get { return backgroundDest.Height; }
+            set { backgroundDest.Height = (int)value; }
         }
 
         public Slot(Texture2D background, int width, int height, bool active) : base(active)
         {
-            this.background = background;
+            this.backgroundTexture = background;
 
-            dest = new Rectangle(0, 0, width, height);
+            backgroundDest = new Rectangle(0, 0, width, height);
+
+            HasItem = false;
         }
 
         public override void Update(GameTime gameTime)
@@ -52,16 +70,38 @@ namespace MountPRG
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(background, dest, Color.White);
+            spriteBatch.Draw(backgroundTexture, backgroundDest, Color.White);
+            if(HasItem)
+                spriteBatch.Draw(itemTexture, backgroundDest, Color.White);
+            if (Count > 1)
+                spriteBatch.DrawString(TextureBank.Font, "" + Count, new Vector2(backgroundDest.X - 5, backgroundDest.Y - 5), Color.White);
         }
 
         public bool Intersects(int x, int y)
         {
-            if (x >= dest.X && x <= dest.Right &&
-                y >= dest.Y && y <= dest.Bottom)
+            if (x >= backgroundDest.X && x <= backgroundDest.Right &&
+                y >= backgroundDest.Y && y <= backgroundDest.Bottom)
                 return true;
 
             return false;
+        }
+
+        public void AddItem(Item item, int count)
+        {
+            Item = item;
+            Count = count;
+
+            itemTexture = item.Texture;
+            HasItem = true;
+        }
+
+        public void Clear()
+        {
+            Item = null;
+            Count = 0;
+
+            itemTexture = null;
+            HasItem = false;
         }
         
     }

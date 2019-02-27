@@ -8,12 +8,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class ActiveInventory : IGUI
+    public class ActiveInventoryGUI : IGUI
     {
 
         private List<Slot> slots;
 
-        public ActiveInventory(int count, bool active) : base(active)
+        public ActiveInventoryGUI(int count, bool active) : base(active)
         {
             slots = new List<Slot>();
             int xStart = (Game1.ScreenRectangle.Width / 2) - ((count * 50 + (count - 1) * 5) / 2);
@@ -40,6 +40,30 @@ namespace MountPRG
                 slots[i].Draw(spriteBatch);
             }
         }
-       
+
+        public bool AddItem(Item item, int count)
+        {
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (!slots[i].HasItem)
+                {
+                    slots[i].AddItem(item, count);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Slot getSelectedSlot()
+        {
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (slots[i].Intersects(InputManager.GetX(), InputManager.GetY()))
+                {
+                    return slots[i];
+                }
+            }
+            return null;
+        } 
     }
 }

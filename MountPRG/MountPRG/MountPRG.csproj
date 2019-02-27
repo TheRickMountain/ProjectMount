@@ -47,11 +47,14 @@
     <Compile Include="Components\AnimatedSprite.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentList.cs" />
+    <Compile Include="Components\Gatherable.cs" />
     <Compile Include="Components\PlayerController.cs" />
     <Compile Include="Components\Mineable.cs" />
     <Compile Include="Components\Sprite.cs" />
     <Compile Include="Components\Storage.cs" />
+    <Compile Include="Entities\Berry.cs" />
     <Compile Include="Entities\Chest.cs" />
+    <Compile Include="Entities\Stone.cs" />
     <Compile Include="Entities\Tree.cs" />
     <Compile Include="Entities\Wood.cs" />
     <Compile Include="Entities\Camera.cs" />
@@ -66,7 +69,7 @@
     <Compile Include="GUISystem\ActiveInventory.cs" />
     <Compile Include="GUISystem\GUIManager.cs" />
     <Compile Include="GUISystem\IGUI.cs" />
-    <Compile Include="GUISystem\Item.cs" />
+    <Compile Include="GUISystem\ItemDatabase.cs" />
     <Compile Include="GUISystem\PlayerStats.cs" />
     <Compile Include="GUISystem\DayNightSystemGUI.cs" />
     <Compile Include="GUISystem\Slot.cs" />
@@ -85,6 +88,7 @@
     <Compile Include="TileEngine\TileSet.cs" />
     <Compile Include="Utils\Animation.cs" />
     <Compile Include="Utils\MathUtils.cs" />
+    <Compile Include="Utils\MyRandom.cs" />
     <Compile Include="Utils\TextureBank.cs" />
   </ItemGroup>
   <ItemGroup>

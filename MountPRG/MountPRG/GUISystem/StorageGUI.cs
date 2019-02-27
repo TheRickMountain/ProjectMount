@@ -45,14 +45,20 @@ namespace MountPRG
 
             int xStart = (Game1.ScreenRectangle.Width / 2) - ((columns * 50 + (columns - 1) * 5) / 2);
             int yStart = (Game1.ScreenRectangle.Height / 2) - ((rows * 50 + (rows - 1) * 5) / 2);
-
-            for (int y = 0; y < rows; y++)
+            
+            for (int y = 0, i = 0; y < rows; y++)
             {
-                for (int x = 0; x < columns; x++)
+                for (int x = 0; x < columns; x++, i++)
                 {
                     Slot slot = new Slot(TextureBank.SlotTexture, 50, 50, true);
                     slot.X = xStart + x * 50 + x * 5;
                     slot.Y = yStart + y * 50 + y * 5;
+
+                    if (storage.Items[i] != -1)
+                    {
+                        slot.AddItem(ItemDatabase.GetItemById(storage.Items[i]), storage.Count[i]);
+                    }
+
                     slots.Add(slot);
                 }
             }
@@ -60,8 +66,55 @@ namespace MountPRG
 
         public void Close()
         {
+            for(int i = 0; i < slots.Count; i++)
+            {
+                Slot slot = slots[i];
+                if (slot.HasItem)
+                {
+                    storage.Items[i] = slot.Item.Id;
+                    storage.Count[i] = slot.Count;
+                }
+                else
+                {
+                    storage.Items[i] = -1;
+                    storage.Count[i] = 0;
+                }
+
+            }
+
             Active = false;
             slots.Clear();
         }
+
+        public bool AddItem(Item item, int count)
+        {
+            if (Active)
+            {
+                for (int i = 0; i < slots.Count; i++)
+                {
+                    Slot slot = slots[i];
+                    if(!slot.HasItem)
+                    {
+                        slot.AddItem(item, count);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public Slot getSelectedSlot()
+        {
+            for (int i = 0; i < slots.Count; i++)
+            {
+                if (slots[i].Intersects(InputManager.GetX(), InputManager.GetY()))
+                {
+                    return slots[i];
+                }
+            }
+            return null;
+        }
+
     }
 }
