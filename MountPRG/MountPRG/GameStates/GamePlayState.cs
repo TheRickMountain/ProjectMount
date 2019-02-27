@@ -49,9 +49,14 @@ namespace MountPRG
             TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
 
             AddEntityToTileMap(15, 10, new Chest());
+            AddEntityToTileMap(16, 10, new Chest());
             AddEntityToTileMap(10, 15, new Tree());
             AddEntityToTileMap(15, 16, new Wood());
+            AddEntityToTileMap(16, 16, new Wood());
+            AddEntityToTileMap(17, 16, new Wood());
+            AddEntityToTileMap(18, 16, new Wood());
             AddEntityToTileMap(15, 17, new Stone());
+            AddEntityToTileMap(16, 17, new Stone());
 
             player = new Player(Engine.ToWorldPos(15), Engine.ToWorldPos(15));
             Entities.Add(player);   

@@ -41,17 +41,47 @@ namespace MountPRG
             }
         }
 
-        public bool AddItem(Item item, int count)
+        public int AddItem(Item itemToAdd, int count)
         {
             for (int i = 0; i < slots.Count; i++)
             {
-                if (!slots[i].HasItem)
+                if (slots[i].HasItem)
                 {
-                    slots[i].AddItem(item, count);
-                    return true;
+                    if (slots[i].Item == itemToAdd && itemToAdd.Stackable && slots[i].Count < 99)
+                    {
+                        // Вычисляем общее количество добавляемых и предметов в слоту
+                        int itemsCount = slots[i].Count + count;
+
+                        // Если общее количество предметов больше 99
+                        if (itemsCount > 99)
+                        {
+                            // Добавляем в слот 99 предметов, а count присваиваем оставшееся количество предметов
+                            slots[i].AddItem(itemToAdd, 99);
+                            count = itemsCount - 99;
+                        }
+                        else
+                        {
+                            // Иначе просто добавляем предметы
+                            slots[i].AddItem(itemToAdd, itemsCount);
+                            return 0;
+                        }
+                    }
+                }
+                else
+                {
+                    if (count > 99)
+                    {
+                        slots[i].AddItem(itemToAdd, 99);
+                        count -= 99;
+                    }
+                    else
+                    {
+                        slots[i].AddItem(itemToAdd, count);
+                        return 0;
+                    }
                 }
             }
-            return false;
+            return count;
         }
 
         public Slot getSelectedSlot()

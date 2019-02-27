@@ -42,12 +42,15 @@ namespace MountPRG
         {
             currTile = destTile = nextTile = GamePlayState.TileMap
                 .GetTile((int)(Entity.X / TileMap.TILE_SIZE), (int)(Entity.Y / TileMap.TILE_SIZE));
-
-            GUIManager.ActiveInventoryGUI.AddItem(ItemDatabase.GetItemById(ItemDatabase.BERRY), 10);
         }
 
         public override void Update(GameTime gameTime)
         {
+            if(InputManager.GetKeyDown(Microsoft.Xna.Framework.Input.Keys.G))
+            {
+                GUIManager.ActiveInventoryGUI.AddItem(ItemDatabase.GetItemById(ItemDatabase.WOOD), 100);
+            }
+
             // Пробуем открыть сундук если игрок рядом с ним
             if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
@@ -76,7 +79,7 @@ namespace MountPRG
                                 } // Подбираем предмет
                                 else if (entity.Get<Gatherable>() != null)
                                 {
-                                    if (GUIManager.ActiveInventoryGUI.AddItem(entity.Get<Gatherable>().Item, 1))
+                                    if (GUIManager.ActiveInventoryGUI.AddItem(entity.Get<Gatherable>().Item, 1) == 0)
                                     {
                                         GamePlayState.TileMap.RemoveEntity(x, y);
                                     }
@@ -93,15 +96,29 @@ namespace MountPRG
                     Slot strSlot = GUIManager.StorageGUI.getSelectedSlot();
                     if(actInvSlot != null && actInvSlot.HasItem)
                     {
-                        GUIManager.StorageGUI.AddItem(actInvSlot.Item, actInvSlot.Count);
-                        actInvSlot.Clear();
+                        int itemsLeft = GUIManager.StorageGUI.AddItem(actInvSlot.Item, actInvSlot.Count);
+                        if (itemsLeft == 0)
+                        {
+                            actInvSlot.Clear();
+                        }
+                        else
+                        {
+                            actInvSlot.AddItem(actInvSlot.Item, itemsLeft);
+                        }
+                        
                     }
                     else if(strSlot != null && strSlot.HasItem)
                     {
-                        GUIManager.ActiveInventoryGUI.AddItem(strSlot.Item, strSlot.Count);
-                        strSlot.Clear();
+                        int itemsLeft = GUIManager.ActiveInventoryGUI.AddItem(strSlot.Item, strSlot.Count);
+                        if (itemsLeft == 0)
+                        {
+                            strSlot.Clear();
+                        }
+                        else
+                        {
+                            strSlot.AddItem(strSlot.Item, itemsLeft);
+                        }
                     }
-
                 }
             }
 
