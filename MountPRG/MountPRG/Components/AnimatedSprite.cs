@@ -44,7 +44,7 @@ namespace MountPRG
                 Entity.Depth = Destination.Bottom;
             }
             spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
-                TimeSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
+                DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
         }
 
     }

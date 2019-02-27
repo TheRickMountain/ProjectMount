@@ -14,7 +14,6 @@ namespace MountPRG
         public Wood()
         {
             Add(new Sprite(TextureBank.WoodTexture, false));
-            Walkable = true;
         }
 
     }

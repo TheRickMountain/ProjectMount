@@ -65,11 +65,11 @@ namespace MountPRG
                 }
                 // TODO: Конец
 
-                spriteBatch.Draw(Texture, Destination, Source, TimeSystemGUI.CurrentColor * Alpha, Rotation, Vector2.Zero, Effects, 0);
+                spriteBatch.Draw(Texture, Destination, Source, DayNightSystemGUI.CurrentColor * Alpha, Rotation, Vector2.Zero, Effects, 0);
             }
             else
             {
-                spriteBatch.Draw(Texture, Destination, Source, TimeSystemGUI.CurrentColor * Alpha, Rotation, Vector2.Zero, Effects, 0);
+                spriteBatch.Draw(Texture, Destination, Source, DayNightSystemGUI.CurrentColor * Alpha, Rotation, Vector2.Zero, Effects, 0);
             }
             
         }

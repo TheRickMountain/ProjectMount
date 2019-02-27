@@ -9,7 +9,6 @@ namespace MountPRG
     public class Storage : Component
     {
 
-        private Dictionary<Item, int> items;
 
         public int Rows
         {
@@ -23,12 +22,23 @@ namespace MountPRG
             private set;
         }
 
+        public int[] Items
+        {
+            get; private set;
+        }
+
+        public int[] Count
+        {
+            get; private set;
+        }
+
         public Storage(int rows, int columns)
             : base(false, false)
         {
             Rows = rows;
             Columns = columns;
-            items = new Dictionary<Item, int>(Rows * Columns);
+            Items = new int[rows * columns];
+            Count = new int[rows * columns];
         }
 
     }

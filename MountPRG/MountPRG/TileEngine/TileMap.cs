@@ -239,7 +239,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[firstIndex],
-                            TimeSystemGUI.CurrentColor);
+                            DayNightSystemGUI.CurrentColor);
                     }
 
                     if (secondIndex != -1)
@@ -248,7 +248,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[secondIndex],
-                            TimeSystemGUI.CurrentColor);
+                            DayNightSystemGUI.CurrentColor);
                     }
                 }
             }

@@ -30,6 +30,8 @@ namespace MountPRG
         private AnimatedSprite sprite;
         private State state = State.IDLE;
 
+        private bool inInventory;
+
         public PlayerController(AnimatedSprite sprite)
             : base(true, false)
         {
@@ -44,24 +46,55 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-           
-            if(InputManager.GetMouseButtonDown(MouseInput.RightButton))
+            // Пробуем открыть сундук если игрок рядом с ним
+            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
                 int x = GamePlayState.Camera.GetCellX();
                 int y = GamePlayState.Camera.GetCellY();
-                Tile tile = GamePlayState.TileMap.GetTile(x, y);
-                if (tile != null && tile.IsWalkable)
+                // Если игрок рядом с сундуком в одном из 4-х направлений
+                if(currTile.X == x - 1 || currTile.X == x + 1
+                    || currTile.Y == y - 1 || currTile.Y == y + 1)
                 {
-                    if (state == State.MOVE)
+                    Tile tile = GamePlayState.TileMap.GetTile(x, y);
+                    if (tile != null)
                     {
-                        newDestTile = tile;
+                        Entity entity = tile.Entity;
+                        if (entity != null)
+                        {
+                            if (entity.Get<Storage>() != null)
+                            {
+                                GUIManager.OpenStorage(entity.Get<Storage>());
+                                inInventory = true;
+                            }
+                        }
                     }
-                    else
+                }   
+            }
+
+            if (InputManager.GetMouseButtonDown(MouseInput.RightButton))
+            {
+                if (!inInventory)
+                {
+                    int x = GamePlayState.Camera.GetCellX();
+                    int y = GamePlayState.Camera.GetCellY();
+                    Tile tile = GamePlayState.TileMap.GetTile(x, y);
+                    if (tile != null && tile.IsWalkable)
                     {
-                        SetDestTile(tile,
-                                GamePlayState.TileMap.GetTileGraph().Nodes,
-                                GamePlayState.TileMap);
+                        if (state == State.MOVE)
+                        {
+                            newDestTile = tile;
+                        }
+                        else
+                        {
+                            SetDestTile(tile,
+                                    GamePlayState.TileMap.GetTileGraph().Nodes,
+                                    GamePlayState.TileMap);
+                        }
                     }
+                } else
+                {
+                    inInventory = false;
+                    GUIManager.CloseStoarge();
                 }
             }
 

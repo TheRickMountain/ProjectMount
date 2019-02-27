@@ -11,12 +11,17 @@ namespace MountPRG.GUISystem
     public class PlayerStats : IGUI
     {
        
-        public void Update(GameTime gameTime)
+        public PlayerStats(bool active) : base(active)
+        {
+
+        }
+
+        public override void Update(GameTime gameTime)
         {
             
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             
         }

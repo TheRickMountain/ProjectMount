@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class TimeSystemGUI : IGUI
+    public class DayNightSystemGUI : IGUI
     {
 
         private float currentTime;
@@ -37,10 +37,10 @@ namespace MountPRG
             get; private set;
         }
 
-        public TimeSystemGUI(Game game)
+        public DayNightSystemGUI(bool active) : base(active)
         {
-            circle = game.Content.Load<Texture2D>(@"day_night");
-            arrow = game.Content.Load<Texture2D>(@"arrow");
+            circle = TextureBank.DayNightCircleTexture;
+            arrow = TextureBank.DayNightArrowTexture;
 
             circleDestination = new Rectangle(40, 40, 80, 80);
             circleSource = new Rectangle(0, 0, 32, 32);
@@ -53,7 +53,7 @@ namespace MountPRG
             CurrentColor = DayColor;
         }
 
-        public void Update(GameTime gameTime)
+        public override void Update(GameTime gameTime)
         {
             currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.1);
             int timeOfDay = -MathUtils.ToDegrees(currentTime);
@@ -69,7 +69,7 @@ namespace MountPRG
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(circle, circleDestination, circleSource, Color.White, currentTime, circleOrigin, SpriteEffects.None, 1);
             spriteBatch.Draw(arrow, arrowDestination, Color.White);
