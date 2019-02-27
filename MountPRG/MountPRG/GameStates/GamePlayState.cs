@@ -28,6 +28,8 @@ namespace MountPRG
 
         public static List<Entity> Characters;
 
+        private Effect effect;
+
         public GamePlayState(Game game) : base(game)
         {
             
@@ -64,6 +66,8 @@ namespace MountPRG
             Characters = new List<Entity>();
             Characters.Add(player);
 
+            effect = content.Load<Effect>(@"Test");
+
             base.Initialize();
         }
 
@@ -91,12 +95,14 @@ namespace MountPRG
         public override void Draw(GameTime gameTime)
         {
             GameRef.SpriteBatch.Begin(
-                SpriteSortMode.Deferred,
+                SpriteSortMode.Immediate,
                 BlendState.AlphaBlend,
                 SamplerState.PointClamp,
                 null, null, null, Camera.Transformation);
 
-            TileMap.Draw(GameRef.SpriteBatch, Camera);
+            effect.CurrentTechnique.Passes[0].Apply();
+
+            TileMap.Draw(GameRef.SpriteBatch, Camera);           
 
             Entities.Render(GameRef.SpriteBatch);
 

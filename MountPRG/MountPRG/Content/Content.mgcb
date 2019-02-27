@@ -109,6 +109,12 @@
 /processorParam:TextureFormat=Color
 /build:day_night.png
 
+#begin File.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:File.fx;Test.fx
+
 #begin mountFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
