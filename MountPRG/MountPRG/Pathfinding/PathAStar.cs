@@ -47,7 +47,7 @@ namespace MountPRG
                     if (IsClippingCorner(currentNode.data, n, tileMap))
                         continue;
 
-                    if (n.MovementCost == 0 || closedSet.Contains(neighbourNode))
+                    if (!n.IsWalkable || closedSet.Contains(neighbourNode))
                         continue;
 
                     int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbourNode);
@@ -116,10 +116,10 @@ namespace MountPRG
             if (Math.Abs(dX) + Math.Abs(dY) == 2)
             {
 
-                if (tilemap.GetTile(curr.X - dX, curr.Y).MovementCost == 0)
+                if (!tilemap.GetTile(curr.X - dX, curr.Y).IsWalkable)
                     return true;
 
-                if (tilemap.GetTile(curr.X, curr.Y - dY).MovementCost == 0)
+                if (!tilemap.GetTile(curr.X, curr.Y - dY).IsWalkable)
                     return true;
 
             }

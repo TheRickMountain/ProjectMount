@@ -98,10 +98,8 @@ namespace MountPRG
 
         public void LockToEntity(Entity entity)
         {
-            Position.X += (entity.X * Zoom
-                - (Game1.ScreenRectangle.Width / 2) - Position.X) * .1f;
-            Position.Y += (entity.Y * Zoom
-                - (Game1.ScreenRectangle.Height / 2) - Position.Y) * .1f;
+            Position.X += ((entity.X + TileMap.TILE_SIZE / 2) * Zoom - (Game1.ScreenRectangle.Width / 2) - Position.X) * .1f;
+            Position.Y += ((entity.Y + TileMap.TILE_SIZE / 2) * Zoom - (Game1.ScreenRectangle.Height / 2) - Position.Y) * .1f;
         }
 
         public void ToggleCameraMode()

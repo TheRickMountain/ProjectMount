@@ -35,11 +35,6 @@ namespace MountPRG
             IsWalkable = true;
         }
 
-        public float MovementCost
-        {
-            get { return IsWalkable ? 1.0f : 0.0f; }
-        }
-
         public List<Tile> GetNeighbours()
         {
             List<Tile> tiles = new List<Tile>();
@@ -57,6 +52,11 @@ namespace MountPRG
             }
 
             return tiles;
+        }
+
+        public override string ToString()
+        {
+            return X + " " + Y;
         }
     }
 
