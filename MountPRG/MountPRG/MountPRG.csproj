@@ -66,6 +66,7 @@
     <Compile Include="GUISystem\GUIManager.cs" />
     <Compile Include="GUISystem\IGUI.cs" />
     <Compile Include="GUISystem\Item.cs" />
+    <Compile Include="GUISystem\PlayerStats.cs" />
     <Compile Include="GUISystem\TimeSystemGUI.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Pathfinding\Heap.cs" />

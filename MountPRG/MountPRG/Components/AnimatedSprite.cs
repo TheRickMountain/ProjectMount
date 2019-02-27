@@ -43,8 +43,8 @@ namespace MountPRG
                 Destination.Y = (int)(Entity.Y - Origin.Y);
                 Entity.Depth = Destination.Bottom;
             }
-            spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect, 
-                Color, Rotation, Vector2.Zero, Effects, 0);
+            spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
+                TimeSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
         }
 
     }

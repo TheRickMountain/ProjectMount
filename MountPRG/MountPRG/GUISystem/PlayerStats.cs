@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace MountPRG
+namespace MountPRG.GUISystem
 {
-    public class Wood : Entity
+    public class PlayerStats : IGUI
     {
-        public Wood()
+       
+        public void Update(GameTime gameTime)
         {
-            Add(new Sprite(TextureBank.WoodTexture, false));
-            Walkable = true;
+            
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            
         }
 
     }

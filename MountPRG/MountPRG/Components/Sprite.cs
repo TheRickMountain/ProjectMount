@@ -41,6 +41,7 @@ namespace MountPRG
                 Destination.X = (int)(Entity.X - Origin.X);
                 Destination.Y = (int)(Entity.Y - Origin.Y);
                 Entity.Depth = Destination.Bottom;
+
                 // TODO: Исправить код смены канала Alpha при нахождении за спратом персонажей
                 // Переместить в Update
                 if(Entity.Tag != "Character")
@@ -63,11 +64,12 @@ namespace MountPRG
                     }
                 }
                 // TODO: Конец
-                spriteBatch.Draw(Texture, Destination, Source, Color * Alpha, Rotation, Vector2.Zero, Effects, 0);
+
+                spriteBatch.Draw(Texture, Destination, Source, TimeSystemGUI.CurrentColor * Alpha, Rotation, Vector2.Zero, Effects, 0);
             }
             else
             {
-                spriteBatch.Draw(Texture, Destination, Source, Color * Alpha, Rotation, Vector2.Zero, Effects, 0);
+                spriteBatch.Draw(Texture, Destination, Source, TimeSystemGUI.CurrentColor * Alpha, Rotation, Vector2.Zero, Effects, 0);
             }
             
         }

@@ -21,5 +21,15 @@ namespace MountPRG
             return p1 + alpha * (p2 - p1);
         }
 
+        public static float ToRadians(int deg)
+        {
+            return (float)(deg * (Math.PI / 180.0f));
+        }
+
+        public static int ToDegrees(float rad)
+        {
+            return (int)(rad * (180.0f / Math.PI));
+        }
+
     }
 }

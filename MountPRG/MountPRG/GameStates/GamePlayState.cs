@@ -45,10 +45,10 @@ namespace MountPRG
             TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
 
             //AddEntityToTileMap(15, 10, new Chest());
-            //AddEntityToTileMap(10, 15, new Tree());
+            AddEntityToTileMap(10, 15, new Tree());
             //AddEntityToTileMap(8, 5, new Wood());
 
-            player = new Player(Engine.ToWorldPos(1), Engine.ToWorldPos(5));
+            player = new Player(Engine.ToWorldPos(15), Engine.ToWorldPos(15));
             Entities.Add(player);
 
             guiManager = new GUIManager(GameRef);

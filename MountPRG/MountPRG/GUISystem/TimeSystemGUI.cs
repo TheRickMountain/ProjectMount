@@ -22,6 +22,21 @@ namespace MountPRG
 
         private Rectangle arrowDestination;
 
+        public static Color DayColor
+        {
+            get; private set;
+        }
+
+        public static Color NightColor
+        {
+            get; private set;
+        }
+
+        public static Color CurrentColor
+        {
+            get; private set;
+        }
+
         public TimeSystemGUI(Game game)
         {
             circle = game.Content.Load<Texture2D>(@"day_night");
@@ -32,11 +47,26 @@ namespace MountPRG
             circleOrigin = new Vector2(16, 16);
 
             arrowDestination = new Rectangle(0, 0, 80, 80);
+
+            DayColor = new Color(255, 255, 255, 255);
+            NightColor = new Color(63, 137, 255, 255);
+            CurrentColor = DayColor;
         }
 
         public void Update(GameTime gameTime)
         {
-            currentTime += (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.1);
+            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.1);
+            int timeOfDay = -MathUtils.ToDegrees(currentTime);
+            if(timeOfDay >= 80 && timeOfDay <= 110)
+            {
+                float amount = Math.Min(1.0f, (timeOfDay - 80.0f) / 20.0f);
+                CurrentColor = Color.Lerp(DayColor, NightColor, amount);
+            }
+            else if(timeOfDay >= 260 && timeOfDay <= 280)
+            {
+                float amount = Math.Min(1.0f, (timeOfDay - 260.0f) / 20.0f);
+                CurrentColor = Color.Lerp(NightColor, DayColor, amount);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
