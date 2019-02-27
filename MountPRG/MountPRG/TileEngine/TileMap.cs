@@ -9,142 +9,250 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
+    public enum Layer
+    {
+        GROUND,
+        ENTITY
+    }
+
+    public class Tile
+    {      
+        public int X { get; }
+        public int Y { get; }
+        public int GroundLayerId { get; set; }
+        public int EntityLayerId { get; set; }
+        public Entity Entity { get; set; }
+        public bool IsWalkable { get; set; }
+        private TileMap tilemap;
+
+        public Tile(int x, int y, int firstLayerId, int secondLayerId, TileMap tilemap)
+        {
+            X = x;
+            Y = y;
+            GroundLayerId = firstLayerId;
+            EntityLayerId = secondLayerId;
+            this.tilemap = tilemap;
+            IsWalkable = true;
+        }
+
+        public float MovementCost
+        {
+            get { return IsWalkable ? 1.0f : 0.0f; }
+        }
+
+        public List<Tile> GetNeighbours()
+        {
+            List<Tile> tiles = new List<Tile>();
+
+            for (int i = X - 1; i <= X + 1; i++)
+            {
+                for (int j = Y - 1; j <= Y + 1; j++)
+                {
+                    if (i == X && j == Y)
+                        continue;
+
+                    if (i >= 0 && j >= 0 && i < tilemap.Width && j < tilemap.Height)
+                        tiles.Add(tilemap.GetTile(i, j));
+                }
+            }
+
+            return tiles;
+        }
+    }
+
     public class TileMap
     {
         public const int GRASS = 0;
         public const int STONE_BLOCK_1 = 1;
         public const int STONE_BLOCK_2 = 2;
 
-        CollisionLayer collisionLayer;
+        public const int TILE_SIZE = 16;
 
-        public TileSet TileSet
+        private TileSet tileSet;
+
+        private Tile[] tiles;
+
+        private PathTileGraph tileGraph;
+
+        public int Width
         {
             get;
             private set;
         }
 
-        public int MapWidth
+        public int Height
         {
             get;
             private set;
         }
 
-        public int MapHeight
+        public PathTileGraph GetTileGraph()
         {
-            get;
-            private set;
+            return tileGraph;
         }
 
-        public int WidthInPixels
+        public TileMap(int width, int height, TileSet tileSet)
         {
-            get { return MapWidth * Engine.TileWidth; }
+            this.tileSet = tileSet;
+            Width = width;
+            Height = height;
+
+            tiles = new Tile[height * width];
+            
+            for(int x = 0; x < width; x++)
+                for(int y = 0; y < height; y++)
+                    tiles[y * Width + x] = new Tile(x, y, GRASS, -1, this);
+
+            tileGraph = new PathTileGraph(this);
         }
 
-        public int HeightInPixels
+        public Tile GetTile(int x, int y)
         {
-            get { return MapHeight * Engine.TileHeight; }
-        }
-
-        public TileMap(TileSet tileSet, int mapWidth, int mapHeight)
-        {
-            TileSet = tileSet;
-            MapWidth = mapWidth;
-            MapHeight = mapHeight;
-
-            collisionLayer = new CollisionLayer(MapWidth, MapHeight);
-        }
-
-        public CollisionLayer GetCollisionLayer()
-        {
-            return collisionLayer;
-        }
-
-        public bool AddEntity(int x, int y, Entity entity)
-        {
-            Tile tile = collisionLayer.GetTile(x, y);
-            if(tile.SecondLayerId != -1)
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
             {
-                Console.WriteLine("Tile " + x + " " + y + " has block");
-                return false;
+                Console.WriteLine("Выход за пределы карты");
+                return null;
             }
 
-            if (tile.Entity != null)
+            return tiles[y * Width + x];
+        }
+
+        public void SetTile(int x, int y, int firstLayerId, int secondLayerId, bool isWalkable)
+        {
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
             {
-                Console.WriteLine("Tile " + x + " " + y + " has entity");
-                return false;
+                Console.WriteLine("Выход за пределы карты");
+                return;
             }
 
-            collisionLayer.GetTile(x, y).Entity = entity;
+            Tile tile = tiles[y * Width + x];
+            tile.GroundLayerId = firstLayerId;
+            tile.EntityLayerId = secondLayerId;
+            tile.IsWalkable = isWalkable;
+        }
 
-            return true;
+        public void SetTile(int x, int y, int id, Layer layer, bool isWalkable)
+        {
+            if (x < 0 || y < 0 || x >= Width || y >= Height)
+            {
+                Console.WriteLine("Выход за пределы карты");
+                return;
+            }
+
+            Tile tile = tiles[y * Width + x];
+            switch(layer)
+            {
+                case Layer.GROUND:
+                    tile.GroundLayerId = id;
+                    break;
+                case Layer.ENTITY:
+                    tile.EntityLayerId = id;
+                    break;
+            }
+            tile.IsWalkable = isWalkable;
+        }
+
+        public bool AddEntity(int x, int y, Entity entity, bool walkable = true)
+        {
+            Tile tile = GetTile(x, y);
+
+            if (tile != null)
+            {
+                if (tile.EntityLayerId != -1)
+                {
+                    Console.WriteLine("Tile " + x + " " + y + " has block");
+                    return false;
+                }
+
+                if (tile.Entity != null)
+                {
+                    Console.WriteLine("Tile " + x + " " + y + " has entity");
+                    return false;
+                }
+
+                tile.Entity = entity;
+                tile.IsWalkable = walkable;
+
+                return true;
+            }
+
+            return false;
         }
 
         public Entity GetEntity(int x, int y)
         {
-            return collisionLayer.GetTile(x, y).Entity;
+            Tile tile = GetTile(x, y);
+
+            if (tile != null)
+                return tile.Entity;
+
+            return null;
+        }
+
+        public int WidthInPixels
+        {
+            get { return Width * TILE_SIZE; }
+        }
+
+        public int HeightInPixels
+        {
+            get { return Height * TILE_SIZE; }
         }
 
         public void Draw(SpriteBatch spriteBatch, Camera camera)
         {
-            int xCamPoint;
-            int yCamPoint;
+            int xCamPoint = Engine.ToCellPos(camera.Position.X * (1 / camera.Zoom));
+            int yCamPoint = Engine.ToCellPos(camera.Position.Y * (1 / camera.Zoom));
 
-            int xViewPort;
-            int yViewPort;
-
-            // Будет отображено только то что входит в область видимости камеры
-            Engine.VectorToCell(camera.Position.X * (1 / camera.Zoom), camera.Position.Y * (1 / camera.Zoom), 
-                out xCamPoint, out yCamPoint);
-            Engine.VectorToCell(
-                (camera.Position.X + Game1.ScreenRectangle.Width) * (1 / camera.Zoom),
-                (camera.Position.Y + Game1.ScreenRectangle.Height) * (1 / camera.Zoom), 
-                out xViewPort, out yViewPort);
+            int xViewPort = Engine.ToCellPos((camera.Position.X + Game1.ScreenRectangle.Width) * (1 / camera.Zoom));
+            int yViewPort = Engine.ToCellPos((camera.Position.Y + Game1.ScreenRectangle.Height) * (1 / camera.Zoom));
 
             Point min = new Point();
             Point max = new Point();
 
             min.X = Math.Max(0, xCamPoint - 1);
             min.Y = Math.Max(0, yCamPoint - 1);
-            max.X = Math.Min(xViewPort + 1, MapWidth);
-            max.Y = Math.Min(yViewPort + 1, MapHeight);
+            max.X = Math.Min(xViewPort + 1, Width);
+            max.Y = Math.Min(yViewPort + 1, Height);
 
-            Rectangle destination = new Rectangle(0, 0, Engine.TileWidth, Engine.TileHeight);
+            Rectangle destination = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
             int firstIndex;
             int secondIndex;
 
             for (int y = min.Y; y < max.Y; y++)
             {
-                destination.Y = y * Engine.TileHeight;
+                destination.Y = y * TILE_SIZE;
 
                 for (int x = min.X; x < max.X; x++)
                 {
                     // Сразу получаем Id двух текстур для отрисовки
-                    firstIndex = collisionLayer.GetTile(x, y).FirstLayerId;
-                    secondIndex = collisionLayer.GetTile(x, y).SecondLayerId;
+                    firstIndex = GetTile(x, y).GroundLayerId;
+                    secondIndex = GetTile(x, y).EntityLayerId;
 
-                    destination.X = x * Engine.TileWidth;
+                    destination.X = x * TILE_SIZE;
 
                     // -1 говорит об отсутствии текстуры
                     if (firstIndex != -1)
                     {
 
                         spriteBatch.Draw(
-                            TileSet.Texture,
+                            tileSet.Texture,
                             destination,
-                            TileSet.SourceRectangles[firstIndex],
+                            tileSet.SourceRectangles[firstIndex],
                             Color.White);
                     }
 
-                    if(secondIndex != -1)
+                    if (secondIndex != -1)
                     {
                         spriteBatch.Draw(
-                            TileSet.Texture,
+                            tileSet.Texture,
                             destination,
-                            TileSet.SourceRectangles[secondIndex],
+                            tileSet.SourceRectangles[secondIndex],
                             Color.White);
                     }
                 }
             }
         }
+
     }
 }

@@ -35,12 +35,13 @@ namespace MountPRG
                 Animations[CurrentAnimation].Update(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Render(SpriteBatch spriteBatch)
         {
             if (Entity != null)
             {
                 Destination.X = (int)(Entity.X - Origin.X);
                 Destination.Y = (int)(Entity.Y - Origin.Y);
+                Entity.Depth = Destination.Bottom;
             }
             spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect, 
                 Color, Rotation, Vector2.Zero, Effects, 0);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,35 +10,62 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public abstract class Entity : IComparable<Entity>
+    public abstract class Entity
     {
         public bool Active = true;
         public bool Visible = true;
-        public Vector2 Position;
-        public float Depth;
+        public bool Walkable = true;
+        public string Tag = "";
+
+        internal int depth = 0;
+        internal int actualDepth = 0;
 
         public ComponentList Components { get; private set; }
 
         public float X
         {
-            get { return Position.X; }
-            set { Position.X = value; }
+            get; set;
         }
-
+     
         public float Y
         {
-            get { return Position.Y; }
-            set { Position.Y = value; }
+            get; set;
         }
 
-        public Entity(Vector2 position)
-        {    
-            Position = position;
+        public float VelX
+        {
+            get; set;
+        }
+
+        public float VelY
+        {
+            get; set;
+        }
+
+        // Установление очередности прорисовки объектов
+        public int Depth
+        {
+            get { return depth; }
+            set
+            {
+                if (depth != value)
+                {
+                    depth = value;
+                    // Сообщить EntityList что необходимо произвести сортировку
+                    GamePlayState.Entities.MarkUnsorted();
+                }
+            }
+        }
+
+        public Entity(float x, float y)
+        {
+            X = x;
+            Y = y;
             Components = new ComponentList(this);
         }
 
         public Entity() 
-            : this(Vector2.Zero)
+            : this(0, 0)
         {
 
         }
@@ -67,11 +95,6 @@ namespace MountPRG
         public T Get<T>() where T : Component
         {
             return Components.Get<T>();
-        }
-
-        public int CompareTo(Entity other)
-        {
-            return 0;
         }
     }
 }

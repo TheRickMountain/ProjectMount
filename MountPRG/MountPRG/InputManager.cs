@@ -100,17 +100,17 @@ namespace MountPRG
             lastMouseState = mouseState;
         }
 
-        public static bool KeyPressed(Keys key)
+        public static bool GetKeyDown(Keys key)
         {
             return keyboardState.IsKeyDown(key) && lastKeyboardState.IsKeyUp(key);
         }
 
-        public static bool KeyReleased(Keys key)
+        public static bool GetKeyReleased(Keys key)
         {
             return keyboardState.IsKeyUp(key) && lastKeyboardState.IsKeyDown(key);
         }
 
-        public static bool KeyDown(Keys key)
+        public static bool GetKey(Keys key)
         {
             return keyboardState.IsKeyDown(key);
         }
@@ -150,7 +150,7 @@ namespace MountPRG
             return tmp;
         }
 
-        public static bool MousePressed(MouseInput input)
+        public static bool GetMouseButtonDown(MouseInput input)
         {
             switch(input)
             {
@@ -174,7 +174,7 @@ namespace MountPRG
             return false;
         }
 
-        public static bool MouseReleased(MouseInput input)
+        public static bool GetMouseButtonReleased(MouseInput input)
         {
             switch (input)
             {
@@ -198,7 +198,7 @@ namespace MountPRG
             return false;
         }
 
-        public static bool MouseDown(MouseInput input)
+        public static bool GetMouseButton(MouseInput input)
         {
             switch (input)
             {

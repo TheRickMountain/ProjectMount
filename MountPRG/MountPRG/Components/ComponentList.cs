@@ -62,14 +62,14 @@ namespace MountPRG
         {
             foreach (var component in components)
                 if (component.Active)
-                    component.Update(gameTime);
+                    component.Update(gameTime);              
         }
 
         internal void Render(SpriteBatch spriteBatch)
         {
             foreach (var component in components)
                 if (component.Visible)
-                    component.Draw(spriteBatch);
+                    component.Render(spriteBatch);
         }
 
         public T Get<T>() where T : Component

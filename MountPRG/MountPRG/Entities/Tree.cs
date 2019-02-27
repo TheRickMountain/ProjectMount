@@ -14,9 +14,10 @@ namespace MountPRG
         public Tree()
         {
             Sprite sprite = new Sprite(TextureBank.TreeTexture, false);
-            sprite.Origin.X = 16;
-            sprite.Origin.Y = 40;
+            sprite.Origin.X = 8;
+            sprite.Origin.Y = 32;
             Add(sprite);
+            Walkable = false;
         }
 
     }

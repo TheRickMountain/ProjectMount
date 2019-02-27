@@ -10,7 +10,7 @@ namespace MountPRG
     {
         private Stack<Tile> path;
 
-        public PathAStar(Tile tileStart, Tile tileEnd, Dictionary<Tile, Node<Tile>> nodes, CollisionLayer collisionLayer)
+        public PathAStar(Tile tileStart, Tile tileEnd, Dictionary<Tile, Node<Tile>> nodes, TileMap tileMap)
         {
             if (!nodes.ContainsKey(tileStart) || !nodes.ContainsKey(tileEnd))
             {
@@ -44,7 +44,7 @@ namespace MountPRG
                     if (n == null)
                         continue;
 
-                    if (IsClippingCorner(currentNode.data, n, collisionLayer))
+                    if (IsClippingCorner(currentNode.data, n, tileMap))
                         continue;
 
                     if (n.MovementCost == 0 || closedSet.Contains(neighbourNode))
@@ -108,7 +108,7 @@ namespace MountPRG
             return 14 * dstX + 10 * (dstY - dstX);
         }
 
-        private bool IsClippingCorner(Tile curr, Tile neigh, CollisionLayer collisionLayer)
+        private bool IsClippingCorner(Tile curr, Tile neigh, TileMap tilemap)
         {
             int dX = curr.X - neigh.X;
             int dY = curr.Y - neigh.Y;
@@ -116,10 +116,10 @@ namespace MountPRG
             if (Math.Abs(dX) + Math.Abs(dY) == 2)
             {
 
-                if (collisionLayer.GetTile(curr.X - dX, curr.Y).MovementCost == 0)
+                if (tilemap.GetTile(curr.X - dX, curr.Y).MovementCost == 0)
                     return true;
 
-                if (collisionLayer.GetTile(curr.X, curr.Y - dY).MovementCost == 0)
+                if (tilemap.GetTile(curr.X, curr.Y - dY).MovementCost == 0)
                     return true;
 
             }

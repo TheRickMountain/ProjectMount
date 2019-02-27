@@ -11,49 +11,19 @@ namespace MountPRG
 {
     public class Engine
     {
-        private static Engine instance;
-
-        public static int TileWidth
+        public static int ToCellPos(int value)
         {
-            get;
-            private set;
+            return value / TileMap.TILE_SIZE;
         }
 
-        public static int TileHeight
+        public static int ToCellPos(float value)
         {
-            get;
-            private set;
+            return (int)value / TileMap.TILE_SIZE;
         }
 
-
-        private Engine(int tileWidth, int tileHeight)
+        public static int ToWorldPos(int value)
         {
-            TileWidth = tileWidth;
-            TileHeight = tileHeight;
+            return value * TileMap.TILE_SIZE;
         }
-
-        public static Engine GetInstance(int tileWidth, int tileHeight)
-        {
-            if (instance == null)
-                instance = new Engine(tileWidth, tileHeight);
-            return instance;
-        }
-
-        public static void VectorToCell(float xPos, float yPos, out int xCell, out int yCell)
-        {
-            xCell = (int)xPos / TileWidth;
-            yCell = (int)yPos / TileHeight;
-        }
-
-        public static int ToWorldPosX(int x)
-        {
-            return x * TileWidth;
-        }
-
-        public static int ToWorldPosY(int y)
-        {
-            return y * TileHeight;
-        }
-
     }
 }

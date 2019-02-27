@@ -32,7 +32,7 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.KeyPressed(Keys.Space))
+            if (InputManager.GetKeyDown(Keys.Space))
             {
                 manager.ChangeState((GamePlayState)GameRef.GamePlayState, PlayerIndex.One);
             }

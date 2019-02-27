@@ -37,12 +37,12 @@ namespace MountPRG
 
         public int GetCellX()
         {
-            return (int)(((InputManager.GetX() + Position.X) / Zoom) / Engine.TileWidth);
+            return (int)(((InputManager.GetX() + Position.X) / Zoom) / TileMap.TILE_SIZE);
         }
 
         public int GetCellY()
         {
-            return (int)(((InputManager.GetY() + Position.Y) / Zoom) / Engine.TileHeight);
+            return (int)(((InputManager.GetY() + Position.Y) / Zoom) / TileMap.TILE_SIZE);
         }
 
         public int GetX()
@@ -57,22 +57,22 @@ namespace MountPRG
 
         public void Update(GameTime gameTime)
         {
-            selectorDestination.X = GetCellX() * Engine.TileWidth;
-            selectorDestination.Y = GetCellY() * Engine.TileHeight;
+            selectorDestination.X = GetCellX() * TileMap.TILE_SIZE;
+            selectorDestination.Y = GetCellY() * TileMap.TILE_SIZE;
 
             if (Mode == CameraMode.Follow)
                 return;
 
             Vector2 motion = Vector2.Zero;
 
-            if (InputManager.KeyDown(Keys.A))
+            if (InputManager.GetKey(Keys.A))
                 motion.X = -Speed;
-            else if (InputManager.KeyDown(Keys.D))
+            else if (InputManager.GetKey(Keys.D))
                 motion.X = Speed;
 
-            if (InputManager.KeyDown(Keys.W))
+            if (InputManager.GetKey(Keys.W))
                 motion.Y = -Speed;
-            else if (InputManager.KeyDown(Keys.S))
+            else if (InputManager.GetKey(Keys.S))
                 motion.Y = Speed;
 
             if (motion != Vector2.Zero)
@@ -109,12 +109,12 @@ namespace MountPRG
             Mode = (Mode == CameraMode.Follow ? CameraMode.Free : CameraMode.Follow);
         }
 
-        public void LockToMap(TileMap map)
+        public void LockToMap(TileMap tileMap)
         {
             Position.X = MathHelper.Clamp(Position.X,
-                0, map.WidthInPixels * Zoom - Game1.ScreenRectangle.Width);
+                0, tileMap.WidthInPixels * Zoom - Game1.ScreenRectangle.Width);
             Position.Y = MathHelper.Clamp(Position.Y,
-                0, map.HeightInPixels * Zoom - Game1.ScreenRectangle.Height);
+                0, tileMap.HeightInPixels * Zoom - Game1.ScreenRectangle.Height);
         }
 
         public void ZoomIn()

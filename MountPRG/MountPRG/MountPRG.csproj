@@ -45,13 +45,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\AnimatedSprite.cs" />
-    <Compile Include="Components\Avatar.cs" />
-    <Compile Include="Components\Collider.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentList.cs" />
-    <Compile Include="Components\AIController.cs" />
-    <Compile Include="Components\Mineable.cs" />
     <Compile Include="Components\PlayerController.cs" />
+    <Compile Include="Components\Mineable.cs" />
     <Compile Include="Components\Sprite.cs" />
     <Compile Include="Components\Storage.cs" />
     <Compile Include="Entities\Chest.cs" />
@@ -66,13 +63,9 @@
     <Compile Include="GameStates\GamePlayState.cs" />
     <Compile Include="GameStates\MainMenuState.cs" />
     <Compile Include="GameStates\TitleIntroState.cs" />
-    <Compile Include="GUISystem\ButtonGUI.cs" />
     <Compile Include="GUISystem\GUIManager.cs" />
     <Compile Include="GUISystem\IGUI.cs" />
     <Compile Include="GUISystem\Item.cs" />
-    <Compile Include="GUISystem\ProgressBarGUI.cs" />
-    <Compile Include="GUISystem\SlotGUI.cs" />
-    <Compile Include="GUISystem\StorageGUI.cs" />
     <Compile Include="GUISystem\TimeSystemGUI.cs" />
     <Compile Include="InputManager.cs" />
     <Compile Include="Pathfinding\Heap.cs" />
@@ -83,9 +76,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateManager\GameState.cs" />
     <Compile Include="StateManager\GameStateManager.cs" />
-    <Compile Include="TileEngine\CollisionLayer.cs" />
-    <Compile Include="TileEngine\Engine.cs" />
     <Compile Include="TileEngine\TileMap.cs" />
+    <Compile Include="TileEngine\Engine.cs" />
     <Compile Include="TileEngine\TileSet.cs" />
     <Compile Include="Utils\Animation.cs" />
     <Compile Include="Utils\MathUtils.cs" />

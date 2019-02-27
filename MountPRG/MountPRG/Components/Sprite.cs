@@ -19,6 +19,7 @@ namespace MountPRG
         public float Rotation;
         public Color Color = Color.White;
         public SpriteEffects Effects = SpriteEffects.None;
+        public float Alpha = 1.0f;
 
         public Sprite(Texture2D texture, bool active)
             : this(texture, texture.Width, texture.Height, active)
@@ -33,17 +34,40 @@ namespace MountPRG
             Source = new Rectangle(0, 0, Texture.Width, Texture.Height);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Render(SpriteBatch spriteBatch)
         {
             if (Entity != null)
             {
                 Destination.X = (int)(Entity.X - Origin.X);
                 Destination.Y = (int)(Entity.Y - Origin.Y);
-                spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, Entity.Depth);
+                Entity.Depth = Destination.Bottom;
+                // TODO: Исправить код смены канала Alpha при нахождении за спратом персонажей
+                // Переместить в Update
+                if(Entity.Tag != "Character")
+                {
+                    for(int i = 0; i < GamePlayState.Characters.Count; i++)
+                    {
+                        Sprite charSprite = GamePlayState.Characters[i].Get<Sprite>();
+                        Rectangle charDest = charSprite.Destination;
+                        if((charDest.Bottom > Destination.Y && charDest.Bottom < Destination.Bottom)
+                            && ((charDest.X > Destination.X && charDest.X < Destination.Right)
+                                || (charDest.Right > Destination.X && charDest.Right < Destination.Right)))
+                        {
+                            Alpha = (float)Math.Max(0.4, Alpha -= 0.05f);
+                        }
+                        else
+                        {
+                            if(Alpha < 1.0)
+                                Alpha += 0.05f;
+                        }
+                    }
+                }
+                // TODO: Конец
+                spriteBatch.Draw(Texture, Destination, Source, Color * Alpha, Rotation, Vector2.Zero, Effects, 0);
             }
             else
             {
-                spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);
+                spriteBatch.Draw(Texture, Destination, Source, Color * Alpha, Rotation, Vector2.Zero, Effects, 0);
             }
             
         }

@@ -19,6 +19,8 @@ namespace MountPRG
         private HashSet<Entity> adding;
         private HashSet<Entity> removing;
 
+        private bool unsorted;
+
         internal EntityList()
         {
             entities = new List<Entity>();
@@ -28,6 +30,11 @@ namespace MountPRG
             current = new HashSet<Entity>();
             adding = new HashSet<Entity>();
             removing = new HashSet<Entity>();
+        }
+
+        internal void MarkUnsorted()
+        {
+            unsorted = true;
         }
 
         public void UpdateList()
@@ -46,6 +53,8 @@ namespace MountPRG
 
                 toAdd.Clear();
                 adding.Clear();
+
+                unsorted = true;
             }
 
             if(toRemove.Count > 0)
@@ -62,6 +71,12 @@ namespace MountPRG
 
                 toRemove.Clear();
                 removing.Clear();
+            }
+
+            if(unsorted)
+            {
+                unsorted = false;
+                entities.Sort(CompareDepth);
             }
         }
 
@@ -104,5 +119,7 @@ namespace MountPRG
                 if (entity.Visible)
                     entity.Render(spriteBatch);
         }
+
+        public static Comparison<Entity> CompareDepth = (a, b) => { return Math.Sign(a.depth - b.depth); };
     }
 }

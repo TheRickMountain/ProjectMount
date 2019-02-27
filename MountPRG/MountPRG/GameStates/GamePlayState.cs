@@ -16,46 +16,45 @@ namespace MountPRG
 
     public class GamePlayState : BaseGameState, IGamePlayState
     {
-       private bool paused;
-        private Camera camera;
+        public static Camera Camera;
 
         public static TileMap TileMap;
-        public PathTileGraph TileGraph;
 
-        private EntityList entities;
+        public static EntityList Entities;
 
         private GUIManager guiManager;
 
         private Player player;
 
+        public static List<Entity> Characters;
+
         public GamePlayState(Game game) : base(game)
         {
-            entities = new EntityList();
+            Entities = new EntityList();
         }
 
         public override void Initialize()
         {
-            Engine engine = Engine.GetInstance(16, 16);
-            camera = new Camera();
+            Camera = new Camera();
 
-            TileMap = new TileMap(
-                new TileSet(TextureBank.TilesetTexture, Engine.TileWidth, Engine.TileHeight), 50, 50);
+            TileMap= new TileMap(50, 50, new TileSet(TextureBank.TilesetTexture));
 
-            TileMap.GetCollisionLayer().SetTile(5, 4, TileMap.STONE_BLOCK_1, Layer.SECOND, false);
-            TileMap.GetCollisionLayer().SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.SECOND, false);
-            TileMap.GetCollisionLayer().SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.SECOND, false);
-            TileMap.GetCollisionLayer().SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.SECOND, false);
+            TileMap.SetTile(5, 4, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
+            TileMap.SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
+            TileMap.SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
+            TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
 
-            TileGraph = new PathTileGraph(TileMap.GetCollisionLayer());
+            //AddEntityToTileMap(15, 10, new Chest());
+            //AddEntityToTileMap(10, 15, new Tree());
+            //AddEntityToTileMap(8, 5, new Wood());
 
-            AddEntityToTileMap(8, 5, new Wood());
-            AddEntityToTileMap(15, 10, new Chest());
-            AddEntityToTileMap(10, 15, new Tree());
-
-            player = new Player(new Vector2(Engine.ToWorldPosX(1), Engine.ToWorldPosY(5)));
-            entities.Add(player);
+            player = new Player(Engine.ToWorldPos(1), Engine.ToWorldPos(5));
+            Entities.Add(player);
 
             guiManager = new GUIManager(GameRef);
+
+            Characters = new List<Entity>();
+            Characters.Add(player);
 
             base.Initialize();
         }
@@ -67,29 +66,14 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-            camera.Update(gameTime);
+            Camera.Update(gameTime);
 
-            entities.UpdateList();
+            Entities.UpdateList();
 
-            if (!paused)
-                entities.Update(gameTime);
+            Entities.Update(gameTime);
 
-            if (InputManager.MousePressed(MouseInput.LeftButton))
-            {
-                Entity selectedEntity = TileMap.GetEntity(camera.GetCellX(), camera.GetCellY());
-                if (selectedEntity != null)
-                {
-                    if (selectedEntity.Get<Storage>() != null)
-                    {
-                        //guiManager.OpenStorage(selectedEntity.Get<Storage>());
-                    }
-                }
-            }
-
-            CheckCollision();
-
-            camera.LockToEntity(player);
-            camera.LockToMap(TileMap);
+            Camera.LockToEntity(player);
+            Camera.LockToMap(TileMap);
 
             guiManager.Update(gameTime);
 
@@ -102,13 +86,13 @@ namespace MountPRG
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
                 SamplerState.PointClamp,
-                null, null, null, camera.Transformation);
+                null, null, null, Camera.Transformation);
 
-            TileMap.Draw(GameRef.SpriteBatch, camera);
+            TileMap.Draw(GameRef.SpriteBatch, Camera);
 
-            entities.Render(GameRef.SpriteBatch);
+            Entities.Render(GameRef.SpriteBatch);
 
-            camera.Draw(GameRef.SpriteBatch);
+            Camera.Draw(GameRef.SpriteBatch);
 
             base.Draw(gameTime);
 
@@ -123,60 +107,18 @@ namespace MountPRG
             GameRef.SpriteBatch.End();
         }
 
-        public void AddEntityToTileMap(int x, int y, Entity entity)
+        public void SortEntity(Entity entity)
         {
-            if (TileMap.AddEntity(x, y, entity))
-            {
-                entity.X = Engine.ToWorldPosX(x);
-                entity.Y = Engine.ToWorldPosY(y);
-                entities.Add(entity);
-            }
+
         }
 
-        public void CheckCollision()
+        public void AddEntityToTileMap(int x, int y, Entity entity)
         {
-            Collider collider = player.Get<Collider>();
-            Entity entity = player;
-
-            int cellX;
-            int cellY;
-            Engine.VectorToCell(entity.Position.X, entity.Position.Y, out cellX, out cellY);
-
-            for (int x = cellX - 1; x <= cellX + 1; x++)
+            if (TileMap.AddEntity(x, y, entity, entity.Walkable))
             {
-                for (int y = cellY - 1; y <= cellY + 1; y++)
-                {
-                    if (x == cellX && y == cellY)
-                        continue;
-
-                    if (!TileMap.GetCollisionLayer().GetTile(x, y).IsWalkable)
-                    {
-                        float deltaX = (x * Engine.TileWidth + Engine.TileWidth / 2) - (entity.X + collider.OffsetX);
-                        float deltaY = (y * Engine.TileHeight + Engine.TileHeight / 2) - (entity.Y + collider.OffsetY);
-
-                        float intersectX = Math.Abs(deltaX) - ((Engine.TileWidth / 2) + (collider.Width / 2));
-                        float intersectY = Math.Abs(deltaY) - ((Engine.TileHeight / 2) + (collider.Height / 2));
-
-                        if (intersectX < 0.0f && intersectY < 0.0f)
-                        {
-
-                            if (intersectX <= intersectY)
-                            {
-                                if (deltaY > 0.0f)
-                                    entity.Position += new Vector2(0, intersectY);
-                                else
-                                    entity.Position += new Vector2(0, -intersectY);
-                            }
-                            else
-                            {
-                                if (deltaX > 0.0f)
-                                    entity.Position += new Vector2(intersectX, 0);
-                                else
-                                    entity.Position += new Vector2(-intersectX, 0);
-                            }
-                        }
-                    }
-                }
+                entity.X = Engine.ToWorldPos(x);
+                entity.Y = Engine.ToWorldPos(y);
+                Entities.Add(entity);
             }
         }
     }

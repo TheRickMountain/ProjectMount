@@ -14,27 +14,11 @@ namespace MountPRG
 
         private TimeSystemGUI worldTime;
 
-        private SlotGUI selectedSettler;
-
-        private StorageGUI storage;
-
         public GUIManager(Game game)
         {
             worldTime = new TimeSystemGUI(game);
 
             guiElements.Add(worldTime);
-
-            selectedSettler = new SlotGUI(TextureBank.SlotTexture, 48, 48);
-            selectedSettler.PositionX = Game1.ScreenRectangle.Width - selectedSettler.Width - 5;
-            selectedSettler.PositionY = Game1.ScreenRectangle.Height - selectedSettler.Height - 5;
-
-            storage = new StorageGUI();
-            storage.Width = 250;
-            storage.Height = 200;
-            storage.X = Game1.ScreenRectangle.Width / 2 - storage.Width / 2;
-            storage.Y = Game1.ScreenRectangle.Height / 2 - storage.Height / 2;
-
-            //guiElements.Add(storage);
         }
 
         public void Update(GameTime gameTime)
@@ -47,21 +31,6 @@ namespace MountPRG
         {
             foreach (IGUI e in guiElements)
                 e.Draw(spriteBatch);
-
-            if (selectedSettler.HasItem)
-                selectedSettler.Draw(spriteBatch);
-        }
-
-        public void SetSelectedSettler(Avatar avatar)
-        {
-            if (avatar == null)
-            {
-                selectedSettler.RemoveItem();
-            }
-            else
-            {
-                selectedSettler.AddItem(avatar.Texture);
-            }
         }
 
     }

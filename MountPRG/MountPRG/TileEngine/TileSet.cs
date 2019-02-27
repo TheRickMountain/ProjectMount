@@ -11,44 +11,26 @@ namespace MountPRG
 {
     public class TileSet
     {
-        private int tilesWide;
-        private int tilesHigh;
-        private int tileWidth;
-        private int tileHeight;
-
-        private Texture2D texture;
-        private string imageName;
         private Rectangle[] sourceRectangles;
 
         public int TilesWide
         {
-            get { return tilesWide; }
+            get; private set;
         }
 
         public int TilesHigh
         {
-            get { return tilesHigh; }
-        }
-
-        public int TileWidth
-        {
-            get { return tileWidth; }
-        }
-
-        public int TileHeight
-        {
-            get { return tileHeight; }
+            get; private set;
         }
 
         public Texture2D Texture
         {
-            get { return texture; }
+            get; private set;
         }
 
         public string TextureName
         {
-            get { return imageName; }
-            set { imageName = value; }
+            get; set;
         }
 
         public Rectangle[] SourceRectangles
@@ -56,15 +38,12 @@ namespace MountPRG
             get { return (Rectangle[])sourceRectangles.Clone(); }
         }
 
-        public TileSet(Texture2D texture, int tileWidth, int tileHeight)
+        public TileSet(Texture2D texture)
         {
-            this.texture = texture;
+            Texture = texture;
 
-            this.tileWidth = tileWidth;
-            this.tileHeight = tileHeight;
-
-            this.tilesWide = texture.Width / tileWidth;
-            this.tilesHigh = texture.Height / tileHeight;
+            TilesWide = texture.Width / TileMap.TILE_SIZE;
+            TilesHigh = texture.Height / TileMap.TILE_SIZE;
 
             sourceRectangles = new Rectangle[TilesWide * TilesHigh];
 
@@ -75,10 +54,10 @@ namespace MountPRG
                 for (int x = 0; x < TilesWide; x++)
                 {
                     sourceRectangles[tile] = new Rectangle(
-                        x * TileWidth,
-                        y * TileHeight,
-                        TileWidth,
-                        TileHeight);
+                        x * TileMap.TILE_SIZE,
+                        y * TileMap.TILE_SIZE,
+                        TileMap.TILE_SIZE,
+                        TileMap.TILE_SIZE);
                     tile++;
                 }
             }

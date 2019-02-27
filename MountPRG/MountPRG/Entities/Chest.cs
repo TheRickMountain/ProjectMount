@@ -17,6 +17,7 @@ namespace MountPRG
         {
             Add(new Sprite(TextureBank.ChestTexture, false));
             Add(new Storage(3, 3));
+            Walkable = false;
         }
 
     }

@@ -12,20 +12,18 @@ namespace MountPRG
   
     public class Player : Entity 
     {
-        public Player(Vector2 position) : base(position)
+        public Player(float x, float y) : base(x, y)
         {
+            Tag = "Character";
             AnimatedSprite sprite = new AnimatedSprite(TextureBank.CharactersTexture, 16, 16);
             sprite.Animations.Add(AnimationKey.Down, new Animation(3, 1, 16, 16, 0, 0));
             sprite.Animations.Add(AnimationKey.Left, new Animation(3, 1, 16, 16, 0, 16));
             sprite.Animations.Add(AnimationKey.Right, new Animation(3, 1, 16, 16, 0, 32));
             sprite.Animations.Add(AnimationKey.Up, new Animation(3, 1, 16, 16, 0, 48));
-            sprite.Origin.X = 8;
-            sprite.Origin.Y = 12;
+            sprite.Origin.Y = 6;
             sprite.IsAnimating = true;
             Add(sprite);
             Add(new PlayerController(sprite));
-            Add(new Collider(16, 16, 0, -4));
-            Depth = 0.1f;
         }
 
     }
