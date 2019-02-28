@@ -81,6 +81,7 @@ namespace MountPRG
                                 {
                                     if (GUIManager.ActiveInventoryGUI.AddItem(entity.Get<Gatherable>().Item, 1) == 0)
                                     {
+                                        ResourceBank.ChopSong.Play();
                                         GamePlayState.TileMap.RemoveEntity(x, y);
                                     }
                                 }

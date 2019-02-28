@@ -13,7 +13,7 @@ namespace MountPRG
     {
         public Wood()
         {
-            Add(new Sprite(TextureBank.WoodTexture, false));
+            Add(new Sprite(ResourceBank.WoodTexture, false));
             Add(new Gatherable(ItemDatabase.GetItemById(ItemDatabase.WOOD)));
         }
 

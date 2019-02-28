@@ -50,7 +50,7 @@ namespace MountPRG
             {
                 for (int x = 0; x < columns; x++, i++)
                 {
-                    Slot slot = new Slot(TextureBank.SlotTexture, 50, 50, true);
+                    Slot slot = new Slot(ResourceBank.SlotTexture, 50, 50, true);
                     slot.X = xStart + x * 50 + x * 5;
                     slot.Y = yStart + y * 50 + y * 5;
 

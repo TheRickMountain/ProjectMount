@@ -93,7 +93,7 @@ namespace MountPRG
             Components.Add(new InputManager(this));
 
             // Загрузка всех игровых текстур
-            TextureBank.CreateInstance(Content);
+            ResourceBank.CreateInstance(Content);
 
             base.Initialize();
         }

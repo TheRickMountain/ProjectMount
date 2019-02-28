@@ -18,9 +18,9 @@ namespace MountPRG
 
         public ItemDatabase()
         {
-            items.Add(new Item(WOOD, "wood", true, TextureBank.WoodTexture, false));
-            items.Add(new Item(STONE, "stone", false, TextureBank.StoneTexture, false));
-            items.Add(new Item(BERRY, "berry", false, TextureBank.BerryTexture, true));
+            items.Add(new Item(WOOD, "wood", true, ResourceBank.WoodTexture, false));
+            items.Add(new Item(STONE, "stone", false, ResourceBank.StoneTexture, false));
+            items.Add(new Item(BERRY, "berry", false, ResourceBank.BerryTexture, true));
         }
 
         public static Item GetItemById(int id)

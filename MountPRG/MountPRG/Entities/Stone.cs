@@ -10,7 +10,7 @@ namespace MountPRG
     {
         public Stone()
         {
-            Add(new Sprite(TextureBank.StoneTexture, false));
+            Add(new Sprite(ResourceBank.StoneTexture, false));
             Add(new Gatherable(ItemDatabase.GetItemById(ItemDatabase.STONE)));
         }
 

@@ -11,9 +11,7 @@ sampler s0;
 
 float4 PixelShaderFunction(float4 pos : SV_POSITION, float4 color1 : COLOR0, float2 coords: TEXCOORD0) : COLOR0
 {
-	float4 color = tex2D(s0, coords);
-	color.gb = color.r;
-	return color;
+	return tex2D(s0, coords);
 }
 
 technique BasicColorDrawing
@@ -22,4 +20,4 @@ technique BasicColorDrawing
 	{
 		PixelShader = compile PS_SHADERMODEL PixelShaderFunction();
 	}
-};
+}

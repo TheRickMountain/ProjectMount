@@ -39,8 +39,8 @@ namespace MountPRG
 
         public DayNightSystemGUI(bool active) : base(active)
         {
-            circle = TextureBank.DayNightCircleTexture;
-            arrow = TextureBank.DayNightArrowTexture;
+            circle = ResourceBank.DayNightCircleTexture;
+            arrow = ResourceBank.DayNightArrowTexture;
 
             circleDestination = new Rectangle(40, 40, 80, 80);
             circleSource = new Rectangle(0, 0, 32, 32);

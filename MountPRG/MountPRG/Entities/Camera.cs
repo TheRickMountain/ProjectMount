@@ -31,7 +31,7 @@ namespace MountPRG
         public Camera(Vector2 position)
         {
             Position = position;
-            selectorTexture = TextureBank.SelectorTexture;
+            selectorTexture = ResourceBank.SelectorTexture;
             selectorDestination = new Rectangle(0, 0, selectorTexture.Width, selectorTexture.Height);
         }
 

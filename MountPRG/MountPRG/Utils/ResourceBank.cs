@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace MountPRG
 {
-    public class TextureBank
+    public class ResourceBank
     {
         
         public static Texture2D TilesetTexture;
@@ -23,15 +24,18 @@ namespace MountPRG
         public static Texture2D DayNightCircleTexture;
         public static Texture2D DayNightArrowTexture;
         public static Texture2D BerryTexture;
+        public static Texture2D WolfTexture;
 
         public static SpriteFont Font;
 
+        public static SoundEffect ChopSong;
+
         public static void CreateInstance(ContentManager content)
         {
-            new TextureBank(content);
+            new ResourceBank(content);
         }
 
-        private TextureBank(ContentManager content)
+        private ResourceBank(ContentManager content)
         {
             TilesetTexture = content.Load<Texture2D>(@"tileset");
             SelectorTexture = content.Load<Texture2D>(@"selector");
@@ -44,8 +48,11 @@ namespace MountPRG
             DayNightCircleTexture = content.Load<Texture2D>(@"day_night");
             DayNightArrowTexture = content.Load<Texture2D>(@"arrow");
             BerryTexture = content.Load<Texture2D>(@"berry");
+            WolfTexture = content.Load<Texture2D>(@"wolf");
 
             Font = content.Load<SpriteFont>(@"mountFont");
+
+            ChopSong = content.Load<SoundEffect>(@"chop");
         }
 
     }

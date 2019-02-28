@@ -20,7 +20,7 @@ namespace MountPRG
             int yStart = Game1.ScreenRectangle.Height - 55;
             for (int i = 0; i < count; i++)
             {
-                Slot slot = new Slot(TextureBank.SlotTexture, 50, 50, true);
+                Slot slot = new Slot(ResourceBank.SlotTexture, 50, 50, true);
                 slot.X = xStart + i * 50 + i * 5;
                 slot.Y = yStart;
                 slots.Add(slot);

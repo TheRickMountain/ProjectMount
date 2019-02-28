@@ -75,7 +75,7 @@ namespace MountPRG
             if(HasItem)
                 spriteBatch.Draw(itemTexture, backgroundDest, Color.White);
             if (Count > 1)
-                spriteBatch.DrawString(TextureBank.Font, "" + Count, new Vector2(backgroundDest.X, backgroundDest.Y), Color.White);
+                spriteBatch.DrawString(ResourceBank.Font, "" + Count, new Vector2(backgroundDest.X, backgroundDest.Y), Color.White);
         }
 
         public bool Intersects(int x, int y)

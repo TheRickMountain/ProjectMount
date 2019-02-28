@@ -39,7 +39,7 @@ namespace MountPRG
         {
             Camera = new Camera();
 
-            TileMap= new TileMap(50, 50, new TileSet(TextureBank.TilesetTexture));
+            TileMap= new TileMap(50, 50, new TileSet(ResourceBank.TilesetTexture));
 
             guiManager = new GUIManager(GameRef);
 
@@ -61,7 +61,9 @@ namespace MountPRG
             AddEntityToTileMap(16, 17, new Stone());
 
             player = new Player(Engine.ToWorldPos(15), Engine.ToWorldPos(15));
-            Entities.Add(player);   
+            Entities.Add(player);
+            Wolf wolf = new Wolf(Engine.ToWorldPos(18), Engine.ToWorldPos(15));
+            Entities.Add(wolf);
 
             Characters = new List<Entity>();
             Characters.Add(player);
@@ -101,6 +103,7 @@ namespace MountPRG
                 null, null, null, Camera.Transformation);
 
             effect.CurrentTechnique.Passes[0].Apply();
+            //effect.Parameters["lightPosition"].SetValue(new Vector2(16*10, 16*10));
 
             TileMap.Draw(GameRef.SpriteBatch, Camera);           
 

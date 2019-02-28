@@ -10,7 +10,7 @@ namespace MountPRG
     {
         public Berry()
         {
-            Add(new Sprite(TextureBank.BerryTexture, false));
+            Add(new Sprite(ResourceBank.BerryTexture, false));
             Add(new Gatherable(ItemDatabase.GetItemById(ItemDatabase.BERRY)));
         }
 

@@ -15,7 +15,7 @@ namespace MountPRG
         public Player(float x, float y) : base(x, y)
         {
             Tag = "Character";
-            AnimatedSprite sprite = new AnimatedSprite(TextureBank.CharactersTexture, 16, 16);
+            AnimatedSprite sprite = new AnimatedSprite(ResourceBank.CharactersTexture, 16, 16);
             sprite.Animations.Add(AnimationKey.Down, new Animation(3, 1, 16, 16, 0, 0));
             sprite.Animations.Add(AnimationKey.Left, new Animation(3, 1, 16, 16, 0, 16));
             sprite.Animations.Add(AnimationKey.Right, new Animation(3, 1, 16, 16, 0, 32));
