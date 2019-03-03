@@ -96,5 +96,13 @@ namespace MountPRG
         {
             return Components.Get<T>();
         }
+
+        public bool Has<T>() where T : Component
+        {
+            if (Components.Get<T>() != null)
+                return true;
+
+            return false;
+        }
     }
 }

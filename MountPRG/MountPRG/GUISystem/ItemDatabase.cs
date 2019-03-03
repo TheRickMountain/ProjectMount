@@ -13,6 +13,12 @@ namespace MountPRG
         public const int WOOD = 0;
         public const int STONE = 1;
         public const int BERRY = 2;
+        public const int AXE = 3;
+
+        public const int HEAD = 4;
+        public const int BODY = 5;
+        public const int LEGS = 6;
+        public const int WEAPON = 7;
 
         private static List<Item> items = new List<Item>();
 
@@ -20,7 +26,12 @@ namespace MountPRG
         {
             items.Add(new Item(WOOD, "wood", true, ResourceBank.WoodTexture, false));
             items.Add(new Item(STONE, "stone", false, ResourceBank.StoneTexture, false));
-            items.Add(new Item(BERRY, "berry", false, ResourceBank.BerryTexture, true));
+            items.Add(new Item(BERRY, "berry", true, ResourceBank.BerryTexture, true));
+            items.Add(new Item(AXE, "axe", false, ResourceBank.AxeTexture, false));
+            items.Add(new Item(HEAD, "head", false, ResourceBank.HeadTexture, false));
+            items.Add(new Item(BODY, "body", false, ResourceBank.BodyTexture, false));
+            items.Add(new Item(LEGS, "legs", false, ResourceBank.LegsTexture, false));
+            items.Add(new Item(WEAPON, "weapon", false, ResourceBank.WeaponTexture, false));
         }
 
         public static Item GetItemById(int id)

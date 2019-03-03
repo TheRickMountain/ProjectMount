@@ -54,6 +54,19 @@ namespace MountPRG
             return tiles;
         }
 
+        public bool IsNeighbour(Tile tileToCheck)
+        {
+            for (int i = X - 1; i <= X + 1; i++)
+            {
+                for (int j = Y - 1; j <= Y + 1; j++)
+                {
+                    if (tileToCheck == tilemap.GetTile(i, j))
+                        return true;
+                }
+            }
+            return false;
+        }
+
         public override string ToString()
         {
             return X + " " + Y;

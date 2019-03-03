@@ -24,7 +24,6 @@ namespace MountPRG
         private Rectangle backgroundDest;
 
         private Texture2D itemTexture;
-        private Rectangle itemDest;
 
         public bool HasItem
         {
@@ -69,13 +68,19 @@ namespace MountPRG
 
         }
 
+        public void SetSelected(bool select)
+        {
+            backgroundTexture = select ? ResourceBank.SelectedSlotTexture : ResourceBank.SlotTexture;
+        }
+
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(backgroundTexture, backgroundDest, Color.White);
             if(HasItem)
-                spriteBatch.Draw(itemTexture, backgroundDest, Color.White);
+                spriteBatch.Draw(itemTexture, new Rectangle(backgroundDest.X + 4, backgroundDest.Y + 4,
+                    backgroundDest.Width - 8, backgroundDest.Height - 8), Color.White);
             if (Count > 1)
-                spriteBatch.DrawString(ResourceBank.Font, "" + Count, new Vector2(backgroundDest.X, backgroundDest.Y), Color.White);
+                spriteBatch.DrawString(ResourceBank.Font, "" + Count, new Vector2(backgroundDest.X + 2, backgroundDest.Y), Color.White);
         }
 
         public bool Intersects(int x, int y)

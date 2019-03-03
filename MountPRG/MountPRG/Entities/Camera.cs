@@ -21,7 +21,11 @@ namespace MountPRG
         public CameraMode Mode = CameraMode.Follow;
 
         private Texture2D selectorTexture;
-        private Rectangle selectorDestination;
+        private Rectangle selectorDest;
+
+        private bool showSelection = false;
+        private Texture2D selectionTexture;
+        private Rectangle selectionDest;
 
         public Camera() : this(Vector2.Zero)
         {
@@ -32,7 +36,10 @@ namespace MountPRG
         {
             Position = position;
             selectorTexture = ResourceBank.SelectorTexture;
-            selectorDestination = new Rectangle(0, 0, selectorTexture.Width, selectorTexture.Height);
+            selectionTexture = ResourceBank.SelectionTexture;
+
+            selectorDest = new Rectangle(0, 0, selectorTexture.Width, selectorTexture.Height);
+            selectionDest = new Rectangle(0, 0, selectionTexture.Width, selectionTexture.Height);
         }
 
         public int GetCellX()
@@ -57,8 +64,8 @@ namespace MountPRG
 
         public void Update(GameTime gameTime)
         {
-            selectorDestination.X = GetCellX() * TileMap.TILE_SIZE;
-            selectorDestination.Y = GetCellY() * TileMap.TILE_SIZE;
+            selectorDest.X = GetCellX() * TileMap.TILE_SIZE;
+            selectorDest.Y = GetCellY() * TileMap.TILE_SIZE;
 
             if (Mode == CameraMode.Follow)
                 return;
@@ -84,7 +91,25 @@ namespace MountPRG
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(selectorTexture, selectorDestination, Color.White);
+            spriteBatch.Draw(selectorTexture, selectorDest, Color.White);
+        }
+
+        public void DrawSelection(SpriteBatch spriteBatch)
+        {
+            if (showSelection)
+                spriteBatch.Draw(selectionTexture, selectionDest, Color.White);
+        }
+
+        public void SetSelection(int x, int y)
+        {
+            showSelection = true;
+            selectionDest.X = x * TileMap.TILE_SIZE;
+            selectionDest.Y = y * TileMap.TILE_SIZE;
+        }
+
+        public void RemoveSelection()
+        {
+            showSelection = false;
         }
 
         public Matrix Transformation

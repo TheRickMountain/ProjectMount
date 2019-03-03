@@ -5,43 +5,43 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace MountPRG
 {
-    public class ActiveInventoryGUI : IGUI
+    public class ActionPanelGUI : IGUI
     {
-
         private List<Slot> slots;
 
-        public ActiveInventoryGUI(int count, bool active) : base(active)
+
+        public ActionPanelGUI(int count, bool active) : base(active)
         {
             slots = new List<Slot>();
-            int xStart = (Game1.ScreenRectangle.Width / 2) - ((count * 50 + (count - 1) * 5) / 2);
-            int yStart = Game1.ScreenRectangle.Height - 55;
+            int xStart = (Game1.ScreenRectangle.Width / 2) - ((count * GUIManager.SLOT_SIZE + (count - 1) * GUIManager.OFFSET) / 2);
+            int yStart = Game1.ScreenRectangle.Height - GUIManager.SLOT_SIZE - GUIManager.OFFSET;
             for (int i = 0; i < count; i++)
             {
-                Slot slot = new Slot(ResourceBank.SlotTexture, 50, 50, true);
-                slot.X = xStart + i * 50 + i * 5;
+                Slot slot = new Slot(ResourceBank.SpellSlotTexture, GUIManager.SLOT_SIZE, GUIManager.SLOT_SIZE, true);
+                slot.X = xStart + i * GUIManager.SLOT_SIZE + i * GUIManager.OFFSET;
                 slot.Y = yStart;
                 slots.Add(slot);
             }
-
         }
 
         public override void Update(GameTime gameTime)
         {
-
+            
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            for(int i = 0; i < slots.Count; i++)
+            for (int i = 0; i < slots.Count; i++)
             {
                 slots[i].Draw(spriteBatch);
             }
         }
 
-        public int AddItem(Item itemToAdd, int count)
+        /*public int AddItem(Item itemToAdd, int count)
         {
             for (int i = 0; i < slots.Count; i++)
             {
@@ -84,16 +84,28 @@ namespace MountPRG
             return count;
         }
 
-        public Slot getSelectedSlot()
+        public void SetSelectedSlot(Slot slot)
+        {
+            for (int i = 0; i < slots.Count; i++)
+            {
+                slots[i].SetSelected(false);
+            }
+
+            slot.SetSelected(true);
+            SelectedSlot = slot;
+        }
+
+        public Slot GetIntersectedSlot()
         {
             for (int i = 0; i < slots.Count; i++)
             {
                 if (slots[i].Intersects(InputManager.GetX(), InputManager.GetY()))
                 {
                     return slots[i];
-                }
+                }       
             }
+               
             return null;
-        } 
+        }*/
     }
 }

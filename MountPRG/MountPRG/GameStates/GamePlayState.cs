@@ -32,14 +32,14 @@ namespace MountPRG
 
         public GamePlayState(Game game) : base(game)
         {
-            
+
         }
 
         public override void Initialize()
         {
             Camera = new Camera();
 
-            TileMap= new TileMap(50, 50, new TileSet(ResourceBank.TilesetTexture));
+            TileMap = new TileMap(50, 50, new TileSet(ResourceBank.TilesetTexture));
 
             guiManager = new GUIManager(GameRef);
 
@@ -49,6 +49,8 @@ namespace MountPRG
             TileMap.SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
             TileMap.SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
             TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
+            TileMap.SetTile(7, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
+            TileMap.SetTile(7, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
 
             AddEntityToTileMap(15, 10, new Chest());
             AddEntityToTileMap(16, 10, new Chest());
@@ -102,10 +104,12 @@ namespace MountPRG
                 SamplerState.PointClamp,
                 null, null, null, Camera.Transformation);
 
-            effect.CurrentTechnique.Passes[0].Apply();
+            //effect.CurrentTechnique.Passes[0].Apply();
             //effect.Parameters["lightPosition"].SetValue(new Vector2(16*10, 16*10));
 
-            TileMap.Draw(GameRef.SpriteBatch, Camera);           
+            TileMap.Draw(GameRef.SpriteBatch, Camera);
+
+            Camera.DrawSelection(GameRef.SpriteBatch);
 
             Entities.Render(GameRef.SpriteBatch);
 
