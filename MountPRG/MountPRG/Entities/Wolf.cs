@@ -18,7 +18,8 @@ namespace MountPRG
             sprite.Origin.X = 8;
             sprite.Origin.Y = 12;
             Add(sprite);
-            
+
+            Add(new AIController());
         }
 
     }

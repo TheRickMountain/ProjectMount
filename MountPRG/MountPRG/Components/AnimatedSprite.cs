@@ -37,11 +37,11 @@ namespace MountPRG
 
         public override void Render(SpriteBatch spriteBatch)
         {
-            if (Entity != null)
+            if (Parent != null)
             {
-                Destination.X = (int)(Entity.X - Origin.X);
-                Destination.Y = (int)(Entity.Y - Origin.Y);
-                Entity.Depth = Destination.Bottom;
+                Destination.X = (int)(Parent.X - Origin.X);
+                Destination.Y = (int)(Parent.Y - Origin.Y);
+                Parent.Depth = Destination.Bottom;
             }
             spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
                 DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);

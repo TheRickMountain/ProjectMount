@@ -23,6 +23,7 @@ namespace MountPRG
         public int EntityLayerId { get; set; }
         public Entity Entity { get; set; }
         public bool IsWalkable { get; set; }
+        public Color Color { get; set; }
         private TileMap tilemap;
 
         public Tile(int x, int y, int firstLayerId, int secondLayerId, TileMap tilemap)
@@ -33,6 +34,7 @@ namespace MountPRG
             EntityLayerId = secondLayerId;
             this.tilemap = tilemap;
             IsWalkable = true;
+            Color = Color.White;
         }
 
         public List<Tile> GetNeighbours()
@@ -79,6 +81,7 @@ namespace MountPRG
         public const int GRASS_FLOWER = 1;
         public const int STONE_BLOCK_1 = 2;
         public const int STONE_BLOCK_2 = 3;
+        public const int STONE_BLOCK_ENTRANCE = 4;
 
         public const int TILE_SIZE = 16;
 

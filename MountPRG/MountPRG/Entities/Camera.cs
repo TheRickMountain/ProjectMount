@@ -22,6 +22,7 @@ namespace MountPRG
 
         private Texture2D selectorTexture;
         private Rectangle selectorDest;
+        private Color selectorColor;
 
         private bool showSelection = false;
         private Texture2D selectionTexture;
@@ -37,6 +38,7 @@ namespace MountPRG
             Position = position;
             selectorTexture = ResourceBank.SelectorTexture;
             selectionTexture = ResourceBank.SelectionTexture;
+            selectorColor = Color.White;
 
             selectorDest = new Rectangle(0, 0, selectorTexture.Width, selectorTexture.Height);
             selectionDest = new Rectangle(0, 0, selectionTexture.Width, selectionTexture.Height);
@@ -66,6 +68,10 @@ namespace MountPRG
         {
             selectorDest.X = GetCellX() * TileMap.TILE_SIZE;
             selectorDest.Y = GetCellY() * TileMap.TILE_SIZE;
+            Tile tile = GamePlayState.TileMap.GetTile(GetCellX(), GetCellY());
+            if (tile != null)
+                selectorColor = tile.IsWalkable ? Color.White : Color.Red;
+
 
             if (Mode == CameraMode.Follow)
                 return;
@@ -91,13 +97,15 @@ namespace MountPRG
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(selectorTexture, selectorDest, Color.White);
+            spriteBatch.Draw(selectorTexture, selectorDest, selectorColor);
         }
 
         public void DrawSelection(SpriteBatch spriteBatch)
         {
             if (showSelection)
+            {
                 spriteBatch.Draw(selectionTexture, selectionDest, Color.White);
+            }
         }
 
         public void SetSelection(int x, int y)

@@ -12,7 +12,7 @@ namespace MountPRG
     public abstract class Component
     {
 
-        public Entity Entity { get; private set; }
+        public Entity Parent { get; private set; }
         public bool Active;
         public bool Visible;
 
@@ -24,12 +24,12 @@ namespace MountPRG
 
         public virtual void Added(Entity entity)
         {
-            Entity = entity;
+            Parent = entity;
         }
 
         public virtual void Removed(Entity entity)
         { 
-            Entity = null;
+            Parent = null;
         }
 
         public virtual void Initialize()

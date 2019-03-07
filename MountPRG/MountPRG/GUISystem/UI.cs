@@ -68,21 +68,21 @@ namespace MountPRG
         {
             texture = ResourceBank.UITexture;
 
-            int tmp = 4;
+            int elementSize = texture.Width / 3;
 
-            topLeftSrc = new Rectangle(0, 0, tmp, tmp);
-            leftSrc = new Rectangle(0, 4, tmp, tmp);
-            bottomLeftSrc = new Rectangle(0, 8, tmp, tmp);
+            topLeftSrc = new Rectangle(0, 0, elementSize, elementSize);
+            leftSrc = new Rectangle(0, elementSize, elementSize, elementSize);
+            bottomLeftSrc = new Rectangle(0, elementSize * 2, elementSize, elementSize);
 
-            topSrc = new Rectangle(4, 0, tmp, tmp);
+            topSrc = new Rectangle(elementSize, 0, elementSize, elementSize);
 
-            topRightSrc = new Rectangle(8, 0, tmp, tmp);
-            rightSrc = new Rectangle(8, 4, tmp, tmp);
-            bottomRightSrc = new Rectangle(8, 8, tmp, tmp);
+            topRightSrc = new Rectangle(elementSize * 2, 0, elementSize, elementSize);
+            rightSrc = new Rectangle(elementSize * 2, elementSize, elementSize, elementSize);
+            bottomRightSrc = new Rectangle(elementSize * 2, elementSize * 2, elementSize, elementSize);
 
-            bottomSrc = new Rectangle(4, 8, tmp, tmp);
+            bottomSrc = new Rectangle(elementSize, elementSize * 2, elementSize, elementSize);
 
-            centerSrc = new Rectangle(4, 4, tmp, tmp);
+            centerSrc = new Rectangle(elementSize, elementSize, elementSize, elementSize);
         }
 
         public override void Update(GameTime gameTime)

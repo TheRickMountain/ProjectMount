@@ -11,11 +11,14 @@ namespace MountPRG
 {
     public class ActionPanelGUI : IGUI
     {
-        private List<Slot> slots;
+        private UI textPanel;
 
+        private List<Slot> slots;
 
         public ActionPanelGUI(int count, bool active) : base(active)
         {
+            textPanel = new UI();
+
             slots = new List<Slot>();
             int xStart = (Game1.ScreenRectangle.Width / 2) - ((count * GUIManager.SLOT_SIZE + (count - 1) * GUIManager.OFFSET) / 2);
             int yStart = Game1.ScreenRectangle.Height - GUIManager.SLOT_SIZE - GUIManager.OFFSET;
@@ -26,6 +29,11 @@ namespace MountPRG
                 slot.Y = yStart;
                 slots.Add(slot);
             }
+
+            textPanel.InnerWidth = 200;
+            textPanel.InnerHeight = 50;
+            textPanel.X = 0;
+            textPanel.Y = Game1.ScreenRectangle.Height - textPanel.Height;
         }
 
         public override void Update(GameTime gameTime)
@@ -35,6 +43,8 @@ namespace MountPRG
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            textPanel.Draw(spriteBatch);
+            spriteBatch.DrawString(ResourceBank.Font, "You gained 25 exp", new Vector2(textPanel.InnerX, textPanel.InnerY), Color.White);
             for (int i = 0; i < slots.Count; i++)
             {
                 slots[i].Draw(spriteBatch);

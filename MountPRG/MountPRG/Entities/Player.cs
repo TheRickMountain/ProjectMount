@@ -21,9 +21,13 @@ namespace MountPRG
             sprite.Animations.Add(AnimationKey.Right, new Animation(3, 1, 16, 16, 0, 32));
             sprite.Animations.Add(AnimationKey.Up, new Animation(3, 1, 16, 16, 0, 48));
             sprite.Origin.Y = 6;
+            sprite.Origin.X = 2;
             sprite.IsAnimating = true;
             Add(sprite);
+
             Add(new PlayerController(sprite));
+            Add(new Collider(12, 12));
+            
         }
 
     }

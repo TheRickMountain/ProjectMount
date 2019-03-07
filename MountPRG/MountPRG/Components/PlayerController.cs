@@ -17,18 +17,10 @@ namespace MountPRG
 
     public class PlayerController : Component
     {
-        private Tile currTile;
-        private Tile nextTile;
-        private Tile destTile;
-
-        private Tile newDestTile;
-
-        private PathAStar pathAStar;
-
-        private float movementPerc;
-        private float speed = 3f;
-
         private AnimatedSprite sprite;
+
+        private float speed;
+
         private PlayerState playerState = PlayerState.IDLE;
 
         private bool inInventory;
@@ -41,13 +33,12 @@ namespace MountPRG
 
         public override void Initialize()
         {
-            currTile = destTile = nextTile = GamePlayState.TileMap
-                .GetTile((int)(Entity.X / TileMap.TILE_SIZE), (int)(Entity.Y / TileMap.TILE_SIZE));
+            speed = 60f;
         }
 
         public override void Update(GameTime gameTime)
-        { 
-            if(InputManager.GetKeyDown(Keys.Tab))
+        {
+            if (InputManager.GetKeyDown(Keys.Tab))
             {
                 inInventory = !inInventory;
                 GUIManager.InventoryGUI.Active = inInventory;
@@ -55,105 +46,52 @@ namespace MountPRG
 
             if(!inInventory)
             {
-                if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
-                {
-                    // Выбираем цель для отправления персонажа
-                    int x = GamePlayState.Camera.GetCellX();
-                    int y = GamePlayState.Camera.GetCellY();
-                    Tile tile = GamePlayState.TileMap.GetTile(x, y);
-                    if (tile != null && tile.IsWalkable)
-                    {
-                        if (playerState == PlayerState.MOVE)
-                        {
-                            newDestTile = tile;
-                        }
-                        else
-                        {
-                            SetDestTile(tile,
-                                    GamePlayState.TileMap.GetTileGraph().Nodes,
-                                    GamePlayState.TileMap);
-                        }
-                        GamePlayState.Camera.SetSelection(x, y);
-                    }
-                }
-                
-                MovementUpdate(gameTime);
-            } 
-        }
-
-        private void SetDestTile(Tile tile, Dictionary<Tile, Node<Tile>> nodes, TileMap tilemap)
-        {
-            if (tile.IsWalkable)
-            {
-                currTile = nextTile = tilemap.GetTile((int)(Entity.X / TileMap.TILE_SIZE), 
-                    (int)(Entity.Y / TileMap.TILE_SIZE));
-                pathAStar = new PathAStar(currTile, tile, nodes, tilemap);
-                if (pathAStar.Length != -1)
-                    destTile = tile;
-                else
-                    pathAStar = null;
+                MotionUpdate(gameTime);
             }
         }
 
-        private void SetDestTile(Tile cTile, Tile dTile, Dictionary<Tile, Node<Tile>> nodes, TileMap tilemap)
+        private void MotionUpdate(GameTime gameTime)
         {
-            if (dTile.IsWalkable)
-            {
-                currTile = nextTile = cTile;
-                pathAStar = new PathAStar(currTile, dTile, nodes, tilemap);
-                if (pathAStar.Length != -1)
-                    destTile = dTile;
-                else
-                    pathAStar = null;
-            }
-        }
+            Vector2 motion = Vector2.Zero;
 
-        private void MovementUpdate(GameTime gameTime)
-        {
-            if (currTile.Equals(destTile))
+            playerState = PlayerState.IDLE;
+
+            if (InputManager.GetKey(Keys.A))
             {
-                pathAStar = null;
-                playerState = PlayerState.IDLE;
-                GamePlayState.Camera.RemoveSelection();
+                motion.X = -1;
+                sprite.CurrentAnimation = AnimationKey.Left;
+                playerState = PlayerState.MOVE;
+            }
+            else if (InputManager.GetKey(Keys.D))
+            {
+                motion.X = 1;
+                sprite.CurrentAnimation = AnimationKey.Right;
+                playerState = PlayerState.MOVE;
             }
 
-            if (pathAStar != null)
+            if (InputManager.GetKey(Keys.W))
             {
-
-                if (nextTile.Equals(currTile))
-                    nextTile = pathAStar.NextTile;
-
-
-                float distToTravel = MathUtils.Distance(currTile.X, currTile.Y, nextTile.X, nextTile.Y);
-
-                float distThisFrame = speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                float percThisFrame = distThisFrame / distToTravel;
-
-                movementPerc += percThisFrame;
-                if (movementPerc >= 1)
-                {
-                    currTile = nextTile;
-
-                    if (newDestTile != null)
-                    {
-                        SetDestTile(currTile, newDestTile,
-                            GamePlayState.TileMap.GetTileGraph().Nodes,
-                                GamePlayState.TileMap);
-                        newDestTile = null;
-                    }
-
-                    movementPerc = 0;
-                }
-
-                Entity.X = MathUtils.Lerp(currTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
-                Entity.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
-
+                motion.Y = -1;
+                sprite.CurrentAnimation = AnimationKey.Up;
+                playerState = PlayerState.MOVE;
+            }
+            else if (InputManager.GetKey(Keys.S))
+            {
+                motion.Y = 1;
+                sprite.CurrentAnimation = AnimationKey.Down;
                 playerState = PlayerState.MOVE;
             }
 
             if (playerState == PlayerState.IDLE)
                 sprite.ResetAnimation();
+
+            if (motion != Vector2.Zero)
+            {
+                motion.Normalize();
+                Parent.X += motion.X * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Parent.Y += motion.Y * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                //LockToMap(world.TileMap);
+            }
         }
     }
 }

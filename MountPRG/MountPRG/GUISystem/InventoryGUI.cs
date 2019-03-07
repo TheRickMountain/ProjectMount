@@ -39,7 +39,7 @@ namespace MountPRG
             equipmentBackground.InnerWidth = inventoryBackground.InnerWidth;
             equipmentBackground.InnerHeight = inventoryBackground.InnerHeight;
             equipmentBackground.X = inventoryBackground.X;
-            equipmentBackground.Y = inventoryBackground.Y - equipmentBackground.Height;
+            equipmentBackground.Y = inventoryBackground.Y - equipmentBackground.Height - GUIManager.OFFSET;
 
             for (int y = 0; y < rows; y++)
             {

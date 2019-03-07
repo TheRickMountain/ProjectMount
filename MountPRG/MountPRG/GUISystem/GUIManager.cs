@@ -27,7 +27,7 @@ namespace MountPRG
             itemDatabase = new ItemDatabase();
 
             dayNightSystemGUI = new DayNightSystemGUI(true);
-            ActionPanelGUI = new ActionPanelGUI(6, true);
+            ActionPanelGUI = new ActionPanelGUI(6, false);
             StorageGUI = new StorageGUI(false);
             InventoryGUI = new InventoryGUI(false);
 
