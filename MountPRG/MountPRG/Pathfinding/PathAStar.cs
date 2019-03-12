@@ -37,7 +37,7 @@ namespace MountPRG
                     return;
                 }
 
-                foreach (Tile n in currentNode.data.GetNeighbours())
+                foreach (Tile n in currentNode.data.GetNeighbours(true))
                 {
                     Node<Tile> neighbourNode = nodes[n];
 
@@ -47,7 +47,7 @@ namespace MountPRG
                     if (IsClippingCorner(currentNode.data, n, tileMap))
                         continue;
 
-                    if (!n.IsWalkable || closedSet.Contains(neighbourNode))
+                    if (!n.Walkable || closedSet.Contains(neighbourNode))
                         continue;
 
                     int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbourNode);
@@ -116,10 +116,10 @@ namespace MountPRG
             if (Math.Abs(dX) + Math.Abs(dY) == 2)
             {
 
-                if (!tilemap.GetTile(curr.X - dX, curr.Y).IsWalkable)
+                if (!tilemap.GetTile(curr.X - dX, curr.Y).Walkable)
                     return true;
 
-                if (!tilemap.GetTile(curr.X, curr.Y - dY).IsWalkable)
+                if (!tilemap.GetTile(curr.X, curr.Y - dY).Walkable)
                     return true;
 
             }

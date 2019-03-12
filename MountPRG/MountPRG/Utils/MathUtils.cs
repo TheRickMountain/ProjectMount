@@ -39,5 +39,12 @@ namespace MountPRG
             }
         }
 
+        public static void Replace(ref int x, ref int y)
+        {
+            int tmp = x;
+            x = y;
+            y = tmp;
+        }
+
     }
 }

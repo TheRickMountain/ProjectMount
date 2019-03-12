@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace MountPRG
@@ -17,13 +18,21 @@ namespace MountPRG
 
     public class PlayerController : Component
     {
+        private Tile currTile;
+        private Tile nextTile;
+        private Tile destTile;
+
+        private Tile newDestTile;
+
+        private PathAStar pathAStar;
+
+        private float movementPerc;
+        private float speed = 2f;
+
         private AnimatedSprite sprite;
-
-        private float speed;
-
         private PlayerState playerState = PlayerState.IDLE;
 
-        private bool inInventory;
+        private Job myJob;
 
         public PlayerController(AnimatedSprite sprite)
             : base(true, false)
@@ -33,65 +42,116 @@ namespace MountPRG
 
         public override void Initialize()
         {
-            speed = 60f;
+            currTile = destTile = nextTile = GamePlayState.TileMap
+                .GetTile((int)(Parent.X / TileMap.TILE_SIZE), (int)(Parent.Y / TileMap.TILE_SIZE));
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.GetKeyDown(Keys.Tab))
+            /*if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                inInventory = !inInventory;
-                GUIManager.InventoryGUI.Active = inInventory;
+                // Выбираем цель для отправления персонажа
+                int x = GamePlayState.Camera.GetCellX();
+                int y = GamePlayState.Camera.GetCellY();
+                Tile tile = GamePlayState.TileMap.GetTile(x, y);
+                if (tile != null && tile.IsWalkable)
+                {
+                    if (playerState == PlayerState.MOVE)
+                    {
+                        newDestTile = tile;
+                    }
+                    else
+                    {
+                        SetDestTile(tile,
+                                GamePlayState.TileMap.GetTileGraph().Nodes,
+                                GamePlayState.TileMap);
+                    }
+                }
+            }*/
+            if(myJob == null && (GamePlayState.JobSystem.Count > 0))
+            {
+                myJob = GamePlayState.JobSystem.Dequeue();
+
+                // TODO get nodes and tilemap from tile
+                Tile tile = myJob.Tile;
+                SetDestTile(tile, GamePlayState.TileMap.GetTileGraph().Nodes, GamePlayState.TileMap);
             }
 
-            if(!inInventory)
+            MovementUpdate(gameTime);
+        }
+
+        private void SetDestTile(Tile tile, Dictionary<Tile, Node<Tile>> nodes, TileMap tilemap)
+        {
+            if (tile.Walkable)
             {
-                MotionUpdate(gameTime);
+                currTile = nextTile = tilemap.GetTile((int)(Parent.X / TileMap.TILE_SIZE),
+                    (int)(Parent.Y / TileMap.TILE_SIZE));
+                pathAStar = new PathAStar(currTile, tile, nodes, tilemap);
+                if (pathAStar.Length != -1)
+                    destTile = tile;
+                else
+                    pathAStar = null;
             }
         }
 
-        private void MotionUpdate(GameTime gameTime)
+        private void SetDestTile(Tile cTile, Tile dTile, Dictionary<Tile, Node<Tile>> nodes, TileMap tilemap)
         {
-            Vector2 motion = Vector2.Zero;
-
-            playerState = PlayerState.IDLE;
-
-            if (InputManager.GetKey(Keys.A))
+            if (dTile.Walkable)
             {
-                motion.X = -1;
-                sprite.CurrentAnimation = AnimationKey.Left;
-                playerState = PlayerState.MOVE;
+                currTile = nextTile = cTile;
+                pathAStar = new PathAStar(currTile, dTile, nodes, tilemap);
+                if (pathAStar.Length != -1)
+                    destTile = dTile;
+                else
+                    pathAStar = null;
             }
-            else if (InputManager.GetKey(Keys.D))
+        }
+
+        private void MovementUpdate(GameTime gameTime)
+        {
+            if (currTile.Equals(destTile))
             {
-                motion.X = 1;
-                sprite.CurrentAnimation = AnimationKey.Right;
-                playerState = PlayerState.MOVE;
+                pathAStar = null;
+                playerState = PlayerState.IDLE;
             }
 
-            if (InputManager.GetKey(Keys.W))
+            if (pathAStar != null)
             {
-                motion.Y = -1;
-                sprite.CurrentAnimation = AnimationKey.Up;
-                playerState = PlayerState.MOVE;
-            }
-            else if (InputManager.GetKey(Keys.S))
-            {
-                motion.Y = 1;
-                sprite.CurrentAnimation = AnimationKey.Down;
+
+                if (nextTile.Equals(currTile))
+                    nextTile = pathAStar.NextTile;
+
+
+                float distToTravel = MathUtils.Distance(currTile.X, currTile.Y, nextTile.X, nextTile.Y);
+
+                float distThisFrame = speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+                float percThisFrame = distThisFrame / distToTravel;
+
+                movementPerc += percThisFrame;
+                if (movementPerc >= 1)
+                {
+                    currTile = nextTile;
+
+                    if (newDestTile != null)
+                    {
+                        SetDestTile(currTile, newDestTile,
+                            GamePlayState.TileMap.GetTileGraph().Nodes,
+                                GamePlayState.TileMap);
+                        newDestTile = null;
+                    }
+
+                    movementPerc = 0;
+                }
+
+                Parent.X = MathUtils.Lerp(currTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
+                Parent.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
+
                 playerState = PlayerState.MOVE;
             }
 
             if (playerState == PlayerState.IDLE)
                 sprite.ResetAnimation();
-
-            if (motion != Vector2.Zero)
-            {
-                motion.Normalize();
-                Parent.X += motion.X * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                Parent.Y += motion.Y * speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                //LockToMap(world.TileMap);
-            }
         }
     }
 }

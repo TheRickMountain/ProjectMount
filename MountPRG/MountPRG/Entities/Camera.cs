@@ -18,15 +18,19 @@ namespace MountPRG
 
         public float Speed = 150f;
         public float Zoom = 2f;
-        public CameraMode Mode = CameraMode.Follow;
+        public CameraMode Mode = CameraMode.Free;
 
         private Texture2D selectorTexture;
         private Rectangle selectorDest;
         private Color selectorColor;
 
-        private bool showSelection = false;
-        private Texture2D selectionTexture;
-        private Rectangle selectionDest;
+        public Tile SelectedTile
+        {
+            get; private set;
+        }
+
+        private Tile firstSelectedTile;
+        private Tile lastSelectedTile;
 
         public Camera() : this(Vector2.Zero)
         {
@@ -36,12 +40,10 @@ namespace MountPRG
         public Camera(Vector2 position)
         {
             Position = position;
-            selectorTexture = ResourceBank.SelectorTexture;
-            selectionTexture = ResourceBank.SelectionTexture;
+            selectorTexture = ResourceBank.Sprites["selector"];
             selectorColor = Color.White;
 
             selectorDest = new Rectangle(0, 0, selectorTexture.Width, selectorTexture.Height);
-            selectionDest = new Rectangle(0, 0, selectionTexture.Width, selectionTexture.Height);
         }
 
         public int GetCellX()
@@ -68,10 +70,62 @@ namespace MountPRG
         {
             selectorDest.X = GetCellX() * TileMap.TILE_SIZE;
             selectorDest.Y = GetCellY() * TileMap.TILE_SIZE;
-            Tile tile = GamePlayState.TileMap.GetTile(GetCellX(), GetCellY());
-            if (tile != null)
-                selectorColor = tile.IsWalkable ? Color.White : Color.Red;
+            SelectedTile = GamePlayState.TileMap.GetTile(GetCellX(), GetCellY());
 
+            if (!GUIManager.ActionPanelGUI.MouseOnUI)
+            {
+                if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+                {
+                    switch (GUIManager.ActionPanelGUI.CurrentJobType)
+                    {
+                        case JobType.NONE:
+                            Console.WriteLine("None");
+                            break;
+                        case JobType.GATHER:
+                            {
+                                // Если объект на сбор уже отправлен, не выделять еще раз
+                                if (!SelectedTile.Selected)
+                                {
+                                    Entity entity = SelectedTile.Entity;
+                                    if (entity != null && entity.Has<Gatherable>())
+                                    {
+                                        SelectedTile.Selected = true;
+                                        GamePlayState.JobSystem.Enqueue(new Job(SelectedTile, JobType.GATHER));
+                                    }
+                                }
+                            }
+                            break;
+                        case JobType.CUT:
+                            Console.WriteLine("Cut");
+                            break;
+                        case JobType.MINE:
+                            Console.WriteLine("Mine");
+                            break;
+                        case JobType.BUILD:
+                            Console.WriteLine("Build");
+                            break;
+                        case JobType.STORAGE:
+                            firstSelectedTile = lastSelectedTile = SelectedTile;
+                            break;
+                    }
+                }
+
+                if (GUIManager.ActionPanelGUI.CurrentJobType == JobType.STORAGE && firstSelectedTile != null)
+                {
+                    if (InputManager.GetMouseButton(MouseInput.LeftButton))
+                    {
+                        SelectArea(firstSelectedTile, lastSelectedTile, Color.White);
+                        SelectArea(firstSelectedTile, SelectedTile, Color.LightPink);
+                        lastSelectedTile = SelectedTile;
+                    }
+
+                    if (InputManager.GetMouseButtonReleased(MouseInput.LeftButton))
+                    {
+                        Console.WriteLine("Area selected");
+                    }
+                }
+            }
+            
 
             if (Mode == CameraMode.Follow)
                 return;
@@ -88,36 +142,19 @@ namespace MountPRG
             else if (InputManager.GetKey(Keys.S))
                 motion.Y = Speed;
 
+
             if (motion != Vector2.Zero)
             {
                 motion.Normalize();
                 Position += motion * Speed * Zoom * (float)gameTime.ElapsedGameTime.TotalSeconds;
-            }           
+            }
+
+            GUIManager.ActionPanelGUI.MouseOnUI = false;
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(selectorTexture, selectorDest, selectorColor);
-        }
-
-        public void DrawSelection(SpriteBatch spriteBatch)
-        {
-            if (showSelection)
-            {
-                spriteBatch.Draw(selectionTexture, selectionDest, Color.White);
-            }
-        }
-
-        public void SetSelection(int x, int y)
-        {
-            showSelection = true;
-            selectionDest.X = x * TileMap.TILE_SIZE;
-            selectionDest.Y = y * TileMap.TILE_SIZE;
-        }
-
-        public void RemoveSelection()
-        {
-            showSelection = false;
         }
 
         public Matrix Transformation
@@ -138,15 +175,7 @@ namespace MountPRG
         public void ToggleCameraMode()
         {
             Mode = (Mode == CameraMode.Follow ? CameraMode.Free : CameraMode.Follow);
-        }
-
-        public void LockToMap(TileMap tileMap)
-        {
-            Position.X = MathHelper.Clamp(Position.X,
-                0, tileMap.WidthInPixels * Zoom - Game1.ScreenRectangle.Width);
-            Position.Y = MathHelper.Clamp(Position.Y,
-                0, tileMap.HeightInPixels * Zoom - Game1.ScreenRectangle.Height);
-        }
+        }       
 
         public void ZoomIn()
         {
@@ -174,6 +203,29 @@ namespace MountPRG
         {
             Position.X = newPosition.X - Game1.ScreenRectangle.Width / 2;
             Position.Y = newPosition.Y - Game1.ScreenRectangle.Height / 2;
+        }
+
+        private void SelectArea(Tile firstTile, Tile lastTile, Color color)
+        {
+            int firstX = firstTile.X;
+            int firstY = firstTile.Y;
+
+            int lastX = lastTile.X;
+            int lastY = lastTile.Y;
+
+            if (firstX > lastX)
+                MathUtils.Replace(ref firstX, ref lastX);
+
+            if (firstY > lastY)
+                MathUtils.Replace(ref firstY, ref lastY);
+
+            for (int x = firstX; x <= lastX; x++)
+            {
+                for (int y = firstY; y <= lastY; y++)
+                {
+                    GamePlayState.TileMap.GetTile(x, y).Color = color;
+                }
+            }
         }
 
     }

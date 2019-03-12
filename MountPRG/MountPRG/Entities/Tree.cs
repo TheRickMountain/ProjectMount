@@ -13,11 +13,12 @@ namespace MountPRG
 
         public Tree()
         {
-            Sprite sprite = new Sprite(ResourceBank.TreeTexture, false);
+            Tag = "Tree";
+            Sprite sprite = new Sprite(ResourceBank.Sprites["tree"], false);
             sprite.Origin.X = 8;
             sprite.Origin.Y = 32;
             Add(sprite);
-            Add(new Mineable(ItemDatabase.GetItemById(ItemDatabase.WOOD), 5));
+            Add(new Mineable(ItemDatabase.GetItemById(ItemDatabase.STICK), 5));
             Walkable = false;
         }
 

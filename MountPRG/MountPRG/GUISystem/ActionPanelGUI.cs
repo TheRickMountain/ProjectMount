@@ -9,113 +9,95 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MountPRG
 {
+   
     public class ActionPanelGUI : IGUI
     {
-        private UI textPanel;
+        private List<Button> buttons;
 
-        private List<Slot> slots;
-
-        public ActionPanelGUI(int count, bool active) : base(active)
+        public JobType CurrentJobType
         {
-            textPanel = new UI();
+            get; private set;
+        }
 
-            slots = new List<Slot>();
-            int xStart = (Game1.ScreenRectangle.Width / 2) - ((count * GUIManager.SLOT_SIZE + (count - 1) * GUIManager.OFFSET) / 2);
-            int yStart = Game1.ScreenRectangle.Height - GUIManager.SLOT_SIZE - GUIManager.OFFSET;
-            for (int i = 0; i < count; i++)
+        public bool MouseOnUI;
+
+        public ActionPanelGUI(bool active) : base(active)
+        {
+            buttons = new List<Button>();
+
+            CurrentJobType = JobType.NONE;
+
+            buttons.Add(new Button("GATHER", ResourceBank.Sprites["gather_icon"], true));
+            buttons.Add(new Button("CUT", ResourceBank.Sprites["cut_icon"], true));
+            buttons.Add(new Button("MINE", ResourceBank.Sprites["mine_icon"], true));
+            buttons.Add(new Button("BUILD", ResourceBank.Sprites["build_icon"], true));
+            buttons.Add(new Button("STORAGE", ResourceBank.Sprites["storage_icon"], true));
+
+            int xStart = Game1.ScreenRectangle.Width - (buttons.Count * GUIManager.BUTTON_SIZE + buttons.Count * GUIManager.OFFSET);
+            int yStart = Game1.ScreenRectangle.Height - (GUIManager.BUTTON_SIZE + GUIManager.OFFSET);
+            for (int i = 0; i < buttons.Count; i++)
             {
-                Slot slot = new Slot(ResourceBank.SpellSlotTexture, GUIManager.SLOT_SIZE, GUIManager.SLOT_SIZE, true);
-                slot.X = xStart + i * GUIManager.SLOT_SIZE + i * GUIManager.OFFSET;
-                slot.Y = yStart;
-                slots.Add(slot);
+                buttons[i].X = xStart + i * GUIManager.BUTTON_SIZE + i * GUIManager.OFFSET;
+                buttons[i].Y = yStart;
+                buttons[i].Widtth = GUIManager.BUTTON_SIZE;
+                buttons[i].Height = GUIManager.BUTTON_SIZE;
             }
 
-            textPanel.InnerWidth = 200;
-            textPanel.InnerHeight = 50;
-            textPanel.X = 0;
-            textPanel.Y = Game1.ScreenRectangle.Height - textPanel.Height;
+            ConnectButtonWithJobAction(buttons[0], JobType.GATHER);
+            ConnectButtonWithJobAction(buttons[1], JobType.CUT);
+            ConnectButtonWithJobAction(buttons[2], JobType.MINE);
+            ConnectButtonWithJobAction(buttons[3], JobType.BUILD);
+            ConnectButtonWithJobAction(buttons[4], JobType.STORAGE);
         }
 
         public override void Update(GameTime gameTime)
         {
-            
+            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                for (int i = 0; i < buttons.Count; i++)
+                {
+                    Button button = buttons[i];
+                    if(button.Intersects(InputManager.GetX(), InputManager.GetY()))
+                    {
+                        UnselectAllButtons();
+                        button.ButtonDown();
+
+                        MouseOnUI = true;
+                    }
+                }
+            }  
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            textPanel.Draw(spriteBatch);
-            spriteBatch.DrawString(ResourceBank.Font, "You gained 25 exp", new Vector2(textPanel.InnerX, textPanel.InnerY), Color.White);
-            for (int i = 0; i < slots.Count; i++)
-            {
-                slots[i].Draw(spriteBatch);
-            }
+            for (int i = 0; i < buttons.Count; i++)
+                buttons[i].Draw(spriteBatch);
         }
 
-        /*public int AddItem(Item itemToAdd, int count)
+        // При нажатии на кнопку она выделяется, про повторном нажатии выделение отменяется
+        private void ConnectButtonWithJobAction(Button button, JobType jobAction)
         {
-            for (int i = 0; i < slots.Count; i++)
+            button.OnButtonDownCallback(delegate
             {
-                if (slots[i].HasItem)
+                if (CurrentJobType == jobAction)
                 {
-                    if (slots[i].Item == itemToAdd && itemToAdd.Stackable && slots[i].Count < 99)
-                    {
-                        // Вычисляем общее количество добавляемых и предметов в слоту
-                        int itemsCount = slots[i].Count + count;
-
-                        // Если общее количество предметов больше 99
-                        if (itemsCount > 99)
-                        {
-                            // Добавляем в слот 99 предметов, а count присваиваем оставшееся количество предметов
-                            slots[i].AddItem(itemToAdd, 99);
-                            count = itemsCount - 99;
-                        }
-                        else
-                        {
-                            // Иначе просто добавляем предметы
-                            slots[i].AddItem(itemToAdd, itemsCount);
-                            return 0;
-                        }
-                    }
+                    CurrentJobType = JobType.NONE;
+                    button.Selected = false;
                 }
                 else
                 {
-                    if (count > 99)
-                    {
-                        slots[i].AddItem(itemToAdd, 99);
-                        count -= 99;
-                    }
-                    else
-                    {
-                        slots[i].AddItem(itemToAdd, count);
-                        return 0;
-                    }
+                    CurrentJobType = jobAction;
+                    button.Selected = true;
                 }
-            }
-            return count;
+            });
         }
 
-        public void SetSelectedSlot(Slot slot)
+        private void UnselectAllButtons()
         {
-            for (int i = 0; i < slots.Count; i++)
+            for (int i = 0; i < buttons.Count; i++)
             {
-                slots[i].SetSelected(false);
+                buttons[i].Selected = false;
             }
-
-            slot.SetSelected(true);
-            SelectedSlot = slot;
         }
-
-        public Slot GetIntersectedSlot()
-        {
-            for (int i = 0; i < slots.Count; i++)
-            {
-                if (slots[i].Intersects(InputManager.GetX(), InputManager.GetY()))
-                {
-                    return slots[i];
-                }       
-            }
-               
-            return null;
-        }*/
     }
 }

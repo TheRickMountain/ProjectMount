@@ -28,6 +28,8 @@ namespace MountPRG
 
         public static List<Entity> Characters;
 
+        public static JobQueue JobSystem;
+
         public GamePlayState(Game game) : base(game)
         {
 
@@ -37,7 +39,7 @@ namespace MountPRG
         {
             Camera = new Camera();
 
-            TileMap = new TileMap(32, 32, new TileSet(ResourceBank.TilesetTexture));
+            TileMap = new TileMap(32, 32, new TileSet(ResourceBank.Sprites["tileset"]));
 
             guiManager = new GUIManager(GameRef);
 
@@ -46,27 +48,22 @@ namespace MountPRG
             TileMap.SetTile(5, 4, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
             TileMap.SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
             TileMap.SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
-            TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_ENTRANCE, Layer.ENTITY, false);
+            TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
             TileMap.SetTile(7, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
             TileMap.SetTile(7, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
 
-            AddEntityToTileMap(15, 10, new Chest());
-            AddEntityToTileMap(16, 10, new Chest());
+            //AddEntityToTileMap(17, 15, new Campfire());
             AddEntityToTileMap(10, 15, new Tree());
-            AddEntityToTileMap(15, 16, new Wood());
-            AddEntityToTileMap(16, 16, new Wood());
-            AddEntityToTileMap(17, 16, new Wood());
-            AddEntityToTileMap(18, 16, new Wood());
-            AddEntityToTileMap(15, 17, new Stone());
-            AddEntityToTileMap(16, 17, new Stone());
+            AddEntityToTileMap(10, 18, new Flint());
+            AddEntityToTileMap(19, 15, new Stick());
 
             Player = new Player(Engine.ToWorldPos(15), Engine.ToWorldPos(15));
             Entities.Add(Player);
-            Wolf wolf = new Wolf(Engine.ToWorldPos(27), Engine.ToWorldPos(15));
-            Entities.Add(wolf);
 
             Characters = new List<Entity>();
             Characters.Add(Player);
+
+            JobSystem = new JobQueue();
 
             base.Initialize();
         }
@@ -78,18 +75,13 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
+            guiManager.Update(gameTime);
+
             Camera.Update(gameTime);
 
             Entities.UpdateList();
 
             Entities.Update(gameTime);
-
-            CheckCollision(Player);
-
-            Camera.LockToEntity(Player);
-            Camera.LockToMap(TileMap);
-
-            guiManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -103,8 +95,6 @@ namespace MountPRG
                 null, null, null, Camera.Transformation);
 
             TileMap.Draw(GameRef.SpriteBatch, Camera);
-
-            Camera.DrawSelection(GameRef.SpriteBatch);
 
             Entities.Render(GameRef.SpriteBatch);
 
@@ -133,46 +123,31 @@ namespace MountPRG
             }
         }
 
-        public void CheckCollision(Entity entity)
+        public void Generate(string name, int count)
         {
-            int cellX = Engine.ToCellPos(Player.X + TileMap.TILE_SIZE / 2);
-            int cellY = Engine.ToCellPos(Player.Y + TileMap.TILE_SIZE / 2);
-            Collider collider = entity.Get<Collider>();
-
-            for (int x = cellX - 1; x <= cellX + 1; x++)
+            for(int i = 0; i < count; i++)
             {
-                for (int y = cellY - 1; y <= cellY + 1; y++)
+                Entity entity = null;
+                if(name.Equals("tree"))
                 {
-                    if (!TileMap.GetTile(x, y).IsWalkable)
-                    {
-                        float deltaX = (x * TileMap.TILE_SIZE + TileMap.TILE_SIZE / 2) - (entity.X + collider.HalfWidth);
-                        float deltaY = (y * TileMap.TILE_SIZE + TileMap.TILE_SIZE / 2) - (entity.Y + collider.HalfHeight);
-                        if (Math.Sqrt(deltaX * deltaX + deltaY * deltaY) <= 19)
-                        {
-                            float intersectX = Math.Abs(deltaX) - ((TileMap.TILE_SIZE / 2) + (collider.Width / 2));
-                            float intersectY = Math.Abs(deltaY) - ((TileMap.TILE_SIZE / 2) + (collider.Height / 2));
-
-                            if (intersectX < 0.0f && intersectY < 0.0f)
-                            {
-
-                                if (intersectX > intersectY)
-                                {
-                                    if (deltaX > 0.0f)
-                                        entity.X += intersectX;
-                                    else
-                                        entity.X += -intersectX;
-                                }
-                                else
-                                {
-                                    if (deltaY > 0.0f)
-                                        entity.Y += intersectY;
-                                    else
-                                        entity.Y += -intersectY;
-                                }
-                            }
-                        }
-                    }
+                    entity = new Tree();
                 }
+                else if(name.Equals("bush"))
+                {
+                    entity = new Bush();
+                }
+                else if(name.Equals("flint"))
+                {
+                    entity = new Flint();
+                }
+                else if(name.Equals("stick"))
+                {
+                    entity = new Stick();
+                }
+
+                int x = MyRandom.Range(0, TileMap.Width - 1);
+                int y = MyRandom.Range(0, TileMap.Height - 1);
+                AddEntityToTileMap(x, y, entity);
             }
         }
     }

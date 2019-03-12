@@ -20,6 +20,7 @@ namespace MountPRG
         public Color Color = Color.White;
         public SpriteEffects Effects = SpriteEffects.None;
         public float Alpha = 1.0f;
+        public bool Shaded = true;
 
         public Sprite(Texture2D texture, bool active)
             : this(texture, texture.Width, texture.Height, active)
@@ -34,7 +35,7 @@ namespace MountPRG
             Source = new Rectangle(0, 0, Texture.Width, Texture.Height);
         }
 
-        public override void Render(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (Parent != null)
             {
@@ -44,7 +45,7 @@ namespace MountPRG
 
                 // TODO: Исправить код смены канала Alpha при нахождении за спратом персонажей
                 // Переместить в Update
-                if(Parent.Tag != "Character")
+                /*if(Parent.Tag != "Character" && Parent.Tag == "Tree")
                 {
                     for(int i = 0; i < GamePlayState.Characters.Count; i++)
                     {
@@ -62,16 +63,17 @@ namespace MountPRG
                                 Alpha += 0.05f;
                         }
                     }
-                }
+                }*/
                 // TODO: Конец
 
-                spriteBatch.Draw(Texture, Destination, Source, DayNightSystemGUI.CurrentColor * Alpha, Rotation, Vector2.Zero, Effects, 0);
+                
             }
+
+            if(Shaded)
+                spriteBatch.Draw(Texture, Destination, Source, DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
             else
-            {
-                spriteBatch.Draw(Texture, Destination, Source, DayNightSystemGUI.CurrentColor * Alpha, Rotation, Vector2.Zero, Effects, 0);
-            }
-            
+                spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);
+
         }
 
         public bool Intersects(int x, int y)

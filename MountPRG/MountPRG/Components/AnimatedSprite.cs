@@ -35,7 +35,7 @@ namespace MountPRG
                 Animations[CurrentAnimation].Update(gameTime);
         }
 
-        public override void Render(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (Parent != null)
             {
@@ -43,9 +43,17 @@ namespace MountPRG
                 Destination.Y = (int)(Parent.Y - Origin.Y);
                 Parent.Depth = Destination.Bottom;
             }
-            spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
-                DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
-        }
 
+            if (Shaded)
+            {
+                spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
+                DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
+            }
+            else
+            {
+                spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
+                Color, Rotation, Vector2.Zero, Effects, 0);
+            }
+        }
     }
 }

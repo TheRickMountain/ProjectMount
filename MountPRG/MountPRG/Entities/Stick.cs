@@ -9,12 +9,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class Wood : Entity
+    public class Stick : Entity
     {
-        public Wood()
+        public Stick()
         {
-            Add(new Sprite(ResourceBank.WoodTexture, false));
-            Add(new Gatherable(ItemDatabase.GetItemById(ItemDatabase.WOOD)));
+            Add(new Sprite(ResourceBank.Sprites["stick"], false));
+            Add(new Gatherable(ItemDatabase.GetItemById(ItemDatabase.STICK), 1));
         }
 
     }

@@ -22,8 +22,9 @@ namespace MountPRG
         public int GroundLayerId { get; set; }
         public int EntityLayerId { get; set; }
         public Entity Entity { get; set; }
-        public bool IsWalkable { get; set; }
+        public bool Walkable { get; set; }
         public Color Color { get; set; }
+        public bool Selected { get; set; }
         private TileMap tilemap;
 
         public Tile(int x, int y, int firstLayerId, int secondLayerId, TileMap tilemap)
@@ -33,24 +34,34 @@ namespace MountPRG
             GroundLayerId = firstLayerId;
             EntityLayerId = secondLayerId;
             this.tilemap = tilemap;
-            IsWalkable = true;
+            Walkable = true;
             Color = Color.White;
         }
 
-        public List<Tile> GetNeighbours()
+        public List<Tile> GetNeighbours(bool withDiag)
         {
             List<Tile> tiles = new List<Tile>();
 
-            for (int i = X - 1; i <= X + 1; i++)
+            if (withDiag)
             {
-                for (int j = Y - 1; j <= Y + 1; j++)
+                for (int i = X - 1; i <= X + 1; i++)
                 {
-                    if (i == X && j == Y)
-                        continue;
+                    for (int j = Y - 1; j <= Y + 1; j++)
+                    {
+                        if (i == X && j == Y)
+                            continue;
 
-                    if (i >= 0 && j >= 0 && i < tilemap.Width && j < tilemap.Height)
-                        tiles.Add(tilemap.GetTile(i, j));
+                        if (i >= 0 && j >= 0 && i < tilemap.Width && j < tilemap.Height)
+                            tiles.Add(tilemap.GetTile(i, j));
+                    }
                 }
+            }
+            else
+            {
+                tiles.Add(tilemap.GetTile(X - 1, Y));
+                tiles.Add(tilemap.GetTile(X + 1, Y));
+                tiles.Add(tilemap.GetTile(X, Y - 1));
+                tiles.Add(tilemap.GetTile(X, Y + 1));
             }
 
             return tiles;
@@ -90,6 +101,8 @@ namespace MountPRG
         private Tile[] tiles;
 
         private PathTileGraph tileGraph;
+
+        private Texture2D selectorTexture;
 
         public int Width
         {
@@ -132,6 +145,8 @@ namespace MountPRG
             }
 
             tileGraph = new PathTileGraph(this);
+
+            selectorTexture = ResourceBank.Sprites["selector"];
         }
 
         public Tile GetTile(int x, int y)
@@ -156,7 +171,7 @@ namespace MountPRG
             Tile tile = tiles[y * Width + x];
             tile.GroundLayerId = firstLayerId;
             tile.EntityLayerId = secondLayerId;
-            tile.IsWalkable = isWalkable;
+            tile.Walkable = isWalkable;
         }
 
         public void SetTile(int x, int y, int id, Layer layer, bool isWalkable)
@@ -177,7 +192,7 @@ namespace MountPRG
                     tile.EntityLayerId = id;
                     break;
             }
-            tile.IsWalkable = isWalkable;
+            tile.Walkable = isWalkable;
         }
 
         public bool AddEntity(int x, int y, Entity entity, bool walkable = true)
@@ -199,7 +214,7 @@ namespace MountPRG
                 }
 
                 tile.Entity = entity;
-                tile.IsWalkable = walkable;
+                tile.Walkable = walkable;
 
                 return true;
             }
@@ -217,7 +232,7 @@ namespace MountPRG
                 {
                     GamePlayState.Entities.Remove(tile.Entity);
                     tile.Entity = null;
-                    tile.IsWalkable = true;
+                    tile.Walkable = true;
                 }
             }
         }
@@ -261,7 +276,6 @@ namespace MountPRG
             Rectangle destination = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
             int firstIndex;
             int secondIndex;
-
             for (int y = min.Y; y < max.Y; y++)
             {
                 destination.Y = y * TILE_SIZE;
@@ -269,8 +283,9 @@ namespace MountPRG
                 for (int x = min.X; x < max.X; x++)
                 {
                     // Сразу получаем Id двух текстур для отрисовки
-                    firstIndex = GetTile(x, y).GroundLayerId;
-                    secondIndex = GetTile(x, y).EntityLayerId;
+                    Tile tile = GetTile(x, y);
+                    firstIndex = tile.GroundLayerId;
+                    secondIndex = tile.EntityLayerId;
 
                     destination.X = x * TILE_SIZE;
 
@@ -282,7 +297,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[firstIndex],
-                            DayNightSystemGUI.CurrentColor);
+                            tile.Color);
                     }
 
                     if (secondIndex != -1)
@@ -293,6 +308,9 @@ namespace MountPRG
                             tileSet.SourceRectangles[secondIndex],
                             DayNightSystemGUI.CurrentColor);
                     }
+
+                    if (tile.Selected)
+                        spriteBatch.Draw(selectorTexture, destination, Color.Yellow);
                 }
             }
         }

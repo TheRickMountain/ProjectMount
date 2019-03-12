@@ -66,7 +66,7 @@ namespace MountPRG
 
         public UI() : base(true)
         {
-            texture = ResourceBank.UITexture;
+            texture = ResourceBank.Sprites["ui"];
 
             int elementSize = texture.Width / 3;
 

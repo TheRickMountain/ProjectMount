@@ -20,6 +20,8 @@ namespace MountPRG
             get; private set;
         }
 
+        private SpriteFont font;
+
         private Texture2D backgroundTexture;
         private Rectangle backgroundDest;
 
@@ -56,7 +58,9 @@ namespace MountPRG
 
         public Slot(Texture2D background, int width, int height, bool active) : base(active)
         {
-            this.backgroundTexture = background;
+            backgroundTexture = background;
+
+            font = ResourceBank.Fonts["mountFont"];
 
             backgroundDest = new Rectangle(0, 0, width, height);
 
@@ -68,11 +72,6 @@ namespace MountPRG
 
         }
 
-        public void SetSelected(bool select)
-        {
-            backgroundTexture = select ? ResourceBank.SelectedSlotTexture : ResourceBank.SlotTexture;
-        }
-
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(backgroundTexture, backgroundDest, Color.White);
@@ -80,7 +79,7 @@ namespace MountPRG
                 spriteBatch.Draw(itemTexture, new Rectangle(backgroundDest.X + 4, backgroundDest.Y + 4,
                     backgroundDest.Width - 8, backgroundDest.Height - 8), Color.White);
             if (Count > 1)
-                spriteBatch.DrawString(ResourceBank.Font, "" + Count, new Vector2(backgroundDest.X + 2, backgroundDest.Y), Color.White);
+                spriteBatch.DrawString(font, "" + Count, new Vector2(backgroundDest.X + 2, backgroundDest.Y), Color.White);
         }
 
         public bool Intersects(int x, int y)

@@ -30,7 +30,7 @@ namespace MountPRG
         {
             Health -= damage;
             Health = Health < 0 ? 0 : Health;
-            ResourceBank.ChopSong.Play();
+            ResourceBank.SoundEffects["chop"].Play();
         }
 
     }

@@ -69,7 +69,7 @@ namespace MountPRG
         {
             foreach (var component in components)
                 if (component.Visible)
-                    component.Render(spriteBatch);
+                    component.Draw(spriteBatch);
         }
 
         public T Get<T>() where T : Component

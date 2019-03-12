@@ -14,14 +14,13 @@ namespace MountPRG
     {
         public Player(float x, float y) : base(x, y)
         {
-            Tag = "Character";
-            AnimatedSprite sprite = new AnimatedSprite(ResourceBank.CharactersTexture, 16, 16);
+            Tag = "Player";
+            AnimatedSprite sprite = new AnimatedSprite(ResourceBank.Sprites["characters"], 16, 16);
             sprite.Animations.Add(AnimationKey.Down, new Animation(3, 1, 16, 16, 0, 0));
             sprite.Animations.Add(AnimationKey.Left, new Animation(3, 1, 16, 16, 0, 16));
             sprite.Animations.Add(AnimationKey.Right, new Animation(3, 1, 16, 16, 0, 32));
             sprite.Animations.Add(AnimationKey.Up, new Animation(3, 1, 16, 16, 0, 48));
             sprite.Origin.Y = 6;
-            sprite.Origin.X = 2;
             sprite.IsAnimating = true;
             Add(sprite);
 

@@ -39,8 +39,8 @@ namespace MountPRG
 
         public DayNightSystemGUI(bool active) : base(active)
         {
-            circle = ResourceBank.DayNightCircleTexture;
-            arrow = ResourceBank.DayNightArrowTexture;
+            circle = ResourceBank.Sprites["day_night"];
+            arrow = ResourceBank.Sprites["arrow"];
 
             circleDestination = new Rectangle(40, 40, 80, 80);
             circleSource = new Rectangle(0, 0, 32, 32);
@@ -55,7 +55,7 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-            /*currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.1);
+            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.1);
             int timeOfDay = -MathUtils.ToDegrees(currentTime);
             if(timeOfDay >= 80 && timeOfDay <= 110)
             {
@@ -66,7 +66,7 @@ namespace MountPRG
             {
                 float amount = Math.Min(1.0f, (timeOfDay - 260.0f) / 20.0f);
                 CurrentColor = Color.Lerp(NightColor, DayColor, amount);
-            }*/
+            }
         }
 
         public override void Draw(SpriteBatch spriteBatch)
