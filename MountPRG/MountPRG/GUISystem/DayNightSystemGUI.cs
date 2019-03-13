@@ -55,7 +55,7 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.1);
+            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.01);
             int timeOfDay = -MathUtils.ToDegrees(currentTime);
             if(timeOfDay >= 80 && timeOfDay <= 110)
             {

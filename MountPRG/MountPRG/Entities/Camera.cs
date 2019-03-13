@@ -89,7 +89,15 @@ namespace MountPRG
                 switch (GUIManager.ActionPanelGUI.CurrentJobType)
                 {
                     case JobType.NONE:
-                        //Console.WriteLine("None");
+                        {
+                            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+                            {
+                                if(SelectedTile.Stockpile > -1)
+                                {
+                                    GUIManager.StockpileGUI.Open(GamePlayState.StockpileList.Get(SelectedTile.Stockpile));
+                                }
+                            }
+                        }
                         break;
                     case JobType.GATHER:
                         MakeGatheringJob();
@@ -254,15 +262,15 @@ namespace MountPRG
             }
         }
 
-        private List<Tile> GetAreaTiles(Tile firstTile, Tile lastTile)
+        private Tile[,] GetAreaTiles(Tile firstTile, Tile lastTile)
         {
-            List<Tile> tiles = new List<Tile>();
-
             int firstX = firstTile.X;
             int firstY = firstTile.Y;
 
             int lastX = lastTile.X;
             int lastY = lastTile.Y;
+
+            Tile[,] tiles = new Tile[Math.Abs(firstX - lastX) + 1, Math.Abs(firstY - lastY) + 1];
 
             if (firstX > lastX)
                 MathUtils.Replace(ref firstX, ref lastX);
@@ -276,7 +284,7 @@ namespace MountPRG
                 {
                     Tile tile = GamePlayState.TileMap.GetTile(x, y);
                     tile.GroundLayerId = TileMap.GROUND;
-                    tiles.Add(tile);
+                    tiles[x - firstX, y - firstY] = tile;
                 }
             }
 

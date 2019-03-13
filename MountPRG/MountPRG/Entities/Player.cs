@@ -10,9 +10,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace MountPRG
 {
   
-    public class Player : Entity 
+    public class Settler : Entity 
     {
-        public Player(float x, float y) : base(x, y)
+        public Settler(float x, float y) : base(x, y)
         {
             Tag = "Player";
             AnimatedSprite sprite = new AnimatedSprite(ResourceBank.Sprites["characters"], 16, 16);

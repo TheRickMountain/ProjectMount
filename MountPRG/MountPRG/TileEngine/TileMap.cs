@@ -26,7 +26,8 @@ namespace MountPRG
         public bool Walkable { get; set; }
         public Color Color { get; set; }
         public bool Selected { get; set; }
-       
+        public bool Occupied { get; set; }
+        public int Stockpile { get; set; }
 
         public Tile(int x, int y, int firstLayerId, int secondLayerId, TileMap tilemap)
         {
@@ -37,6 +38,7 @@ namespace MountPRG
             EntityLayerId = secondLayerId;
             Walkable = true;
             Color = Color.White;
+            Stockpile = -1;
         }
 
         public List<Tile> GetNeighbours(bool withDiag)

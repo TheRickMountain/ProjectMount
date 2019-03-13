@@ -10,7 +10,7 @@ namespace MountPRG
 {
     public class GUIManager
     {
-        public static int SLOT_SIZE = 56;
+        public static int SLOT_SIZE = 32;
         public static int BUTTON_SIZE = 48;
         public static int OFFSET = 5;
 
@@ -20,6 +20,7 @@ namespace MountPRG
 
         private DayNightSystemGUI dayNightSystemGUI;
         public static ActionPanelGUI ActionPanelGUI;
+        public static StockpileGUI StockpileGUI;
 
         public static bool MouseOnUI { get; set; }
 
@@ -29,9 +30,11 @@ namespace MountPRG
 
             dayNightSystemGUI = new DayNightSystemGUI(true);
             ActionPanelGUI = new ActionPanelGUI(true);
+            StockpileGUI = new StockpileGUI(false);
 
             guiElements.Add(dayNightSystemGUI);
             guiElements.Add(ActionPanelGUI);
+            guiElements.Add(StockpileGUI);
         }
 
         public void Update(GameTime gameTime)

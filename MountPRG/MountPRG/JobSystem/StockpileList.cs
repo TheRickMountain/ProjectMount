@@ -9,32 +9,38 @@ namespace MountPRG
     public class StockpileList
     {
 
-        private Dictionary<int, List<Tile>> stockpiles;
+        private Dictionary<int, Tile[,]> stockpiles;
 
         public StockpileList()
         {
-            stockpiles = new Dictionary<int, List<Tile>>();
+            stockpiles = new Dictionary<int, Tile[,]>();
         }
 
-        public void Add(List<Tile> tiles)
+        public void Add(Tile[,] tiles)
         {
-            Console.WriteLine("Stockpile has added");
+            for (int i = 0; i < tiles.GetLength(0); i++)
+                for (int j = 0; j < tiles.GetLength(1); j++)
+                    tiles[i, j].Stockpile = Count;
+
             stockpiles.Add(Count, tiles);
         }
 
-        public List<Tile> Get(int val)
+        public Tile[,] Get(int val)
         {
             return stockpiles[val];
         }
 
         public Tile GetEmptyTileFrom(int val)
         {
-            List<Tile> tiles = stockpiles[val];
-            for(int i = 0; i < tiles.Count; i++)
+            Tile[,] tiles = stockpiles[val];
+            for(int i = 0; i < tiles.GetLength(0); i++)
             {
-                Tile tile = tiles[i];
-                if (tile.Entity == null)
-                    return tile;
+                for(int j = 0; j < tiles.GetLength(1); j++)
+                {
+                    Tile tile = tiles[i,j];
+                    if (!tile.Occupied && tile.Entity == null)
+                        return tile;
+                }
             }
 
             return null;

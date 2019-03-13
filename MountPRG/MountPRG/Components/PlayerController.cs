@@ -35,6 +35,7 @@ namespace MountPRG
         private Job myJob;
 
         private Entity cargo;
+        private Tile stockpileTile;
 
         public PlayerController(AnimatedSprite sprite)
             : base(true, false)
@@ -92,6 +93,7 @@ namespace MountPRG
                             Tile tile = GamePlayState.StockpileList.GetEmptyTileFrom(0);
                             if (tile != null)
                             {
+                                tile.Occupied = true;
                                 SetDestTile(tile);
                             }
                         }
