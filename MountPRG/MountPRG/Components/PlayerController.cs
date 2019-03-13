@@ -27,12 +27,14 @@ namespace MountPRG
         private PathAStar pathAStar;
 
         private float movementPerc;
-        private float speed = 2f;
+        private float speed = 3f;
 
         private AnimatedSprite sprite;
         private PlayerState playerState = PlayerState.IDLE;
 
         private Job myJob;
+
+        private Entity cargo;
 
         public PlayerController(AnimatedSprite sprite)
             : base(true, false)
@@ -62,31 +64,80 @@ namespace MountPRG
                     }
                     else
                     {
-                        SetDestTile(tile,
-                                GamePlayState.TileMap.GetTileGraph().Nodes,
-                                GamePlayState.TileMap);
+                        SetDestTile(tile);
                     }
                 }
             }*/
-            if(myJob == null && (GamePlayState.JobSystem.Count > 0))
+            if(myJob != null)
             {
-                myJob = GamePlayState.JobSystem.Dequeue();
+                if(myJob.JobType == JobType.GATHER)
+                {
+                    if (cargo != null)
+                    {
+                        if(currTile == destTile)
+                        {
+                            GamePlayState.TileMap.AddEntity(currTile.X, currTile.Y, cargo, true);
+                            cargo = null;
+                            myJob = null;
+                        }
+                    }
+                    else
+                    {
+                        if (myJob.Tile == currTile)
+                        {
+                            currTile.Selected = false;
+                            cargo = currTile.Entity;
+                            GamePlayState.TileMap.RemoveEntity(currTile.X, currTile.Y);
 
-                // TODO get nodes and tilemap from tile
-                Tile tile = myJob.Tile;
-                SetDestTile(tile, GamePlayState.TileMap.GetTileGraph().Nodes, GamePlayState.TileMap);
+                            Tile tile = GamePlayState.StockpileList.GetEmptyTileFrom(0);
+                            if (tile != null)
+                            {
+                                SetDestTile(tile);
+                            }
+                        }
+                    }
+                }
             }
 
+            if(myJob == null && (GamePlayState.JobSystem.Count > 0))
+            {
+                for(int i = 0; i < GamePlayState.JobSystem.Count; i++)
+                {
+                    Job job = GamePlayState.JobSystem.Get(i);
+                    if(job.JobType == JobType.GATHER)
+                    {
+                        if(GamePlayState.StockpileList.Count > 0)
+                        {
+                            GamePlayState.JobSystem.Remove(i);
+                            myJob = job;
+                            myJob.Tile.Selected = true;
+                            SetDestTile(myJob.Tile);
+                            break;
+                        }
+                    }
+                }
+            }
+            
             MovementUpdate(gameTime);
         }
 
-        private void SetDestTile(Tile tile, Dictionary<Tile, Node<Tile>> nodes, TileMap tilemap)
+        private void TakeEntity(Tile tile)
+        {
+
+        }
+
+        private void PlaceEntity(Tile tile)
+        {
+
+        }
+
+        private void SetDestTile(Tile tile)
         {
             if (tile.Walkable)
             {
-                currTile = nextTile = tilemap.GetTile((int)(Parent.X / TileMap.TILE_SIZE),
+                currTile = nextTile = tile.Tilemap.GetTile((int)(Parent.X / TileMap.TILE_SIZE),
                     (int)(Parent.Y / TileMap.TILE_SIZE));
-                pathAStar = new PathAStar(currTile, tile, nodes, tilemap);
+                pathAStar = new PathAStar(currTile, tile, tile.Tilemap.GetTileGraph().Nodes, tile.Tilemap);
                 if (pathAStar.Length != -1)
                     destTile = tile;
                 else
@@ -117,7 +168,6 @@ namespace MountPRG
 
             if (pathAStar != null)
             {
-
                 if (nextTile.Equals(currTile))
                     nextTile = pathAStar.NextTile;
 

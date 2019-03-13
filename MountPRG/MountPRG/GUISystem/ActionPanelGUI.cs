@@ -14,16 +14,18 @@ namespace MountPRG
     {
         private List<Button> buttons;
 
+        private Rectangle dest;
+
         public JobType CurrentJobType
         {
             get; private set;
         }
 
-        public bool MouseOnUI;
-
         public ActionPanelGUI(bool active) : base(active)
         {
             buttons = new List<Button>();
+
+            dest = new Rectangle();
 
             CurrentJobType = JobType.NONE;
 
@@ -43,15 +45,25 @@ namespace MountPRG
                 buttons[i].Height = GUIManager.BUTTON_SIZE;
             }
 
+            dest = new Rectangle(xStart, yStart,
+                buttons.Count * GUIManager.BUTTON_SIZE + buttons.Count * GUIManager.OFFSET,
+                (GUIManager.BUTTON_SIZE + GUIManager.OFFSET));
+
             ConnectButtonWithJobAction(buttons[0], JobType.GATHER);
             ConnectButtonWithJobAction(buttons[1], JobType.CUT);
             ConnectButtonWithJobAction(buttons[2], JobType.MINE);
             ConnectButtonWithJobAction(buttons[3], JobType.BUILD);
-            ConnectButtonWithJobAction(buttons[4], JobType.STORAGE);
+            ConnectButtonWithJobAction(buttons[4], JobType.STOCKPILE);
         }
 
         public override void Update(GameTime gameTime)
         {
+            if(InputManager.GetX() >= dest.X && InputManager.GetX() <= dest.Right &&
+                InputManager.GetY() >= dest.Y && InputManager.GetY() <= dest.Bottom)
+            {
+                GUIManager.MouseOnUI = true;
+            }
+
             if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
                 for (int i = 0; i < buttons.Count; i++)
@@ -61,8 +73,6 @@ namespace MountPRG
                     {
                         UnselectAllButtons();
                         button.ButtonDown();
-
-                        MouseOnUI = true;
                     }
                 }
             }  

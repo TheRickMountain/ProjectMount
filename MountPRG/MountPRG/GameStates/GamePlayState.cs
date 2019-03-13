@@ -28,7 +28,8 @@ namespace MountPRG
 
         public static List<Entity> Characters;
 
-        public static JobQueue JobSystem;
+        public static JobList JobSystem;
+        public static StockpileList StockpileList;
 
         public GamePlayState(Game game) : base(game)
         {
@@ -53,9 +54,9 @@ namespace MountPRG
             TileMap.SetTile(7, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
 
             //AddEntityToTileMap(17, 15, new Campfire());
-            AddEntityToTileMap(10, 15, new Tree());
-            AddEntityToTileMap(10, 18, new Flint());
-            AddEntityToTileMap(19, 15, new Stick());
+            TileMap.AddEntity(10, 15, new Tree(), false);
+            TileMap.AddEntity(10, 18, new Flint());
+            TileMap.AddEntity(19, 15, new Stick());
 
             Player = new Player(Engine.ToWorldPos(15), Engine.ToWorldPos(15));
             Entities.Add(Player);
@@ -63,7 +64,8 @@ namespace MountPRG
             Characters = new List<Entity>();
             Characters.Add(Player);
 
-            JobSystem = new JobQueue();
+            JobSystem = new JobList();
+            StockpileList = new StockpileList();
 
             base.Initialize();
         }
@@ -111,44 +113,6 @@ namespace MountPRG
             guiManager.Draw(GameRef.SpriteBatch);
 
             GameRef.SpriteBatch.End();
-        }
-
-        public void AddEntityToTileMap(int x, int y, Entity entity)
-        {
-            if (TileMap.AddEntity(x, y, entity, entity.Walkable))
-            {
-                entity.X = Engine.ToWorldPos(x);
-                entity.Y = Engine.ToWorldPos(y);
-                Entities.Add(entity);
-            }
-        }
-
-        public void Generate(string name, int count)
-        {
-            for(int i = 0; i < count; i++)
-            {
-                Entity entity = null;
-                if(name.Equals("tree"))
-                {
-                    entity = new Tree();
-                }
-                else if(name.Equals("bush"))
-                {
-                    entity = new Bush();
-                }
-                else if(name.Equals("flint"))
-                {
-                    entity = new Flint();
-                }
-                else if(name.Equals("stick"))
-                {
-                    entity = new Stick();
-                }
-
-                int x = MyRandom.Range(0, TileMap.Width - 1);
-                int y = MyRandom.Range(0, TileMap.Height - 1);
-                AddEntityToTileMap(x, y, entity);
-            }
         }
     }
 }

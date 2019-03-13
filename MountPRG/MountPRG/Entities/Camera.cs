@@ -48,12 +48,24 @@ namespace MountPRG
 
         public int GetCellX()
         {
-            return (int)(((InputManager.GetX() + Position.X) / Zoom) / TileMap.TILE_SIZE);
+            int cellX = (int)(((InputManager.GetX() + Position.X) / Zoom) / TileMap.TILE_SIZE);
+            if (cellX >= GamePlayState.TileMap.Width)
+                return GamePlayState.TileMap.Width - 1;
+            else if (cellX < 0)
+                return 0;
+
+            return cellX;
         }
 
         public int GetCellY()
         {
-            return (int)(((InputManager.GetY() + Position.Y) / Zoom) / TileMap.TILE_SIZE);
+            int cellY = (int)(((InputManager.GetY() + Position.Y) / Zoom) / TileMap.TILE_SIZE);
+            if (cellY >= GamePlayState.TileMap.Height)
+                return GamePlayState.TileMap.Height - 1;
+            else if (cellY < 0)
+                return 0;
+
+            return cellY;
         }
 
         public int GetX()
@@ -72,61 +84,42 @@ namespace MountPRG
             selectorDest.Y = GetCellY() * TileMap.TILE_SIZE;
             SelectedTile = GamePlayState.TileMap.GetTile(GetCellX(), GetCellY());
 
-            if (!GUIManager.ActionPanelGUI.MouseOnUI)
+            if (!GUIManager.MouseOnUI)
             {
-                if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+                switch (GUIManager.ActionPanelGUI.CurrentJobType)
                 {
-                    switch (GUIManager.ActionPanelGUI.CurrentJobType)
-                    {
-                        case JobType.NONE:
-                            Console.WriteLine("None");
-                            break;
-                        case JobType.GATHER:
-                            {
-                                // Если объект на сбор уже отправлен, не выделять еще раз
-                                if (!SelectedTile.Selected)
-                                {
-                                    Entity entity = SelectedTile.Entity;
-                                    if (entity != null && entity.Has<Gatherable>())
-                                    {
-                                        SelectedTile.Selected = true;
-                                        GamePlayState.JobSystem.Enqueue(new Job(SelectedTile, JobType.GATHER));
-                                    }
-                                }
-                            }
-                            break;
-                        case JobType.CUT:
-                            Console.WriteLine("Cut");
-                            break;
-                        case JobType.MINE:
-                            Console.WriteLine("Mine");
-                            break;
-                        case JobType.BUILD:
-                            Console.WriteLine("Build");
-                            break;
-                        case JobType.STORAGE:
-                            firstSelectedTile = lastSelectedTile = SelectedTile;
-                            break;
-                    }
-                }
-
-                if (GUIManager.ActionPanelGUI.CurrentJobType == JobType.STORAGE && firstSelectedTile != null)
-                {
-                    if (InputManager.GetMouseButton(MouseInput.LeftButton))
-                    {
-                        SelectArea(firstSelectedTile, lastSelectedTile, Color.White);
-                        SelectArea(firstSelectedTile, SelectedTile, Color.LightPink);
-                        lastSelectedTile = SelectedTile;
-                    }
-
-                    if (InputManager.GetMouseButtonReleased(MouseInput.LeftButton))
-                    {
-                        Console.WriteLine("Area selected");
-                    }
+                    case JobType.NONE:
+                        //Console.WriteLine("None");
+                        break;
+                    case JobType.GATHER:
+                        MakeGatheringJob();
+                        break;
+                    case JobType.CUT:
+                        //Console.WriteLine("Cut");
+                        break;
+                    case JobType.MINE:
+                        //Console.WriteLine("Mine");
+                        break;
+                    case JobType.BUILD:
+                        //Console.WriteLine("Build");
+                        break;
+                    case JobType.STOCKPILE:
+                        MakeStockpile();
+                        break;
                 }
             }
-            
 
+
+            MovementUpdate(gameTime);
+        }
+
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(selectorTexture, selectorDest, selectorColor);
+        }
+
+        private void MovementUpdate(GameTime gameTime)
+        {
             if (Mode == CameraMode.Follow)
                 return;
 
@@ -148,13 +141,6 @@ namespace MountPRG
                 motion.Normalize();
                 Position += motion * Speed * Zoom * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
-
-            GUIManager.ActionPanelGUI.MouseOnUI = false;
-        }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(selectorTexture, selectorDest, selectorColor);
         }
 
         public Matrix Transformation
@@ -205,6 +191,46 @@ namespace MountPRG
             Position.Y = newPosition.Y - Game1.ScreenRectangle.Height / 2;
         }
 
+        private void MakeStockpile()
+        {
+            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                firstSelectedTile = lastSelectedTile = SelectedTile;
+            }
+
+            if (InputManager.GetMouseButton(MouseInput.LeftButton))
+            {
+                SelectArea(firstSelectedTile, lastSelectedTile, Color.White);
+
+                int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
+                int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
+
+                if (width < 2 || width > 5 || height < 2 || height > 5)
+                {
+                    SelectArea(firstSelectedTile, SelectedTile, Color.IndianRed);
+                }
+                else
+                {
+                    SelectArea(firstSelectedTile, SelectedTile, Color.LightGreen);
+                }
+
+                lastSelectedTile = SelectedTile;
+            }
+
+            if (InputManager.GetMouseButtonReleased(MouseInput.LeftButton))
+            {
+                int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
+                int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
+
+                if (width >= 2 && width <= 5 && height >= 2 && height <= 5)
+                {
+                    GamePlayState.StockpileList.Add(GetAreaTiles(firstSelectedTile, SelectedTile));
+                }
+
+                SelectArea(firstSelectedTile, SelectedTile, Color.White);
+            }
+        }
+
         private void SelectArea(Tile firstTile, Tile lastTile, Color color)
         {
             int firstX = firstTile.X;
@@ -228,5 +254,49 @@ namespace MountPRG
             }
         }
 
+        private List<Tile> GetAreaTiles(Tile firstTile, Tile lastTile)
+        {
+            List<Tile> tiles = new List<Tile>();
+
+            int firstX = firstTile.X;
+            int firstY = firstTile.Y;
+
+            int lastX = lastTile.X;
+            int lastY = lastTile.Y;
+
+            if (firstX > lastX)
+                MathUtils.Replace(ref firstX, ref lastX);
+
+            if (firstY > lastY)
+                MathUtils.Replace(ref firstY, ref lastY);
+
+            for (int x = firstX; x <= lastX; x++)
+            {
+                for (int y = firstY; y <= lastY; y++)
+                {
+                    Tile tile = GamePlayState.TileMap.GetTile(x, y);
+                    tile.GroundLayerId = TileMap.GROUND;
+                    tiles.Add(tile);
+                }
+            }
+
+            return tiles;
+        }
+
+        private void MakeGatheringJob()
+        {
+            if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                if (!SelectedTile.Selected)
+                {
+                    Entity entity = SelectedTile.Entity;
+                    if (entity != null && entity.Has<Gatherable>())
+                    {
+                        SelectedTile.Selected = true;
+                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.GATHER));
+                    }
+                }
+            }
+        }
     }
 }

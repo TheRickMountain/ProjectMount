@@ -21,6 +21,8 @@ namespace MountPRG
         private DayNightSystemGUI dayNightSystemGUI;
         public static ActionPanelGUI ActionPanelGUI;
 
+        public static bool MouseOnUI { get; set; }
+
         public GUIManager(Game game)
         {
             itemDatabase = new ItemDatabase();
@@ -34,6 +36,8 @@ namespace MountPRG
 
         public void Update(GameTime gameTime)
         {
+            MouseOnUI = false;
+
             for (int i = 0; i < guiElements.Count; i++)
             {
                 if (guiElements[i].Active)

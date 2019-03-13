@@ -12,7 +12,7 @@ namespace MountPRG
         CUT,
         MINE,
         BUILD,
-        STORAGE,
+        STOCKPILE,
         NONE
     }
 

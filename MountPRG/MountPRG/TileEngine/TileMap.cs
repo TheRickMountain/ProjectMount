@@ -16,24 +16,25 @@ namespace MountPRG
     }
 
     public class Tile
-    {      
+    {
         public int X { get; }
         public int Y { get; }
+        public TileMap Tilemap { get; }
         public int GroundLayerId { get; set; }
         public int EntityLayerId { get; set; }
         public Entity Entity { get; set; }
         public bool Walkable { get; set; }
         public Color Color { get; set; }
         public bool Selected { get; set; }
-        private TileMap tilemap;
+       
 
         public Tile(int x, int y, int firstLayerId, int secondLayerId, TileMap tilemap)
         {
             X = x;
             Y = y;
+            Tilemap = tilemap;
             GroundLayerId = firstLayerId;
             EntityLayerId = secondLayerId;
-            this.tilemap = tilemap;
             Walkable = true;
             Color = Color.White;
         }
@@ -51,17 +52,17 @@ namespace MountPRG
                         if (i == X && j == Y)
                             continue;
 
-                        if (i >= 0 && j >= 0 && i < tilemap.Width && j < tilemap.Height)
-                            tiles.Add(tilemap.GetTile(i, j));
+                        if (i >= 0 && j >= 0 && i < Tilemap.Width && j < Tilemap.Height)
+                            tiles.Add(Tilemap.GetTile(i, j));
                     }
                 }
             }
             else
             {
-                tiles.Add(tilemap.GetTile(X - 1, Y));
-                tiles.Add(tilemap.GetTile(X + 1, Y));
-                tiles.Add(tilemap.GetTile(X, Y - 1));
-                tiles.Add(tilemap.GetTile(X, Y + 1));
+                tiles.Add(Tilemap.GetTile(X - 1, Y));
+                tiles.Add(Tilemap.GetTile(X + 1, Y));
+                tiles.Add(Tilemap.GetTile(X, Y - 1));
+                tiles.Add(Tilemap.GetTile(X, Y + 1));
             }
 
             return tiles;
@@ -73,7 +74,7 @@ namespace MountPRG
             {
                 for (int j = Y - 1; j <= Y + 1; j++)
                 {
-                    if (tileToCheck == tilemap.GetTile(i, j))
+                    if (tileToCheck == Tilemap.GetTile(i, j))
                         return true;
                 }
             }
@@ -92,7 +93,7 @@ namespace MountPRG
         public const int GRASS_FLOWER = 1;
         public const int STONE_BLOCK_1 = 2;
         public const int STONE_BLOCK_2 = 3;
-        public const int STONE_BLOCK_ENTRANCE = 4;
+        public const int GROUND = 4;
 
         public const int TILE_SIZE = 16;
 
@@ -213,6 +214,9 @@ namespace MountPRG
                     return false;
                 }
 
+                GamePlayState.Entities.Add(entity);
+                entity.X = tile.X * TILE_SIZE;
+                entity.Y = tile.Y * TILE_SIZE;
                 tile.Entity = entity;
                 tile.Walkable = walkable;
 
@@ -297,7 +301,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[firstIndex],
-                            tile.Color);
+                            tile.Color == Color.White ? DayNightSystemGUI.CurrentColor : tile.Color);
                     }
 
                     if (secondIndex != -1)
