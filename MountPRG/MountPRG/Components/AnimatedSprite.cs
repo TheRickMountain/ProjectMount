@@ -44,16 +44,8 @@ namespace MountPRG
                 Parent.Depth = Destination.Bottom;
             }
 
-            if (Shaded)
-            {
-                spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
+            spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
                 DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
-            }
-            else
-            {
-                spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
-                Color, Rotation, Vector2.Zero, Effects, 0);
-            }
         }
     }
 }

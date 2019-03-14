@@ -9,29 +9,25 @@ namespace MountPRG
 {
     public class ItemDatabase
     {
-
-        public const int STICK = 0;
-        public const int FLINT = 1;
-        public const int BERRY = 2;
-        public const int FLINT_KNIFE = 3;
-        public const int WOODEN_SPEAR = 4;
-        public const int HAY = 5;
-
-        private static List<Item> items = new List<Item>();
+        private static Dictionary<int, Item> items = new Dictionary<int, Item>();
 
         public ItemDatabase()
         {
-            items.Add(new Item(STICK, "stick", true, false, false));
-            items.Add(new Item(FLINT, "stone", true, false, false));
-            items.Add(new Item(BERRY, "berry", true, true, false));
-            items.Add(new Item(FLINT_KNIFE, "flint_knife", false, false, true));
-            items.Add(new Item(WOODEN_SPEAR, "wooden_spear", false, false, true));
-            items.Add(new Item(HAY, "hay", true, false, false));
+            items.Add(TileMap.STICK, new Item(TileMap.STICK, "stick", true, false, false));
+
+            items.Add(TileMap.FLINT, new Item(TileMap.FLINT, "stone", true, false, false));
+            items.Add(TileMap.BERRY, new Item(TileMap.BERRY, "berry", true, true, false));
+            items.Add(TileMap.FLINT_KNIFE, new Item(TileMap.FLINT_KNIFE, "flint_knife", false, false, true));
+            items.Add(TileMap.WOODEN_SPEAR, new Item(TileMap.WOODEN_SPEAR, "wooden_spear", false, false, true));
+            items.Add(TileMap.HAY, new Item(TileMap.HAY, "hay", true, false, false));
         }
 
         public static Item GetItemById(int id)
         {
-            return items[id];
+            if (items.ContainsKey(id))
+                return items[id];
+
+            return null;
         }
 
     }
@@ -41,7 +37,7 @@ namespace MountPRG
         public int Id { get; private set; }
         public string Name { get; private set; }
         public bool Stackable { get; private set; }
-        public Texture2D Texture { get; private set; }
+        public Sprite Sprite { get; private set; }
         public bool Consumable { get; private set; }
         public bool Weapon { get; private set; }
 
@@ -50,9 +46,10 @@ namespace MountPRG
             Id = id;
             Name = name;
             Stackable = stackable;
-            Texture = ResourceBank.Sprites[name];
+            Sprite = new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[id], 16, 16, true);
             Consumable = consumable;
             Weapon = weapon;
         }
+
     }
 }

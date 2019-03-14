@@ -20,20 +20,27 @@ namespace MountPRG
         public Color Color = Color.White;
         public SpriteEffects Effects = SpriteEffects.None;
         public float Alpha = 1.0f;
-        public bool Shaded = true;
 
         public Sprite(Texture2D texture, bool active)
-            : this(texture, texture.Width, texture.Height, active)
+            : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), texture.Width, texture.Height, active)
         {
         }
 
         public Sprite(Texture2D texture, int width, int height, bool active)
+            : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), width, height, active)
+        {
+
+        }
+
+        public Sprite(Texture2D texture, Rectangle source, int width, int height, bool active)
             : base(active, true)
         {
             Texture = texture;
             Destination = new Rectangle(0, 0, width, height);
-            Source = new Rectangle(0, 0, Texture.Width, Texture.Height);
+            Source = source;
         }
+
+        
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -69,10 +76,7 @@ namespace MountPRG
                 
             }
 
-            if(Shaded)
-                spriteBatch.Draw(Texture, Destination, Source, DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
-            else
-                spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);
+            spriteBatch.Draw(Texture, Destination, Source, DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
 
         }
 

@@ -95,11 +95,21 @@ namespace MountPRG
 
     public class TileMap
     {
-        public const int GRASS = 0;
-        public const int GRASS_FLOWER = 1;
-        public const int STONE_BLOCK_1 = 2;
-        public const int STONE_BLOCK_2 = 3;
-        public const int GROUND = 4;
+        public const int GRASS_TILE = 0;
+        public const int GRASS_FLOWER_TILE = 1;
+        public const int STONE_1_BLOCK = 2;
+        public const int STONE_2_BLOCK = 3;
+        public const int GROUND_TILE = 4;
+        public const int BUSH = 5;
+        public const int RASPBERRY_BUSH = 6;
+        public const int BLUEBERRY_BUSH = 7;
+        public const int STICK = 8;
+        public const int FLINT = 9;
+        public const int HAY = 10;
+        public const int BERRY = 11;
+        public const int WOODEN_SPEAR = 12;
+        public const int FLINT_KNIFE = 13;
+        public const int GRASS = 14;
 
         public const int STRAW_HUT_0 = 16;
         public const int STRAW_HUT_1 = 17;
@@ -148,9 +158,9 @@ namespace MountPRG
                 {
                     tmp = MyRandom.Range(1, 10);
                     if (tmp == 10)
-                        tmp = GRASS_FLOWER;
+                        tmp = GRASS_FLOWER_TILE;
                     else
-                        tmp = GRASS;
+                        tmp = GRASS_TILE;
                     
                     tiles[y * Width + x] = new Tile(x, y, tmp, -1, this);
                 }
@@ -289,8 +299,8 @@ namespace MountPRG
             max.Y = Math.Min(yViewPort + 1, Height);
 
             Rectangle destination = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
-            int firstIndex;
-            int secondIndex;
+            int groundIndex;
+            int buildingIndex;
             for (int y = min.Y; y < max.Y; y++)
             {
                 destination.Y = y * TILE_SIZE;
@@ -299,28 +309,28 @@ namespace MountPRG
                 {
                     // Сразу получаем Id двух текстур для отрисовки
                     Tile tile = GetTile(x, y);
-                    firstIndex = tile.GroundLayerId;
-                    secondIndex = tile.BuildingLayerId;
+                    groundIndex = tile.GroundLayerId;
+                    buildingIndex = tile.BuildingLayerId;
 
                     destination.X = x * TILE_SIZE;
 
                     // -1 говорит об отсутствии текстуры
-                    if (firstIndex != -1)
+                    if (groundIndex != -1)
                     {
 
                         spriteBatch.Draw(
                             tileSet.Texture,
                             destination,
-                            tileSet.SourceRectangles[firstIndex],
+                            tileSet.SourceRectangles[groundIndex],
                             tile.GroundColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.GroundColor);
                     }
 
-                    if (secondIndex != -1)
+                    if (buildingIndex != -1)
                     {
                         spriteBatch.Draw(
                             tileSet.Texture,
                             destination,
-                            tileSet.SourceRectangles[secondIndex],
+                            tileSet.SourceRectangles[buildingIndex],
                             tile.BuildingColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.BuildingColor);
                     }
 

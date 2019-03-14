@@ -283,7 +283,7 @@ namespace MountPRG
                 for (int y = firstY; y <= lastY; y++)
                 {
                     Tile tile = GamePlayState.TileMap.GetTile(x, y);
-                    tile.GroundLayerId = TileMap.GROUND;
+                    tile.GroundLayerId = TileMap.GROUND_TILE;
                     tiles[x - firstX, y - firstY] = tile;
                 }
             }
@@ -297,11 +297,13 @@ namespace MountPRG
             {
                 if (!SelectedTile.Selected)
                 {
-                    Entity entity = SelectedTile.Entity;
-                    if (entity != null && entity.Has<Gatherable>())
+                    if (SelectedTile.Entity != null && SelectedTile.Entity.Get<Gatherable>() != null)
                     {
-                        SelectedTile.Selected = true;
-                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.GATHER));
+                        if (SelectedTile.Entity.Get<Gatherable>().Count > 0)
+                        {
+                            SelectedTile.Selected = true;
+                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.GATHER));
+                        }
                     }
                 }
             }

@@ -8,10 +8,10 @@ namespace MountPRG
 {
     public class Flint : Entity
     {
-        public Flint()
-        {
-            Add(new Sprite(ResourceBank.Sprites["flint"], false));
-            Add(new Gatherable(ItemDatabase.GetItemById(ItemDatabase.FLINT), 1));
+
+        public Flint() {
+            Add(new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.FLINT], 16, 16, true));
+            Add(new Gatherable(ItemDatabase.GetItemById(TileMap.FLINT),1)); 
         }
 
     }

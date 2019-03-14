@@ -18,6 +18,8 @@ namespace MountPRG
     {
         public static Camera Camera;
 
+
+        public static TileSet TileSet;
         public static TileMap TileMap;
 
         public static EntityList Entities;
@@ -38,34 +40,41 @@ namespace MountPRG
         {
             Camera = new Camera();
 
-            TileMap = new TileMap(32, 32, new TileSet(ResourceBank.Sprites["tileset"]));
+            TileSet = new TileSet(ResourceBank.Sprites["tileset"]);
+            TileMap = new TileMap(32, 32, TileSet);
 
             guiManager = new GUIManager(GameRef);
 
             Entities = new EntityList();
 
-            TileMap.SetTile(5, 4, TileMap.STONE_BLOCK_1, Layer.BUILDING, false);
-            TileMap.SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.BUILDING, false);
-            TileMap.SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.BUILDING, false);
-            TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.BUILDING, false);
-            TileMap.SetTile(7, 3, TileMap.STONE_BLOCK_2, Layer.BUILDING, false);
-            TileMap.SetTile(7, 5, TileMap.STONE_BLOCK_2, Layer.BUILDING, false);
+            TileMap.SetTile(5, 4, TileMap.STONE_1_BLOCK, Layer.BUILDING, false);
+            TileMap.SetTile(5, 5, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
+            TileMap.SetTile(5, 3, TileMap.STONE_1_BLOCK, Layer.BUILDING, false);
+            TileMap.SetTile(6, 3, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
+            TileMap.SetTile(7, 3, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
+            TileMap.SetTile(7, 5, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
 
             //AddEntityToTileMap(17, 15, new Campfire());
             TileMap.AddEntity(10, 15, new Tree(), false);
+            TileMap.AddEntity(10, 17, new Flint());
             TileMap.AddEntity(10, 18, new Flint());
             TileMap.AddEntity(10, 19, new Flint());
             TileMap.AddEntity(10, 20, new Flint());
-            TileMap.AddEntity(10, 21, new Flint());
-            TileMap.AddEntity(19, 15, new Stick());
-            TileMap.AddEntity(20, 15, new Stick());
-            TileMap.AddEntity(21, 15, new Stick());
-            TileMap.AddEntity(22, 15, new Stick());
-            TileMap.AddEntity(24, 15, new Bush());
-            TileMap.AddEntity(15, 16, new Grass());
-            TileMap.AddEntity(16, 16, new Grass());
-            TileMap.AddEntity(16, 17, new Grass());
-            TileMap.AddEntity(15, 17, new Grass());
+
+            TileMap.AddEntity(11, 17, new Stick());
+            TileMap.AddEntity(11, 18, new Stick());
+            TileMap.AddEntity(11, 19, new Stick());
+            TileMap.AddEntity(11, 20, new Stick());
+
+            TileMap.AddEntity(12, 17, new Grass());
+            TileMap.AddEntity(12, 18, new Grass());
+            TileMap.AddEntity(12, 19, new Grass());
+            TileMap.AddEntity(12, 20, new Grass());
+
+            TileMap.AddEntity(9, 17, new Bush());
+            TileMap.AddEntity(9, 18, new Bush());
+            TileMap.AddEntity(9, 19, new Bush());
+            TileMap.AddEntity(9, 20, new Bush());
 
             Entities.Add(new Settler(Engine.ToWorldPos(18), Engine.ToWorldPos(15)));
             Entities.Add(new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15)));

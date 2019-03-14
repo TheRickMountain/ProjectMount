@@ -90,31 +90,60 @@ namespace MountPRG
                         if (myJob.Tile == currTile)
                         {
                             currTile.Selected = false;
-                            cargo = currTile.Entity;
-                            GamePlayState.TileMap.RemoveEntity(currTile.X, currTile.Y);
 
-                            // Получаем тайл с таким же предметом, либо пустой
-                            Tile tile = GamePlayState.StockpileList.GetTileForItem(cargo.Get<Gatherable>().Item.Id);
-                            if (tile != null)
+                            if (currTile.Entity.Get<Gatherable>().Item.Id == TileMap.HAY)
                             {
-                                // Занимаем тайл для предмета
-                                tile.EntityToAdd = cargo;
-                                SetDestTile(tile);
+                                cargo = new Hay();
+                                GamePlayState.TileMap.RemoveEntity(currTile.X, currTile.Y);
                             }
+                            else if (currTile.Entity.Get<Gatherable>().Item.Id == TileMap.BERRY)
+                            {
+                                if (currTile.Entity.Tag.Equals("Bush"))
+                                {
+                                    currTile.Entity.Get<Gatherable>().Count -= 1;
+                                    if (currTile.Entity.Get<Gatherable>().Count == 0)
+                                        currTile.Entity.Get<Sprite>().Source = GamePlayState.TileSet.SourceRectangles[TileMap.BUSH];
+                                }
+
+                                cargo = new Berry();
+                            }
+                            else
+                            {
+                                cargo = currTile.Entity;
+                                GamePlayState.TileMap.RemoveEntity(currTile.X, currTile.Y);
+                            }
+
+                            
+
+                            SetDestTile(stockpileTile);
                         }
                     }
                 }
             }
 
-            if(myJob == null && (GamePlayState.JobSystem.Count > 0))
+            if (myJob == null && (GamePlayState.JobSystem.Count > 0))
             {
-                for(int i = 0; i < GamePlayState.JobSystem.Count; i++)
+                for (int i = 0; i < GamePlayState.JobSystem.Count; i++)
                 {
                     Job job = GamePlayState.JobSystem.Get(i);
-                    if(job.JobType == JobType.GATHER)
+                    if (job.JobType == JobType.GATHER)
                     {
-                        if(GamePlayState.StockpileList.Count > 0)
+                        stockpileTile = GamePlayState.StockpileList.GetTileForItem(job.Tile.Entity.Get<Gatherable>().Item);
+                        if (stockpileTile != null)
                         {
+                            if (job.Tile.Entity.Get<Gatherable>().Item.Id == TileMap.HAY)
+                            {
+                                stockpileTile.EntityToAdd = new Hay();
+                            }
+                            else if(job.Tile.Entity.Get<Gatherable>().Item.Id == TileMap.BERRY)
+                            {
+                                stockpileTile.EntityToAdd = new Berry();
+                            }
+                            else
+                            {
+                                stockpileTile.EntityToAdd = job.Tile.Entity;
+                            }
+
                             GamePlayState.JobSystem.Remove(i);
                             myJob = job;
                             myJob.Tile.Selected = true;
@@ -124,7 +153,7 @@ namespace MountPRG
                     }
                 }
             }
-            
+
             MovementUpdate(gameTime);
         }
 

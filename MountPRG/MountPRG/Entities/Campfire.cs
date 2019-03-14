@@ -14,7 +14,6 @@ namespace MountPRG
             sprite.Animations.Add(AnimationKey.Down, new Animation(5, 0, 16, 24, 0, 0));
             sprite.IsAnimating = true;
             sprite.Origin.Y = 8;
-            sprite.Shaded = false;
             Add(sprite);
             Walkable = false;
         }

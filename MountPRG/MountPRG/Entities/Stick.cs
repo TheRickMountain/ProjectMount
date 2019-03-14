@@ -4,17 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
 namespace MountPRG
 {
     public class Stick : Entity
     {
-        public Stick()
-        {
-            Add(new Sprite(ResourceBank.Sprites["stick"], false));
-            Add(new Gatherable(ItemDatabase.GetItemById(ItemDatabase.STICK), 1));
+
+        public Stick() {
+            Add(new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.STICK], 16, 16, true));
+            Add(new Gatherable(ItemDatabase.GetItemById(TileMap.STICK), 1)); 
         }
 
     }

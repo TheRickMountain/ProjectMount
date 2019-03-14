@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
@@ -18,7 +16,7 @@ namespace MountPRG
             sprite.Origin.X = 8;
             sprite.Origin.Y = 32;
             Add(sprite);
-            Add(new Mineable(ItemDatabase.GetItemById(ItemDatabase.STICK), 5));
+            Add(new Mineable(ItemDatabase.GetItemById(TileMap.STICK), 5));
             Walkable = false;
         }
 
