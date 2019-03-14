@@ -12,6 +12,7 @@ namespace MountPRG
 {
     public abstract class Entity
     {
+        public int Id { get; protected set; }
         public bool Active = true;
         public bool Visible = true;
         public bool Walkable = true;

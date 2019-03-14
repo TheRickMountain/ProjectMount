@@ -8,12 +8,11 @@ namespace MountPRG
 {
     public class Berry : Entity
     {
-
         public Berry()
         {
+            Id = TileMap.BERRY;
             Add(new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.BERRY], 16, 16, true));
-            Add(new Gatherable(ItemDatabase.GetItemById(TileMap.BERRY), 1));
+            Add(new Gatherable(this, 1));
         }
-
     }
 }

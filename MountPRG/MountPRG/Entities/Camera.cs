@@ -297,9 +297,10 @@ namespace MountPRG
             {
                 if (!SelectedTile.Selected)
                 {
-                    if (SelectedTile.Entity != null && SelectedTile.Entity.Get<Gatherable>() != null)
+                    if(SelectedTile.Entity != null)
                     {
-                        if (SelectedTile.Entity.Get<Gatherable>().Count > 0)
+                        Gatherable gatherable = SelectedTile.Entity.Get<Gatherable>();
+                        if(gatherable != null && gatherable.Count > 0)
                         {
                             SelectedTile.Selected = true;
                             GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.GATHER));

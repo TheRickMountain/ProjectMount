@@ -32,7 +32,7 @@ namespace MountPRG
 
         // Если в хранилище есть такой предмет, то возвращает тайл с этим предметом
         // Иначе возвращает любой пустой тайл
-        public Tile GetTileForItem(Item item)
+        public Tile GetTileForEntity(Entity entity)
         {
             if (stockpiles.Count == 0)
                 return null;
@@ -43,12 +43,8 @@ namespace MountPRG
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
                     Tile tile = tiles[i, j];
-                    if (tile.EntityToAdd != null)
-                    {
-                        Gatherable gatherable = tile.EntityToAdd.Get<Gatherable>();
-                        if(gatherable.Item == item)
+                    if (tile.EntityToAdd != null && entity.Id == tile.EntityToAdd.Id)
                             return tile;
-                    }
                 }
             }
 
@@ -58,9 +54,7 @@ namespace MountPRG
                 {
                     Tile tile = tiles[i, j];
                     if (tile.EntityToAdd == null)
-                    {
                         return tile;
-                    }
                 }
             }
 

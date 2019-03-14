@@ -8,11 +8,11 @@ namespace MountPRG
 {
     public class Flint : Entity
     {
-
-        public Flint() {
+        public Flint()
+        {
+            Id = TileMap.FLINT;
             Add(new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.FLINT], 16, 16, true));
-            Add(new Gatherable(ItemDatabase.GetItemById(TileMap.FLINT),1)); 
+            Add(new Gatherable(this, 1));
         }
-
     }
 }

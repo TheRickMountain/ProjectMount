@@ -56,6 +56,7 @@ namespace MountPRG
 
             //AddEntityToTileMap(17, 15, new Campfire());
             TileMap.AddEntity(10, 15, new Tree(), false);
+
             TileMap.AddEntity(10, 17, new Flint());
             TileMap.AddEntity(10, 18, new Flint());
             TileMap.AddEntity(10, 19, new Flint());
@@ -70,6 +71,7 @@ namespace MountPRG
             TileMap.AddEntity(12, 18, new Grass());
             TileMap.AddEntity(12, 19, new Grass());
             TileMap.AddEntity(12, 20, new Grass());
+
 
             TileMap.AddEntity(9, 17, new Bush());
             TileMap.AddEntity(9, 18, new Bush());

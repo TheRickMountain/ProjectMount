@@ -45,7 +45,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\AnimatedSprite.cs" />
-    <Compile Include="Components\Collider.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentList.cs" />
     <Compile Include="Components\Gatherable.cs" />
@@ -55,10 +54,10 @@
     <Compile Include="Components\Storage.cs" />
     <Compile Include="Entities\Berry.cs" />
     <Compile Include="Entities\Bush.cs" />
-    <Compile Include="Entities\Hay.cs" />
-    <Compile Include="Entities\Grass.cs" />
-    <Compile Include="Entities\Stick.cs" />
     <Compile Include="Entities\Flint.cs" />
+    <Compile Include="Entities\Grass.cs" />
+    <Compile Include="Entities\Hay.cs" />
+    <Compile Include="Entities\Stick.cs" />
     <Compile Include="Entities\Tree.cs" />
     <Compile Include="GUISystem\Button.cs" />
     <Compile Include="Entities\Campfire.cs" />

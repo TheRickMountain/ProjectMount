@@ -31,7 +31,7 @@ namespace MountPRG
                     Slot slot = slots[i * tiles.GetLength(1) + j];
                     Tile tile = tiles[i, j];
                     if (tile.Entity != null)
-                        slot.AddItem(tile.Entity.Get<Gatherable>().Item, tile.EntityCount);
+                        slot.AddItem(ItemDatabase.GetItemById(tile.Entity.Id), tile.Entity.Get<Gatherable>().Count);
                     else
                         slot.Clear();
                 }
@@ -73,11 +73,11 @@ namespace MountPRG
                     Slot slot = new Slot(ResourceBank.Sprites["slot"], GUIManager.SLOT_SIZE, GUIManager.SLOT_SIZE, true);
                     slot.X = background.InnerX + i * GUIManager.SLOT_SIZE + i * GUIManager.OFFSET;
                     slot.Y = background.InnerY + j * GUIManager.SLOT_SIZE + j * GUIManager.OFFSET;
+
                     Tile tile = tiles[i, j];
                     if (tile.Entity != null)
-                    {
-                        slot.AddItem(tile.Entity.Get<Gatherable>().Item, tile.EntityCount);
-                    }
+                        slot.AddItem(ItemDatabase.GetItemById(tile.Entity.Id), tile.Entity.Get<Gatherable>().Count);
+
                     slots.Add(slot);
                 }
             }

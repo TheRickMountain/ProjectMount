@@ -10,21 +10,42 @@ namespace MountPRG
 {
     public class Gatherable : Component
     {
-        public Item Item
+
+        private Action cbCountEqualsZero;
+
+        public Entity Entity
         {
             get; private set;
         }
 
+        private int count;
+
         public int Count
         {
-            get; set;
+            get { return count; }
+            set {
+                count = value;
+                if (count == 0)
+                    cbCountEqualsZero();
+            }
         }
 
-        public Gatherable(Item item, int count) : base(false, false)
+        public bool EntityHolder
         {
-            Item = item;
-            Count = count;
+            get; private set;
+        }
+
+        public Gatherable(Entity entity, int count, bool entityHolder = false) : base(false, false)
+        {
+            Entity = entity;
+            this.count = count;
+            EntityHolder = entityHolder;
         } 
+
+        public void OnCountEqualsZeroCallback(Action cb)
+        {
+            cbCountEqualsZero += cb;
+        }
 
     }
 }

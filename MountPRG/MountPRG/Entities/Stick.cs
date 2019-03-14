@@ -8,11 +8,11 @@ namespace MountPRG
 {
     public class Stick : Entity
     {
-
-        public Stick() {
+        public Stick()
+        {
+            Id = TileMap.STICK;
             Add(new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.STICK], 16, 16, true));
-            Add(new Gatherable(ItemDatabase.GetItemById(TileMap.STICK), 1)); 
+            Add(new Gatherable(this, 1));
         }
-
     }
 }

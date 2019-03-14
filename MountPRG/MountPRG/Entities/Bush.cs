@@ -11,9 +11,16 @@ namespace MountPRG
 
         public Bush()
         {
-            Tag = "Bush";
-            Add(new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.RASPBERRY_BUSH], 16, 16, true));
-            Add(new Gatherable(ItemDatabase.GetItemById(TileMap.BERRY), 1));
+
+            Sprite sprite = new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.RASPBERRY_BUSH], 16, 16, true);
+            Add(sprite);
+
+            Gatherable gatherable = new Gatherable(new Berry(), 1, true);
+            Add(gatherable);
+            gatherable.OnCountEqualsZeroCallback(delegate
+            {
+                sprite.Source = GamePlayState.TileSet.SourceRectangles[TileMap.BUSH];
+            });
         }
 
     }

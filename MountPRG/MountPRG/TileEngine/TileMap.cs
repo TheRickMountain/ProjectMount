@@ -23,25 +23,23 @@ namespace MountPRG
         public int GroundLayerId { get; set; }
         public int BuildingLayerId { get; set; }
         public Entity Entity { get; set; }
+        public Entity EntityToAdd { get; set; }
         public bool Walkable { get; set; }
         public Color GroundColor { get; set; }
         public Color BuildingColor { get; set; }
         public bool Selected { get; set; }
-        public Entity EntityToAdd { get; set; }
-        public int EntityCount { get; set; }
         public int Stockpile { get; set; }
 
-        public Tile(int x, int y, int firstLayerId, int secondLayerId, TileMap tilemap)
+        public Tile(int x, int y, int groundLayerId, int buildingLayerId, TileMap tilemap)
         {
             X = x;
             Y = y;
             Tilemap = tilemap;
-            GroundLayerId = firstLayerId;
-            BuildingLayerId = secondLayerId;
+            GroundLayerId = groundLayerId;
+            BuildingLayerId = buildingLayerId;
             Walkable = true;
             GroundColor = Color.White;
             BuildingColor = Color.White;
-            EntityCount = 0;
             Stockpile = -1;
         }
 

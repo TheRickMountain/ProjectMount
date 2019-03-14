@@ -12,7 +12,7 @@ namespace MountPRG
         public Grass()
         {
             Add(new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.GRASS], 16, 16, true));
-            Add(new Gatherable(ItemDatabase.GetItemById(TileMap.HAY), 1));
+            Add(new Gatherable(new Hay(), 1));
         }
 
     }
