@@ -35,7 +35,7 @@ namespace MountPRG
             buttons.Add(new Button("BUILD", ResourceBank.Sprites["build_icon"], true));
             buttons.Add(new Button("STORAGE", ResourceBank.Sprites["storage_icon"], true));
 
-            int xStart = Game1.ScreenRectangle.Width - (buttons.Count * GUIManager.BUTTON_SIZE + buttons.Count * GUIManager.OFFSET);
+            int xStart = (Game1.ScreenRectangle.Width / 2) - (buttons.Count * GUIManager.BUTTON_SIZE + buttons.Count * GUIManager.OFFSET) / 2;
             int yStart = Game1.ScreenRectangle.Height - (GUIManager.BUTTON_SIZE + GUIManager.OFFSET);
             for (int i = 0; i < buttons.Count; i++)
             {

@@ -10,7 +10,7 @@ namespace MountPRG
 {
     public class GUIManager
     {
-        public static int SLOT_SIZE = 32;
+        public static int SLOT_SIZE = 48;
         public static int BUTTON_SIZE = 48;
         public static int OFFSET = 5;
 

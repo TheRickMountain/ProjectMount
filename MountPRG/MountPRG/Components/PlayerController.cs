@@ -77,7 +77,10 @@ namespace MountPRG
                     {
                         if(currTile == destTile)
                         {
-                            GamePlayState.TileMap.AddEntity(currTile.X, currTile.Y, cargo, true);
+                            if(currTile.Entity == null)
+                                GamePlayState.TileMap.AddEntity(currTile.X, currTile.Y, cargo, true);
+                            currTile.EntityCount += 1;
+
                             cargo = null;
                             myJob = null;
                         }
@@ -90,10 +93,12 @@ namespace MountPRG
                             cargo = currTile.Entity;
                             GamePlayState.TileMap.RemoveEntity(currTile.X, currTile.Y);
 
-                            Tile tile = GamePlayState.StockpileList.GetEmptyTileFrom(0);
+                            // Получаем тайл с таким же предметом, либо пустой
+                            Tile tile = GamePlayState.StockpileList.GetTileForItem(cargo.Get<Gatherable>().Item.Id);
                             if (tile != null)
                             {
-                                tile.Occupied = true;
+                                // Занимаем тайл для предмета
+                                tile.EntityToAdd = cargo;
                                 SetDestTile(tile);
                             }
                         }

@@ -109,7 +109,7 @@ namespace MountPRG
                         //Console.WriteLine("Mine");
                         break;
                     case JobType.BUILD:
-                        //Console.WriteLine("Build");
+                        MakeBuilding();
                         break;
                     case JobType.STOCKPILE:
                         MakeStockpile();
@@ -257,7 +257,7 @@ namespace MountPRG
             {
                 for (int y = firstY; y <= lastY; y++)
                 {
-                    GamePlayState.TileMap.GetTile(x, y).Color = color;
+                    GamePlayState.TileMap.GetTile(x, y).GroundColor = color;
                 }
             }
         }
@@ -304,6 +304,26 @@ namespace MountPRG
                         GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.GATHER));
                     }
                 }
+            }
+        }
+
+        private void MakeBuilding()
+        {
+            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                int x = SelectedTile.X;
+                int y = SelectedTile.Y;
+                GamePlayState.TileMap.GetTile(x, y).BuildingLayerId = TileMap.STRAW_HUT_0;
+                GamePlayState.TileMap.GetTile(x, y).Walkable = false;
+
+                GamePlayState.TileMap.GetTile(x + 1, y).BuildingLayerId = TileMap.STRAW_HUT_1;
+                GamePlayState.TileMap.GetTile(x + 1, y).Walkable = false;
+
+                GamePlayState.TileMap.GetTile(x, y + 1).BuildingLayerId = TileMap.STRAW_HUT_2;
+                GamePlayState.TileMap.GetTile(x, y + 1).Walkable = false;
+
+                GamePlayState.TileMap.GetTile(x + 1, y + 1).BuildingLayerId = TileMap.STRAW_HUT_3;
+                GamePlayState.TileMap.GetTile(x + 1, y + 1).Walkable = false;
             }
         }
     }

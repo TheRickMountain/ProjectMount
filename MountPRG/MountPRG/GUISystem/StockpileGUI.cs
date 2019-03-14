@@ -31,13 +31,13 @@ namespace MountPRG
                     Slot slot = slots[i * tiles.GetLength(1) + j];
                     Tile tile = tiles[i, j];
                     if (tile.Entity != null)
-                        slot.AddItem(tile.Entity.Get<Gatherable>().Item, 1);
+                        slot.AddItem(tile.Entity.Get<Gatherable>().Item, tile.EntityCount);
                     else
                         slot.Clear();
                 }
             }
 
-            if (InputManager.GetKeyDown(Keys.Tab))
+            if (InputManager.GetKeyDown(Keys.E))
             {
                 Active = false;
                 slots.Clear();
@@ -63,8 +63,8 @@ namespace MountPRG
             background.InnerWidth = tiles.GetLength(0) * GUIManager.SLOT_SIZE + (tiles.GetLength(0) - 1) * GUIManager.OFFSET;
             background.InnerHeight = tiles.GetLength(1) * GUIManager.SLOT_SIZE + (tiles.GetLength(1) - 1) * GUIManager.OFFSET;
 
-            background.X = Game1.ScreenRectangle.Width / 2 - background.Width / 2;
-            background.Y = Game1.ScreenRectangle.Height / 2 - background.Height / 2;
+            background.X = Game1.ScreenRectangle.Width- background.Width;
+            background.Y = Game1.ScreenRectangle.Height - background.Height;
 
             for (int i = 0; i < tiles.GetLength(0); i++)
             {
@@ -76,7 +76,7 @@ namespace MountPRG
                     Tile tile = tiles[i, j];
                     if (tile.Entity != null)
                     {
-                        slot.AddItem(tile.Entity.Get<Gatherable>().Item, 1);
+                        slot.AddItem(tile.Entity.Get<Gatherable>().Item, tile.EntityCount);
                     }
                     slots.Add(slot);
                 }

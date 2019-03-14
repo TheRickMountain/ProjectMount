@@ -15,6 +15,7 @@ namespace MountPRG
         public const int BERRY = 2;
         public const int FLINT_KNIFE = 3;
         public const int WOODEN_SPEAR = 4;
+        public const int HAY = 5;
 
         private static List<Item> items = new List<Item>();
 
@@ -25,6 +26,7 @@ namespace MountPRG
             items.Add(new Item(BERRY, "berry", true, true, false));
             items.Add(new Item(FLINT_KNIFE, "flint_knife", false, false, true));
             items.Add(new Item(WOODEN_SPEAR, "wooden_spear", false, false, true));
+            items.Add(new Item(HAY, "hay", true, false, false));
         }
 
         public static Item GetItemById(int id)

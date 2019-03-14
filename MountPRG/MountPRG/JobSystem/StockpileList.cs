@@ -30,16 +30,34 @@ namespace MountPRG
             return stockpiles[val];
         }
 
-        public Tile GetEmptyTileFrom(int val)
+        // Если в хранилище есть такой предмет, то возвращает тайл с этим предметом
+        // Иначе возвращает любой пустой тайл
+        public Tile GetTileForItem(int id)
         {
-            Tile[,] tiles = stockpiles[val];
-            for(int i = 0; i < tiles.GetLength(0); i++)
+            Tile[,] tiles = stockpiles[0];
+            for (int i = 0; i < tiles.GetLength(0); i++)
             {
-                for(int j = 0; j < tiles.GetLength(1); j++)
+                for (int j = 0; j < tiles.GetLength(1); j++)
                 {
-                    Tile tile = tiles[i,j];
-                    if (!tile.Occupied && tile.Entity == null)
+                    Tile tile = tiles[i, j];
+                    if (tile.Entity != null)
+                    {
+                        Gatherable gatherable = tile.EntityToAdd.Get<Gatherable>();
+                        if(gatherable.Item.Id == id)
+                            return tile;
+                    }
+                }
+            }
+
+            for (int i = 0; i < tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < tiles.GetLength(1); j++)
+                {
+                    Tile tile = tiles[i, j];
+                    if (tile.Entity == null)
+                    {
                         return tile;
+                    }
                 }
             }
 

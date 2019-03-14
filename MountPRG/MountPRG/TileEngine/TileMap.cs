@@ -12,7 +12,7 @@ namespace MountPRG
     public enum Layer
     {
         GROUND,
-        ENTITY
+        BUILDING
     }
 
     public class Tile
@@ -21,12 +21,14 @@ namespace MountPRG
         public int Y { get; }
         public TileMap Tilemap { get; }
         public int GroundLayerId { get; set; }
-        public int EntityLayerId { get; set; }
+        public int BuildingLayerId { get; set; }
         public Entity Entity { get; set; }
         public bool Walkable { get; set; }
-        public Color Color { get; set; }
+        public Color GroundColor { get; set; }
+        public Color BuildingColor { get; set; }
         public bool Selected { get; set; }
-        public bool Occupied { get; set; }
+        public Entity EntityToAdd { get; set; }
+        public int EntityCount { get; set; }
         public int Stockpile { get; set; }
 
         public Tile(int x, int y, int firstLayerId, int secondLayerId, TileMap tilemap)
@@ -35,9 +37,11 @@ namespace MountPRG
             Y = y;
             Tilemap = tilemap;
             GroundLayerId = firstLayerId;
-            EntityLayerId = secondLayerId;
+            BuildingLayerId = secondLayerId;
             Walkable = true;
-            Color = Color.White;
+            GroundColor = Color.White;
+            BuildingColor = Color.White;
+            EntityCount = 0;
             Stockpile = -1;
         }
 
@@ -96,6 +100,11 @@ namespace MountPRG
         public const int STONE_BLOCK_1 = 2;
         public const int STONE_BLOCK_2 = 3;
         public const int GROUND = 4;
+
+        public const int STRAW_HUT_0 = 16;
+        public const int STRAW_HUT_1 = 17;
+        public const int STRAW_HUT_2 = 32;
+        public const int STRAW_HUT_3 = 33;
 
         public const int TILE_SIZE = 16;
 
@@ -173,7 +182,7 @@ namespace MountPRG
 
             Tile tile = tiles[y * Width + x];
             tile.GroundLayerId = firstLayerId;
-            tile.EntityLayerId = secondLayerId;
+            tile.BuildingLayerId = secondLayerId;
             tile.Walkable = isWalkable;
         }
 
@@ -191,8 +200,8 @@ namespace MountPRG
                 case Layer.GROUND:
                     tile.GroundLayerId = id;
                     break;
-                case Layer.ENTITY:
-                    tile.EntityLayerId = id;
+                case Layer.BUILDING:
+                    tile.BuildingLayerId = id;
                     break;
             }
             tile.Walkable = isWalkable;
@@ -204,7 +213,7 @@ namespace MountPRG
 
             if (tile != null)
             {
-                if (tile.EntityLayerId != -1)
+                if (tile.BuildingLayerId != -1)
                 {
                     Console.WriteLine("Tile " + x + " " + y + " has block");
                     return false;
@@ -291,7 +300,7 @@ namespace MountPRG
                     // Сразу получаем Id двух текстур для отрисовки
                     Tile tile = GetTile(x, y);
                     firstIndex = tile.GroundLayerId;
-                    secondIndex = tile.EntityLayerId;
+                    secondIndex = tile.BuildingLayerId;
 
                     destination.X = x * TILE_SIZE;
 
@@ -303,7 +312,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[firstIndex],
-                            tile.Color == Color.White ? DayNightSystemGUI.CurrentColor : tile.Color);
+                            tile.GroundColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.GroundColor);
                     }
 
                     if (secondIndex != -1)
@@ -312,7 +321,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[secondIndex],
-                            DayNightSystemGUI.CurrentColor);
+                            tile.BuildingColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.BuildingColor);
                     }
 
                     if (tile.Selected)

@@ -44,12 +44,12 @@ namespace MountPRG
 
             Entities = new EntityList();
 
-            TileMap.SetTile(5, 4, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
-            TileMap.SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
-            TileMap.SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.ENTITY, false);
-            TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
-            TileMap.SetTile(7, 3, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
-            TileMap.SetTile(7, 5, TileMap.STONE_BLOCK_2, Layer.ENTITY, false);
+            TileMap.SetTile(5, 4, TileMap.STONE_BLOCK_1, Layer.BUILDING, false);
+            TileMap.SetTile(5, 5, TileMap.STONE_BLOCK_2, Layer.BUILDING, false);
+            TileMap.SetTile(5, 3, TileMap.STONE_BLOCK_1, Layer.BUILDING, false);
+            TileMap.SetTile(6, 3, TileMap.STONE_BLOCK_2, Layer.BUILDING, false);
+            TileMap.SetTile(7, 3, TileMap.STONE_BLOCK_2, Layer.BUILDING, false);
+            TileMap.SetTile(7, 5, TileMap.STONE_BLOCK_2, Layer.BUILDING, false);
 
             //AddEntityToTileMap(17, 15, new Campfire());
             TileMap.AddEntity(10, 15, new Tree(), false);
@@ -61,6 +61,11 @@ namespace MountPRG
             TileMap.AddEntity(20, 15, new Stick());
             TileMap.AddEntity(21, 15, new Stick());
             TileMap.AddEntity(22, 15, new Stick());
+            TileMap.AddEntity(24, 15, new Bush());
+            TileMap.AddEntity(15, 16, new Grass());
+            TileMap.AddEntity(16, 16, new Grass());
+            TileMap.AddEntity(16, 17, new Grass());
+            TileMap.AddEntity(15, 17, new Grass());
 
             Entities.Add(new Settler(Engine.ToWorldPos(18), Engine.ToWorldPos(15)));
             Entities.Add(new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15)));

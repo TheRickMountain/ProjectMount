@@ -54,6 +54,7 @@
     <Compile Include="Components\Sprite.cs" />
     <Compile Include="Components\Storage.cs" />
     <Compile Include="Entities\Bush.cs" />
+    <Compile Include="Entities\Grass.cs" />
     <Compile Include="GUISystem\Button.cs" />
     <Compile Include="Entities\Campfire.cs" />
     <Compile Include="Entities\Chest.cs" />
