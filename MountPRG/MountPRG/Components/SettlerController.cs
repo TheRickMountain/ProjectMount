@@ -10,14 +10,26 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MountPRG
 {
-    public enum PlayerState
+    public enum AnimationState
     {
         IDLE,
-        MOVE
+        MOVING,
     }
 
-    public class PlayerController : Component
+    public enum JobState
     {
+        WAITING,
+        WORKING,
+        SLEEPING
+    }
+
+    public class SettlerController : Component
+    {
+        public string Name
+        {
+            get; private set;
+        }
+
         private Tile currTile;
         private Tile nextTile;
         private Tile destTile;
@@ -30,17 +42,20 @@ namespace MountPRG
         private float speed = 3f;
 
         private AnimatedSprite sprite;
-        private PlayerState playerState = PlayerState.IDLE;
+        private AnimationState animationState = AnimationState.IDLE;
+        private JobState jobState = JobState.WAITING;
 
         private Job myJob;
 
         private Entity cargo;
         private Tile stockpileTile;
 
-        public PlayerController(AnimatedSprite sprite)
+        public SettlerController(AnimatedSprite sprite)
             : base(true, false)
         {
             this.sprite = sprite;
+
+            Name = NameGenerator.GetInstance.GenerateMaleName();
         }
 
         public override void Initialize()
@@ -69,11 +84,35 @@ namespace MountPRG
                     }
                 }
             }*/
-    
-            if(myJob != null)
+            if (jobState == JobState.WAITING)
             {
-                if (myJob.JobType == JobType.GATHER) {
+                if (myJob == null && (GamePlayState.JobSystem.Count > 0))
+                {
+                    for (int i = 0; i < GamePlayState.JobSystem.Count; i++)
+                    {
+                        Job job = GamePlayState.JobSystem.Get(i);
+                        if (job.JobType == JobType.HARVEST)
+                        {
+                            stockpileTile = GamePlayState.StockpileList.GetTileForEntity(job.Tile.Entity.Get<Gatherable>().Entity);
 
+                            if (stockpileTile != null)
+                            {
+                                stockpileTile.EntityToAdd = job.Tile.Entity.Get<Gatherable>().Entity;
+
+                                GamePlayState.JobSystem.Remove(i);
+                                myJob = job;
+                                SetDestTile(myJob.Tile);
+                                jobState = JobState.WORKING;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (jobState == JobState.WORKING)
+            {
+                if (myJob.JobType == JobType.HARVEST)
+                {
                     if (cargo == null)
                     {
                         if (myJob.Tile == currTile)
@@ -92,7 +131,7 @@ namespace MountPRG
                     }
                     else
                     {
-                        if(currTile == stockpileTile)
+                        if (currTile == stockpileTile)
                         {
                             if (stockpileTile.Entity == null)
                             {
@@ -105,28 +144,8 @@ namespace MountPRG
 
                             cargo = null;
                             myJob = null;
-                        }
-                    }
-                }
-            }
 
-            if (myJob == null && (GamePlayState.JobSystem.Count > 0))
-            {
-                for (int i = 0; i < GamePlayState.JobSystem.Count; i++)
-                {
-                    Job job = GamePlayState.JobSystem.Get(i);
-                    if (job.JobType == JobType.GATHER)
-                    {
-                        stockpileTile = GamePlayState.StockpileList.GetTileForEntity(job.Tile.Entity.Get<Gatherable>().Entity);
-
-                        if (stockpileTile != null)
-                        {
-                            stockpileTile.EntityToAdd = job.Tile.Entity.Get<Gatherable>().Entity;
-
-                            GamePlayState.JobSystem.Remove(i);
-                            myJob = job;
-                            SetDestTile(myJob.Tile);
-                            break;
+                            jobState = JobState.WAITING;
                         }
                     }
                 }
@@ -167,7 +186,7 @@ namespace MountPRG
             if (currTile.Equals(destTile))
             {
                 pathAStar = null;
-                playerState = PlayerState.IDLE;
+                animationState = AnimationState.IDLE;
             }
 
             if (pathAStar != null)
@@ -201,10 +220,10 @@ namespace MountPRG
                 Parent.X = MathUtils.Lerp(currTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
                 Parent.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
 
-                playerState = PlayerState.MOVE;
+                animationState = AnimationState.MOVING;
             }
 
-            if (playerState == PlayerState.IDLE)
+            if (animationState == AnimationState.IDLE)
                 sprite.ResetAnimation();
         }
     }

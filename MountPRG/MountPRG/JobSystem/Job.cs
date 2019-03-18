@@ -8,11 +8,12 @@ namespace MountPRG
 {
     public enum JobType
     {
-        GATHER,
-        CUT,
+        HARVEST,
+        CHOP,
         MINE,
-        BUILD,
+        HAUL,
         STOCKPILE,
+        BUILDING,
         NONE
     }
 
@@ -28,6 +29,11 @@ namespace MountPRG
             Tile = tile;
             JobType = jobType;
             JobTime = jobTime;
+        }
+
+        public void DoWork(SettlerController player)
+        {
+
         }
 
     }

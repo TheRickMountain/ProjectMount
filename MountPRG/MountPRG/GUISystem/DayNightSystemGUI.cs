@@ -10,17 +10,20 @@ namespace MountPRG
 {
     public class DayNightSystemGUI : IGUI
     {
-
-        private float currentTime;
-
         private Texture2D circle;
         private Texture2D arrow;
 
         private Rectangle circleDestination;
         private Rectangle circleSource;
         private Vector2 circleOrigin;
+        private float currentTime;
 
         private Rectangle arrowDestination;
+
+        public float TimeOfDay
+        {
+            get; private set;
+        }
 
         public static Color DayColor
         {
@@ -55,7 +58,7 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.01);
+            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.0); // 0.1
             int timeOfDay = -MathUtils.ToDegrees(currentTime);
             if(timeOfDay >= 80 && timeOfDay <= 110)
             {
@@ -67,6 +70,11 @@ namespace MountPRG
                 float amount = Math.Min(1.0f, (timeOfDay - 260.0f) / 20.0f);
                 CurrentColor = Color.Lerp(NightColor, DayColor, amount);
             }
+
+            if (timeOfDay >= 360)
+                currentTime = 0;
+
+            TimeOfDay = timeOfDay;
         }
 
         public override void Draw(SpriteBatch spriteBatch)

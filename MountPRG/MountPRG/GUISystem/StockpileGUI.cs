@@ -37,7 +37,7 @@ namespace MountPRG
                 }
             }
 
-            if (InputManager.GetKeyDown(Keys.E))
+            if (InputManager.GetKeyDown(Keys.E) || InputManager.GetMouseButtonDown(MouseInput.RightButton))
             {
                 Active = false;
                 slots.Clear();

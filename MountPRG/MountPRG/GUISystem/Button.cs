@@ -10,7 +10,19 @@ namespace MountPRG
 {
     public class Button : IGUI
     {
-        private Texture2D texture;
+        private Texture2D background;
+
+        public Texture2D Icon
+        {
+            get; set;
+        }
+
+        private SpriteFont font;
+
+        public string Text
+        {
+            get; set;
+        }
 
         private Rectangle dest;
 
@@ -35,19 +47,19 @@ namespace MountPRG
             get; private set;
         }
 
-        public int X
+        public float X
         {
             get { return dest.X; }
-            set { dest.X = value; }
+            set { dest.X = (int)value; }
         }
 
-        public int Y
+        public float Y
         {
             get { return dest.Y; }
-            set { dest.Y = value; }
+            set { dest.Y = (int)value; }
         }
 
-        public int Widtth
+        public int Width
         {
             get { return dest.Width; }
             set { dest.Width = value; }
@@ -59,13 +71,26 @@ namespace MountPRG
             set { dest.Height = value; }
         }
 
-        public Button(string name, Texture2D texture, bool active) : base(active)
+        public Button(Texture2D background, Texture2D icon, bool active) : base(active)
         {
-            Name = name;
+            this.background = background;
+            this.Icon = icon;
 
-            this.texture = texture;
+            dest = new Rectangle(0, 0, background.Width, background.Height);
 
-            dest = new Rectangle(0, 0, texture.Width, texture.Height);
+            color = Color.White;
+        }
+
+        public Button(Texture2D background, string text, bool active) : base(active)
+        {
+            this.background = background;
+            Text = text;
+
+            Vector2 textSize = ResourceBank.Fonts["mountFont"].MeasureString(text);
+
+            dest = new Rectangle(0, 0, (int)textSize.X, (int)textSize.Y);
+
+            font = ResourceBank.Fonts["mountFont"];
 
             color = Color.White;
         }
@@ -77,7 +102,12 @@ namespace MountPRG
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, dest, color);
+            spriteBatch.Draw(background, dest, color);
+            if (Icon != null)
+                spriteBatch.Draw(Icon, dest, color);
+            
+            if(Text != null)
+                spriteBatch.DrawString(font, Text, new Vector2(dest.X, dest.Y), Color.White);
         }
 
         public bool Intersects(int x, int y)

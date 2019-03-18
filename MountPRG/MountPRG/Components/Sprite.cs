@@ -36,8 +36,8 @@ namespace MountPRG
             : base(active, true)
         {
             Texture = texture;
-            Destination = new Rectangle(0, 0, width, height);
             Source = source;
+            Destination = new Rectangle(0, 0, width, height);
         }
 
         
@@ -76,8 +76,7 @@ namespace MountPRG
                 
             }
 
-            spriteBatch.Draw(Texture, Destination, Source, DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
-
+            spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);
         }
 
         public bool Intersects(int x, int y)

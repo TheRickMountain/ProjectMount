@@ -96,23 +96,35 @@ namespace MountPRG
                                 {
                                     GUIManager.StockpileGUI.Open(GamePlayState.StockpileList.Get(SelectedTile.Stockpile));
                                 }
+
+                                if(SelectedTile.Entity != null)
+                                {
+                                    Hut hut = SelectedTile.Entity.Get<Hut>();
+                                    if(hut != null)
+                                    {
+                                        GUIManager.HutUI.Open(hut);
+                                    }
+                                }
                             }
                         }
                         break;
-                    case JobType.GATHER:
+                    case JobType.HARVEST:
                         MakeGatheringJob();
                         break;
-                    case JobType.CUT:
+                    case JobType.CHOP:
                         //Console.WriteLine("Cut");
                         break;
                     case JobType.MINE:
                         //Console.WriteLine("Mine");
                         break;
-                    case JobType.BUILD:
-                        MakeBuilding();
+                    case JobType.HAUL:
+                        //MakeBuilding();
                         break;
                     case JobType.STOCKPILE:
                         MakeStockpile();
+                        break;
+                    case JobType.BUILDING:
+                        MakeBuilding();
                         break;
                 }
             }
@@ -206,36 +218,42 @@ namespace MountPRG
                 firstSelectedTile = lastSelectedTile = SelectedTile;
             }
 
-            if (InputManager.GetMouseButton(MouseInput.LeftButton))
+            if (firstSelectedTile != null)
             {
-                SelectArea(firstSelectedTile, lastSelectedTile, Color.White);
-
-                int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
-                int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
-
-                if (width < 2 || width > 5 || height < 2 || height > 5)
+                if (InputManager.GetMouseButton(MouseInput.LeftButton))
                 {
-                    SelectArea(firstSelectedTile, SelectedTile, Color.IndianRed);
-                }
-                else
-                {
-                    SelectArea(firstSelectedTile, SelectedTile, Color.LightGreen);
-                }
+                    SelectArea(firstSelectedTile, lastSelectedTile, Color.White);
 
-                lastSelectedTile = SelectedTile;
-            }
+                    int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
+                    int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
 
-            if (InputManager.GetMouseButtonReleased(MouseInput.LeftButton))
-            {
-                int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
-                int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
+                    if (width < 2 || width > 5 || height < 2 || height > 5)
+                    {
+                        SelectArea(firstSelectedTile, SelectedTile, Color.IndianRed);
+                    }
+                    else
+                    {
+                        SelectArea(firstSelectedTile, SelectedTile, Color.LightGreen);
+                    }
 
-                if (width >= 2 && width <= 5 && height >= 2 && height <= 5)
-                {
-                    GamePlayState.StockpileList.Add(GetAreaTiles(firstSelectedTile, SelectedTile));
+                    lastSelectedTile = SelectedTile;
                 }
 
-                SelectArea(firstSelectedTile, SelectedTile, Color.White);
+                if (InputManager.GetMouseButtonReleased(MouseInput.LeftButton))
+                {
+                    int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
+                    int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
+
+                    if (width >= 2 && width <= 5 && height >= 2 && height <= 5)
+                    {
+                        GamePlayState.StockpileList.Add(GetAreaTiles(firstSelectedTile, SelectedTile));
+                    }
+
+                    SelectArea(firstSelectedTile, SelectedTile, Color.White);
+
+                    firstSelectedTile = null;
+                    lastSelectedTile = null;
+                }
             }
         }
 
@@ -257,7 +275,7 @@ namespace MountPRG
             {
                 for (int y = firstY; y <= lastY; y++)
                 {
-                    GamePlayState.TileMap.GetTile(x, y).GroundColor = color;
+                    GamePlayState.TileMap.GetTile(x, y).GroundLayerColor = color;
                 }
             }
         }
@@ -303,7 +321,7 @@ namespace MountPRG
                         if(gatherable != null && gatherable.Count > 0)
                         {
                             SelectedTile.Selected = true;
-                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.GATHER));
+                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.HARVEST));
                         }
                     }
                 }
@@ -312,21 +330,48 @@ namespace MountPRG
 
         private void MakeBuilding()
         {
+            Entity entity = GUIManager.ActionPanelGUI.CurrentBuilding;
+            entity.X = GetCellX() * TileMap.TILE_SIZE;
+            entity.Y = GetCellY() * TileMap.TILE_SIZE;
+
+            Building building = entity.Get<Building>();
+            Sprite sprite = entity.Get<Sprite>();
+
+            bool validToBuild = true;
+
+            for (int i = GetCellX(); i < GetCellX() + building.Columns; i++)
+            {
+                for(int j = GetCellY(); j < GetCellY() + building.Rows; j++)
+                {
+                    Tile tile = GamePlayState.TileMap.GetTile(i, j);
+                    if (tile == null || tile.BuildingLayerId != -1 || tile.Entity != null)
+                    {
+                        validToBuild = false;
+                        break;
+                    }
+                }
+            }
+
+            sprite.Color = (validToBuild ? Color.Green : Color.Red) * 0.5f;          
+            
             if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                int x = SelectedTile.X;
-                int y = SelectedTile.Y;
-                GamePlayState.TileMap.GetTile(x, y).BuildingLayerId = TileMap.STRAW_HUT_0;
-                GamePlayState.TileMap.GetTile(x, y).Walkable = false;
+                if(validToBuild)
+                {
+                    for (int i = GetCellX(); i < GetCellX() + building.Columns; i++)
+                    {
+                        for (int j = GetCellY(); j < GetCellY() + building.Rows; j++)
+                        {
+                            Tile tile = GamePlayState.TileMap.GetTile(i, j);
+                            tile.Entity = GUIManager.ActionPanelGUI.CurrentBuilding;
+                            tile.Walkable = false;
+                        }
+                    }
 
-                GamePlayState.TileMap.GetTile(x + 1, y).BuildingLayerId = TileMap.STRAW_HUT_1;
-                GamePlayState.TileMap.GetTile(x + 1, y).Walkable = false;
-
-                GamePlayState.TileMap.GetTile(x, y + 1).BuildingLayerId = TileMap.STRAW_HUT_2;
-                GamePlayState.TileMap.GetTile(x, y + 1).Walkable = false;
-
-                GamePlayState.TileMap.GetTile(x + 1, y + 1).BuildingLayerId = TileMap.STRAW_HUT_3;
-                GamePlayState.TileMap.GetTile(x + 1, y + 1).Walkable = false;
+                    sprite.Color = Color.White;
+                    GUIManager.ActionPanelGUI.CurrentBuilding = null;
+                    GUIManager.ActionPanelGUI.CurrentJobType = JobType.NONE;
+                }
             }
         }
     }

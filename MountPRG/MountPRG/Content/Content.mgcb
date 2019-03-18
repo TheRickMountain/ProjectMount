@@ -56,6 +56,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/arrow.png
 
+#begin Sprites/avatar.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/avatar.png
+
 #begin Sprites/axe.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -104,6 +116,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/build_icon.png
 
+#begin Sprites/button.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/button.png
+
 #begin Sprites/campfire.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -128,6 +152,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/characters.png
 
+#begin Sprites/checkbox.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/checkbox.png
+
 #begin Sprites/chest.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -140,7 +176,7 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/chest.png
 
-#begin Sprites/cut_icon.png
+#begin Sprites/chop_icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -150,7 +186,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/cut_icon.png
+/build:Sprites/chop_icon.png
 
 #begin Sprites/day_night.png
 /importer:TextureImporter
@@ -164,7 +200,7 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/day_night.png
 
-#begin Sprites/gather_icon.png
+#begin Sprites/harvest_icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -174,7 +210,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/gather_icon.png
+/build:Sprites/harvest_icon.png
+
+#begin Sprites/haul_icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/haul_icon.png
 
 #begin Sprites/head.png
 /importer:TextureImporter
@@ -224,6 +272,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/lightmask.png
 
+#begin Sprites/mark.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/mark.png
+
 #begin Sprites/mine_icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -235,18 +295,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sprites/mine_icon.png
-
-#begin Sprites/selected_slot.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Sprites/selected_slot.png
 
 #begin Sprites/selection.png
 /importer:TextureImporter
@@ -296,7 +344,7 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/slot.png
 
-#begin Sprites/spell_slot.png
+#begin Sprites/stoсkpile_icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -306,19 +354,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Sprites/spell_slot.png
-
-#begin Sprites/storage_icon.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Sprites/storage_icon.png
+/build:Sprites/stoсkpile_icon.png
 
 #begin Sprites/swing.png
 /importer:TextureImporter

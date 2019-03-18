@@ -18,9 +18,10 @@ namespace MountPRG
 
         private ItemDatabase itemDatabase;
 
-        private DayNightSystemGUI dayNightSystemGUI;
+        public static DayNightSystemGUI DayNightSystemGUI;
         public static ActionPanelGUI ActionPanelGUI;
         public static StockpileGUI StockpileGUI;
+        public static HutUI HutUI;
 
         public static bool MouseOnUI { get; set; }
 
@@ -28,13 +29,15 @@ namespace MountPRG
         {
             itemDatabase = new ItemDatabase();
 
-            dayNightSystemGUI = new DayNightSystemGUI(true);
+            DayNightSystemGUI = new DayNightSystemGUI(true);
             ActionPanelGUI = new ActionPanelGUI(true);
             StockpileGUI = new StockpileGUI(false);
+            HutUI = new HutUI(false);
 
-            guiElements.Add(dayNightSystemGUI);
+            guiElements.Add(DayNightSystemGUI);
             guiElements.Add(ActionPanelGUI);
             guiElements.Add(StockpileGUI);
+            guiElements.Add(HutUI);
         }
 
         public void Update(GameTime gameTime)

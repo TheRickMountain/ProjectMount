@@ -26,7 +26,7 @@ namespace MountPRG
 
         private GUIManager guiManager;
 
-        public static List<Entity> Characters;
+        public static List<Settler> Settlers;
 
         public static JobList JobSystem;
         public static StockpileList StockpileList;
@@ -78,9 +78,19 @@ namespace MountPRG
             TileMap.AddEntity(9, 19, new Bush());
             TileMap.AddEntity(9, 20, new Bush());
 
-            Entities.Add(new Settler(Engine.ToWorldPos(18), Engine.ToWorldPos(15)));
-            Entities.Add(new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15)));
-            Entities.Add(new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18)));
+            Settlers = new List<Settler>();
+
+            Settler settler = new Settler(Engine.ToWorldPos(18), Engine.ToWorldPos(15));
+            Entities.Add(settler);
+            Settlers.Add(settler);
+
+            settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
+            Entities.Add(settler);
+            Settlers.Add(settler);
+
+            settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
+            Entities.Add(settler);
+            Settlers.Add(settler);
 
             JobSystem = new JobList();
             StockpileList = new StockpileList();

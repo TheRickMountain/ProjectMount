@@ -22,11 +22,13 @@ namespace MountPRG
         public TileMap Tilemap { get; }
         public int GroundLayerId { get; set; }
         public int BuildingLayerId { get; set; }
+        public int EdgeLayerId { get; set; }
         public Entity Entity { get; set; }
         public Entity EntityToAdd { get; set; }
         public bool Walkable { get; set; }
-        public Color GroundColor { get; set; }
-        public Color BuildingColor { get; set; }
+        public Color GroundLayerColor { get; set; }
+        public Color BuildingLayerColor { get; set; }
+        public Color EdgeLayerColor { get; set; }
         public bool Selected { get; set; }
         public int Stockpile { get; set; }
 
@@ -37,9 +39,10 @@ namespace MountPRG
             Tilemap = tilemap;
             GroundLayerId = groundLayerId;
             BuildingLayerId = buildingLayerId;
+            EdgeLayerId = -1;
             Walkable = true;
-            GroundColor = Color.White;
-            BuildingColor = Color.White;
+            GroundLayerColor = Color.White;
+            BuildingLayerColor = Color.White;
             Stockpile = -1;
         }
 
@@ -172,10 +175,7 @@ namespace MountPRG
         public Tile GetTile(int x, int y)
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
-            {
-                Console.WriteLine("Выход за пределы карты");
                 return null;
-            }
 
             return tiles[y * Width + x];
         }
@@ -183,10 +183,7 @@ namespace MountPRG
         public void SetTile(int x, int y, int firstLayerId, int secondLayerId, bool isWalkable)
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
-            {
-                Console.WriteLine("Выход за пределы карты");
                 return;
-            }
 
             Tile tile = tiles[y * Width + x];
             tile.GroundLayerId = firstLayerId;
@@ -197,10 +194,7 @@ namespace MountPRG
         public void SetTile(int x, int y, int id, Layer layer, bool isWalkable)
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
-            {
-                Console.WriteLine("Выход за пределы карты");
                 return;
-            }
 
             Tile tile = tiles[y * Width + x];
             switch(layer)
@@ -299,6 +293,7 @@ namespace MountPRG
             Rectangle destination = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
             int groundIndex;
             int buildingIndex;
+            int edgeIndex;
             for (int y = min.Y; y < max.Y; y++)
             {
                 destination.Y = y * TILE_SIZE;
@@ -309,6 +304,7 @@ namespace MountPRG
                     Tile tile = GetTile(x, y);
                     groundIndex = tile.GroundLayerId;
                     buildingIndex = tile.BuildingLayerId;
+                    edgeIndex = tile.EdgeLayerId;
 
                     destination.X = x * TILE_SIZE;
 
@@ -320,7 +316,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[groundIndex],
-                            tile.GroundColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.GroundColor);
+                            tile.GroundLayerColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.GroundLayerColor);
                     }
 
                     if (buildingIndex != -1)
@@ -329,7 +325,16 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[buildingIndex],
-                            tile.BuildingColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.BuildingColor);
+                            tile.BuildingLayerColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.BuildingLayerColor);
+                    }
+
+                    if(edgeIndex != -1)
+                    {
+                        spriteBatch.Draw(
+                            tileSet.Texture,
+                            destination,
+                            tileSet.SourceRectangles[edgeIndex],
+                            tile.EdgeLayerColor);
                     }
 
                     if (tile.Selected)

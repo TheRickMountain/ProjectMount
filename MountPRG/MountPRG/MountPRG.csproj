@@ -45,10 +45,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\AnimatedSprite.cs" />
+    <Compile Include="Components\Building.cs" />
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentList.cs" />
     <Compile Include="Components\Gatherable.cs" />
-    <Compile Include="Components\PlayerController.cs" />
+    <Compile Include="Components\Hut.cs" />
+    <Compile Include="Components\SettlerController.cs" />
     <Compile Include="Components\Mineable.cs" />
     <Compile Include="Components\Sprite.cs" />
     <Compile Include="Components\Storage.cs" />
@@ -58,6 +60,8 @@
     <Compile Include="Entities\Grass.cs" />
     <Compile Include="Entities\Hay.cs" />
     <Compile Include="Entities\Stick.cs" />
+    <Compile Include="Entities\StrawHut.cs" />
+    <Compile Include="Entities\ToolsWorkbench.cs" />
     <Compile Include="Entities\Tree.cs" />
     <Compile Include="GUISystem\Button.cs" />
     <Compile Include="Entities\Campfire.cs" />
@@ -73,6 +77,7 @@
     <Compile Include="GameStates\TitleIntroState.cs" />
     <Compile Include="GUISystem\ActionPanelGUI.cs" />
     <Compile Include="GUISystem\GUIManager.cs" />
+    <Compile Include="GUISystem\HutUI.cs" />
     <Compile Include="GUISystem\IGUI.cs" />
     <Compile Include="GUISystem\ItemDatabase.cs" />
     <Compile Include="GUISystem\DayNightSystemGUI.cs" />
@@ -99,6 +104,7 @@
     <Compile Include="Utils\Circle.cs" />
     <Compile Include="Utils\MathUtils.cs" />
     <Compile Include="Utils\MyRandom.cs" />
+    <Compile Include="Utils\NameGenerator.cs" />
     <Compile Include="Utils\ResourceBank.cs" />
   </ItemGroup>
   <ItemGroup>

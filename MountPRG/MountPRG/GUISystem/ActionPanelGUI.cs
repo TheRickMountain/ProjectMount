@@ -9,31 +9,57 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MountPRG
 {
-   
+
+    public enum BuildingType
+    {
+        STRAW_HUT,
+        TOOLS_WORKBENCH,
+    }
+
     public class ActionPanelGUI : IGUI
     {
         private List<Button> buttons;
 
+        private List<Button> subButtons;
+
         private Rectangle dest;
 
+        private Rectangle subDest;
+
         public JobType CurrentJobType
+        {
+            get; set;
+        }
+
+        public BuildingType CurrentBuildingType
         {
             get; private set;
         }
 
+        public Entity CurrentBuilding
+        {
+            get; set;
+        }
+
         public ActionPanelGUI(bool active) : base(active)
         {
+            Texture2D buttonBackground = ResourceBank.Sprites["button"];
+
             buttons = new List<Button>();
+            subButtons = new List<Button>();
 
             dest = new Rectangle();
+            subDest = new Rectangle();
 
             CurrentJobType = JobType.NONE;
+            CurrentBuildingType = BuildingType.STRAW_HUT;
 
-            buttons.Add(new Button("GATHER", ResourceBank.Sprites["gather_icon"], true));
-            buttons.Add(new Button("CUT", ResourceBank.Sprites["cut_icon"], true));
-            buttons.Add(new Button("MINE", ResourceBank.Sprites["mine_icon"], true));
-            buttons.Add(new Button("BUILD", ResourceBank.Sprites["build_icon"], true));
-            buttons.Add(new Button("STORAGE", ResourceBank.Sprites["storage_icon"], true));
+            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["harvest_icon"], true));
+            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["chop_icon"], true));
+            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["mine_icon"], true));
+            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["haul_icon"], true));
+            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["stoсkpile_icon"], true));
+            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["build_icon"], true));
 
             int xStart = (Game1.ScreenRectangle.Width / 2) - (buttons.Count * GUIManager.BUTTON_SIZE + buttons.Count * GUIManager.OFFSET) / 2;
             int yStart = Game1.ScreenRectangle.Height - (GUIManager.BUTTON_SIZE + GUIManager.OFFSET);
@@ -41,7 +67,7 @@ namespace MountPRG
             {
                 buttons[i].X = xStart + i * GUIManager.BUTTON_SIZE + i * GUIManager.OFFSET;
                 buttons[i].Y = yStart;
-                buttons[i].Widtth = GUIManager.BUTTON_SIZE;
+                buttons[i].Width = GUIManager.BUTTON_SIZE;
                 buttons[i].Height = GUIManager.BUTTON_SIZE;
             }
 
@@ -49,39 +75,129 @@ namespace MountPRG
                 buttons.Count * GUIManager.BUTTON_SIZE + buttons.Count * GUIManager.OFFSET,
                 (GUIManager.BUTTON_SIZE + GUIManager.OFFSET));
 
-            ConnectButtonWithJobAction(buttons[0], JobType.GATHER);
-            ConnectButtonWithJobAction(buttons[1], JobType.CUT);
+            ConnectButtonWithJobAction(buttons[0], JobType.HARVEST);
+            ConnectButtonWithJobAction(buttons[1], JobType.CHOP);
             ConnectButtonWithJobAction(buttons[2], JobType.MINE);
-            ConnectButtonWithJobAction(buttons[3], JobType.BUILD);
+            ConnectButtonWithJobAction(buttons[3], JobType.HAUL);
             ConnectButtonWithJobAction(buttons[4], JobType.STOCKPILE);
+
+            buttons[5].OnButtonDownCallback(delegate (Button button)
+            {
+                button.Selected = true;
+
+                subButtons.Add(new Button(buttonBackground, "Straw hut", true));
+                subButtons.Add(new Button(buttonBackground, "Tools workbench", true));
+
+                int startX = (int)button.X;
+                int startY = (int)button.Y - subButtons.Count * subButtons[0].Height - subButtons.Count * GUIManager.OFFSET;
+
+                int maxWidth = 0;
+
+                for (int i = 0; i < subButtons.Count; i++)
+                {
+                    subButtons[i].X = startX;
+                    subButtons[i].Y = startY + subButtons[i].Height * i + GUIManager.OFFSET * i;
+
+                    if (subButtons[i].Width > maxWidth)
+                        maxWidth = subButtons[i].Width;
+                }
+
+                subDest = new Rectangle(startX, startY, maxWidth, subButtons.Count * subButtons[0].Height + (subButtons.Count - 1) * GUIManager.OFFSET);
+            });
         }
 
         public override void Update(GameTime gameTime)
         {
-            if(InputManager.GetX() >= dest.X && InputManager.GetX() <= dest.Right &&
-                InputManager.GetY() >= dest.Y && InputManager.GetY() <= dest.Bottom)
+            // По нажатию правой кнопки все выбранные действия отменяются
+            if(InputManager.GetMouseButtonDown(MouseInput.RightButton))
             {
-                GUIManager.MouseOnUI = true;
+                ResetAllAction();
             }
 
-            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                for (int i = 0; i < buttons.Count; i++)
+                // Всплывающие текстовые кнопки
+                if (subButtons.Count > 0)
                 {
-                    Button button = buttons[i];
-                    if(button.Intersects(InputManager.GetX(), InputManager.GetY()))
+                    if (InputManager.GetX() >= subDest.X && InputManager.GetX() <= subDest.Right &&
+                    InputManager.GetY() >= subDest.Y && InputManager.GetY() <= subDest.Bottom)
                     {
-                        UnselectAllButtons();
-                        button.ButtonDown();
+                        GUIManager.MouseOnUI = true;
+
+                        for (int i = 0; i < subButtons.Count; i++)
+                        {
+                            Button button = subButtons[i];
+                            if (button.Active && button.Intersects(InputManager.GetX(), InputManager.GetY()))
+                            {
+                                CurrentJobType = JobType.BUILDING;
+                                CurrentBuildingType = (BuildingType)i;
+                                switch(CurrentBuildingType)
+                                {
+                                    case BuildingType.STRAW_HUT:
+                                        CurrentBuilding = new StrawHut();
+                                        GamePlayState.Entities.Add(CurrentBuilding);
+                                        break;
+                                    case BuildingType.TOOLS_WORKBENCH:
+                                        CurrentBuilding = new ToolsWorkbench();
+                                        GamePlayState.Entities.Add(CurrentBuilding);
+                                        break;
+                                }
+                                break;
+                            }
+                        }
+                    }
+
+                    subButtons.Clear();
+                    buttons[5].Selected = false;
+                }
+
+                // Кнопки на главной панели
+                if (InputManager.GetX() >= dest.X && InputManager.GetX() <= dest.Right &&
+                InputManager.GetY() >= dest.Y && InputManager.GetY() <= dest.Bottom)
+                {
+                    GUIManager.MouseOnUI = true;
+
+                    for (int i = 0; i < buttons.Count; i++)
+                    {
+                        Button button = buttons[i];
+                        if (button.Active && button.Intersects(InputManager.GetX(), InputManager.GetY()))
+                        {
+                            UnselectAllButtons();
+                            button.ButtonDown();
+                            break;
+                        }
                     }
                 }
-            }  
+            }
+        }
+
+            
+        private void ResetAllAction()
+        {
+            UnselectAllButtons();
+            CurrentJobType = JobType.NONE;
+            if (CurrentBuilding != null)
+            {
+                GamePlayState.Entities.Remove(CurrentBuilding);
+            }
+
+            subButtons.Clear();
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             for (int i = 0; i < buttons.Count; i++)
-                buttons[i].Draw(spriteBatch);
+            {
+                if(buttons[i].Active)
+                    buttons[i].Draw(spriteBatch);
+            }
+
+
+            for (int i = 0; i < subButtons.Count; i++)
+            {
+                if (subButtons[i].Active)
+                    subButtons[i].Draw(spriteBatch);
+            }
         }
 
         // При нажатии на кнопку она выделяется, про повторном нажатии выделение отменяется
