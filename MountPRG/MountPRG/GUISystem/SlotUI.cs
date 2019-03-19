@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class Slot : IGUI
+    public class SlotUI : UI
     {
         public Item Item
         {
@@ -22,8 +22,8 @@ namespace MountPRG
 
         private SpriteFont font;
 
-        private Texture2D backgroundTexture;
-        private Rectangle backgroundDest;
+        private Texture2D background;
+        private Rectangle dest;
 
         private Sprite itemSprite;
 
@@ -34,35 +34,37 @@ namespace MountPRG
 
         public float X
         {
-            get { return backgroundDest.X; }
-            set { backgroundDest.X = (int)value; }
+            get { return dest.X; }
+            set { dest.X = (int)value; }
         }
 
         public float Y
         {
-            get { return backgroundDest.Y; }
-            set { backgroundDest.Y = (int)value; }
+            get { return dest.Y; }
+            set { dest.Y = (int)value; }
         }
 
         public float Width
         {
-            get { return backgroundDest.Width; }
-            set { backgroundDest.Width = (int)value; }
+            get { return dest.Width; }
+            set { dest.Width = (int)value; }
         }
 
         public float Height
         {
-            get { return backgroundDest.Height; }
-            set { backgroundDest.Height = (int)value; }
+            get { return dest.Height; }
+            set { dest.Height = (int)value; }
         }
 
-        public Slot(Texture2D background, int width, int height, bool active) : base(active)
+        public SlotUI(Texture2D background, int width, int height)
         {
-            backgroundTexture = background;
+            Active = false;
+
+            this.background = background;
 
             font = ResourceBank.Fonts["mountFont"];
 
-            backgroundDest = new Rectangle(0, 0, width, height);
+            dest = new Rectangle(0, 0, width, height);
 
             HasItem = false;
         }
@@ -74,21 +76,17 @@ namespace MountPRG
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(backgroundTexture, backgroundDest, Color.White);
+            spriteBatch.Draw(background, dest, Color.White);
             if(HasItem)
-                spriteBatch.Draw(itemSprite.Texture, new Rectangle(backgroundDest.X + 4, backgroundDest.Y + 4,
-                    backgroundDest.Width - 8, backgroundDest.Height - 8), itemSprite.Source, Color.White);
+                spriteBatch.Draw(itemSprite.Texture, new Rectangle(dest.X + 4, dest.Y + 4,
+                    dest.Width - 8, dest.Height - 8), itemSprite.Source, Color.White);
             if (Count > 1)
-                spriteBatch.DrawString(font, "" + Count, new Vector2(backgroundDest.X + 2, backgroundDest.Y), Color.White);
+                spriteBatch.DrawString(font, "" + Count, new Vector2(dest.X + 2, dest.Y), Color.White);
         }
 
-        public bool Intersects(int x, int y)
+        public override bool Intersects(int x, int y)
         {
-            if (x >= backgroundDest.X && x <= backgroundDest.Right &&
-                y >= backgroundDest.Y && y <= backgroundDest.Bottom)
-                return true;
-
-            return false;
+            return dest.Contains(new Point(x, y));
         }
 
         public void AddItem(Item item, int count)

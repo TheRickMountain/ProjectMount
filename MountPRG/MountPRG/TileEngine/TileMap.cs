@@ -111,6 +111,7 @@ namespace MountPRG
         public const int WOODEN_SPEAR = 12;
         public const int FLINT_KNIFE = 13;
         public const int GRASS = 14;
+        public const int WOOD = 15;
 
         public const int STRAW_HUT_0 = 16;
         public const int STRAW_HUT_1 = 17;
@@ -316,7 +317,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[groundIndex],
-                            tile.GroundLayerColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.GroundLayerColor);
+                            tile.GroundLayerColor == Color.White ? DayNightSystemUI.CurrentColor : tile.GroundLayerColor);
                     }
 
                     if (buildingIndex != -1)
@@ -325,7 +326,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[buildingIndex],
-                            tile.BuildingLayerColor == Color.White ? DayNightSystemGUI.CurrentColor : tile.BuildingLayerColor);
+                            tile.BuildingLayerColor == Color.White ? DayNightSystemUI.CurrentColor : tile.BuildingLayerColor);
                     }
 
                     if(edgeIndex != -1)

@@ -92,6 +92,10 @@ namespace MountPRG
             Entities.Add(settler);
             Settlers.Add(settler);
 
+            settler = new Settler(Engine.ToWorldPos(17), Engine.ToWorldPos(17));
+            Entities.Add(settler);
+            Settlers.Add(settler);
+
             JobSystem = new JobList();
             StockpileList = new StockpileList();
 

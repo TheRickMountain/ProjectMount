@@ -8,21 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class Button : IGUI
+    public class ButtonUI : UI
     {
         private Texture2D background;
-
-        public Texture2D Icon
-        {
-            get; set;
-        }
-
-        private SpriteFont font;
-
-        public string Text
-        {
-            get; set;
-        }
 
         private Rectangle dest;
 
@@ -30,7 +18,17 @@ namespace MountPRG
 
         private bool selected;
 
-        private Action<Button> cbButtonDown;
+        private Action<ButtonUI> cbButtonDown;
+
+        public Texture2D Icon
+        {
+            get; set;
+        }
+
+        public TextUI Text
+        {
+            get; private set;
+        }
 
         public bool Selected
         {
@@ -71,26 +69,27 @@ namespace MountPRG
             set { dest.Height = value; }
         }
 
-        public Button(Texture2D background, Texture2D icon, bool active) : base(active)
+        public ButtonUI(Texture2D background, Texture2D icon)
         {
+            Active = false;
+
             this.background = background;
-            this.Icon = icon;
+            Icon = icon;
 
             dest = new Rectangle(0, 0, background.Width, background.Height);
 
             color = Color.White;
         }
 
-        public Button(Texture2D background, string text, bool active) : base(active)
+        public ButtonUI(Texture2D background, TextUI text)
         {
+            Active = false;
+
             this.background = background;
+
             Text = text;
 
-            Vector2 textSize = ResourceBank.Fonts["mountFont"].MeasureString(text);
-
-            dest = new Rectangle(0, 0, (int)textSize.X, (int)textSize.Y);
-
-            font = ResourceBank.Fonts["mountFont"];
+            dest = new Rectangle(0, 0, Text.Width, Text.Height);
 
             color = Color.White;
         }
@@ -103,23 +102,24 @@ namespace MountPRG
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(background, dest, color);
+
             if (Icon != null)
                 spriteBatch.Draw(Icon, dest, color);
-            
-            if(Text != null)
-                spriteBatch.DrawString(font, Text, new Vector2(dest.X, dest.Y), Color.White);
+
+            if (Text != null)
+            {
+                Text.X = dest.X;
+                Text.Y = dest.Y;
+                Text.Draw(spriteBatch);
+            }
         }
 
-        public bool Intersects(int x, int y)
+        public override bool Intersects(int x, int y)
         {
-            if (x >= dest.X && x <= dest.Right &&
-                y >= dest.Y && y <= dest.Bottom)
-                return true;
-
-            return false;
+            return dest.Contains(new Point(x, y));
         }
 
-        public void OnButtonDownCallback(Action<Button> cb)
+        public void OnButtonDownCallback(Action<ButtonUI> cb)
         {
             cbButtonDown += cb;
         }

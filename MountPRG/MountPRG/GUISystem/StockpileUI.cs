@@ -9,17 +9,17 @@ using Microsoft.Xna.Framework.Input;
 
 namespace MountPRG
 {
-    public class StockpileGUI : IGUI
+    public class StockpileUI : UI
     {
 
-        private List<Slot> slots = new List<Slot>();
+        private List<SlotUI> slots = new List<SlotUI>();
         private Tile[,] tiles;
 
-        private UI background;
+        private PanelUI background;
 
-        public StockpileGUI(bool active) : base(active)
+        public StockpileUI()
         {
-            background = new UI();
+            background = new PanelUI();
         }
 
         public override void Update(GameTime gameTime)
@@ -28,20 +28,13 @@ namespace MountPRG
             {
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
-                    Slot slot = slots[i * tiles.GetLength(1) + j];
+                    SlotUI slot = slots[i * tiles.GetLength(1) + j];
                     Tile tile = tiles[i, j];
                     if (tile.Entity != null)
                         slot.AddItem(ItemDatabase.GetItemById(tile.Entity.Id), tile.Entity.Get<Gatherable>().Count);
                     else
                         slot.Clear();
                 }
-            }
-
-            if (InputManager.GetKeyDown(Keys.E) || InputManager.GetMouseButtonDown(MouseInput.RightButton))
-            {
-                Active = false;
-                slots.Clear();
-                tiles = null;
             }
         }
 
@@ -70,7 +63,7 @@ namespace MountPRG
             {
                 for (int j = 0; j < tiles.GetLength(1); j++)
                 {
-                    Slot slot = new Slot(ResourceBank.Sprites["slot"], GUIManager.SLOT_SIZE, GUIManager.SLOT_SIZE, true);
+                    SlotUI slot = new SlotUI(ResourceBank.Sprites["slot"], GUIManager.SLOT_SIZE, GUIManager.SLOT_SIZE);
                     slot.X = background.InnerX + i * GUIManager.SLOT_SIZE + i * GUIManager.OFFSET;
                     slot.Y = background.InnerY + j * GUIManager.SLOT_SIZE + j * GUIManager.OFFSET;
 
@@ -83,6 +76,19 @@ namespace MountPRG
             }
 
             Active = true;
+        }
+
+        public void Close()
+        {
+            Active = false;
+
+            slots.Clear();
+            tiles = null;
+        }
+
+        public override bool Intersects(int x, int y)
+        {
+            throw new NotImplementedException();
         }
     }
 }

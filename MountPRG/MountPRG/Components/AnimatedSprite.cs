@@ -45,7 +45,7 @@ namespace MountPRG
             }
 
             spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
-                DayNightSystemGUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
+                DayNightSystemUI.CurrentColor, Rotation, Vector2.Zero, Effects, 0);
         }
     }
 }

@@ -16,11 +16,11 @@ namespace MountPRG
         TOOLS_WORKBENCH,
     }
 
-    public class ActionPanelGUI : IGUI
+    public class ActionPanelUI : UI
     {
-        private List<Button> buttons;
+        private List<ButtonUI> buttons;
 
-        private List<Button> subButtons;
+        private List<ButtonUI> subButtons;
 
         private Rectangle dest;
 
@@ -41,12 +41,12 @@ namespace MountPRG
             get; set;
         }
 
-        public ActionPanelGUI(bool active) : base(active)
+        public ActionPanelUI()
         {
             Texture2D buttonBackground = ResourceBank.Sprites["button"];
 
-            buttons = new List<Button>();
-            subButtons = new List<Button>();
+            buttons = new List<ButtonUI>();
+            subButtons = new List<ButtonUI>();
 
             dest = new Rectangle();
             subDest = new Rectangle();
@@ -54,12 +54,12 @@ namespace MountPRG
             CurrentJobType = JobType.NONE;
             CurrentBuildingType = BuildingType.STRAW_HUT;
 
-            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["harvest_icon"], true));
-            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["chop_icon"], true));
-            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["mine_icon"], true));
-            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["haul_icon"], true));
-            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["stoсkpile_icon"], true));
-            buttons.Add(new Button(buttonBackground, ResourceBank.Sprites["build_icon"], true));
+            buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["harvest_icon"]));
+            buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["chop_icon"]));
+            buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["mine_icon"]));
+            buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["haul_icon"]));
+            buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["stoсkpile_icon"]));
+            buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["build_icon"]));
 
             int xStart = (Game1.ScreenRectangle.Width / 2) - (buttons.Count * GUIManager.BUTTON_SIZE + buttons.Count * GUIManager.OFFSET) / 2;
             int yStart = Game1.ScreenRectangle.Height - (GUIManager.BUTTON_SIZE + GUIManager.OFFSET);
@@ -81,12 +81,13 @@ namespace MountPRG
             ConnectButtonWithJobAction(buttons[3], JobType.HAUL);
             ConnectButtonWithJobAction(buttons[4], JobType.STOCKPILE);
 
-            buttons[5].OnButtonDownCallback(delegate (Button button)
+            buttons[5].OnButtonDownCallback(delegate (ButtonUI button)
             {
                 button.Selected = true;
 
-                subButtons.Add(new Button(buttonBackground, "Straw hut", true));
-                subButtons.Add(new Button(buttonBackground, "Tools workbench", true));
+                subButtons.Add(new ButtonUI(buttonBackground, new TextUI(ResourceBank.Fonts["mountFont"], "Straw Hut")));
+
+                subButtons.Add(new ButtonUI(buttonBackground, new TextUI(ResourceBank.Fonts["mountFont"], "Tools Workbench")));
 
                 int startX = (int)button.X;
                 int startY = (int)button.Y - subButtons.Count * subButtons[0].Height - subButtons.Count * GUIManager.OFFSET;
@@ -126,8 +127,8 @@ namespace MountPRG
 
                         for (int i = 0; i < subButtons.Count; i++)
                         {
-                            Button button = subButtons[i];
-                            if (button.Active && button.Intersects(InputManager.GetX(), InputManager.GetY()))
+                            ButtonUI button = subButtons[i];
+                            if (button.Intersects(InputManager.GetX(), InputManager.GetY()))
                             {
                                 CurrentJobType = JobType.BUILDING;
                                 CurrentBuildingType = (BuildingType)i;
@@ -159,8 +160,8 @@ namespace MountPRG
 
                     for (int i = 0; i < buttons.Count; i++)
                     {
-                        Button button = buttons[i];
-                        if (button.Active && button.Intersects(InputManager.GetX(), InputManager.GetY()))
+                        ButtonUI button = buttons[i];
+                        if (button.Intersects(InputManager.GetX(), InputManager.GetY()))
                         {
                             UnselectAllButtons();
                             button.ButtonDown();
@@ -188,20 +189,20 @@ namespace MountPRG
         {
             for (int i = 0; i < buttons.Count; i++)
             {
-                if(buttons[i].Active)
+                if(buttons[i].Visible)
                     buttons[i].Draw(spriteBatch);
             }
 
 
             for (int i = 0; i < subButtons.Count; i++)
             {
-                if (subButtons[i].Active)
+                if (subButtons[i].Visible)
                     subButtons[i].Draw(spriteBatch);
             }
         }
 
         // При нажатии на кнопку она выделяется, про повторном нажатии выделение отменяется
-        private void ConnectButtonWithJobAction(Button button, JobType jobAction)
+        private void ConnectButtonWithJobAction(ButtonUI button, JobType jobAction)
         {
             button.OnButtonDownCallback(delegate
             {
@@ -224,6 +225,11 @@ namespace MountPRG
             {
                 buttons[i].Selected = false;
             }
+        }
+
+        public override bool Intersects(int x, int y)
+        {
+            throw new NotImplementedException();
         }
     }
 }

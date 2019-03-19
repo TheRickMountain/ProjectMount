@@ -12,15 +12,16 @@ namespace MountPRG
     {
         public static int SLOT_SIZE = 48;
         public static int BUTTON_SIZE = 48;
+        public static int CHECKBOX_SIZE = 16;
         public static int OFFSET = 5;
 
-        private List<IGUI> guiElements = new List<IGUI>();
+        private List<UI> guiElements = new List<UI>();
 
         private ItemDatabase itemDatabase;
 
-        public static DayNightSystemGUI DayNightSystemGUI;
-        public static ActionPanelGUI ActionPanelGUI;
-        public static StockpileGUI StockpileGUI;
+        public static DayNightSystemUI DayNightSystemUI;
+        public static ActionPanelUI ActionPanelUI;
+        public static StockpileUI StockpileUI;
         public static HutUI HutUI;
 
         public static bool MouseOnUI { get; set; }
@@ -29,20 +30,32 @@ namespace MountPRG
         {
             itemDatabase = new ItemDatabase();
 
-            DayNightSystemGUI = new DayNightSystemGUI(true);
-            ActionPanelGUI = new ActionPanelGUI(true);
-            StockpileGUI = new StockpileGUI(false);
-            HutUI = new HutUI(false);
+            DayNightSystemUI = new DayNightSystemUI();
+            guiElements.Add(DayNightSystemUI);
 
-            guiElements.Add(DayNightSystemGUI);
-            guiElements.Add(ActionPanelGUI);
-            guiElements.Add(StockpileGUI);
-            guiElements.Add(HutUI);
+            ActionPanelUI = new ActionPanelUI();
+            ActionPanelUI.Enable();
+            guiElements.Add(ActionPanelUI);
+
+            StockpileUI = new StockpileUI();
+            StockpileUI.Disable();
+            guiElements.Add(StockpileUI);
+
+            HutUI = new HutUI();
         }
 
         public void Update(GameTime gameTime)
         {
             MouseOnUI = false;
+
+            if(InputManager.GetMouseButtonDown(MouseInput.RightButton))
+            {
+                StockpileUI.Close();
+                HutUI.Close();
+            }
+
+            if (HutUI.Active)
+                HutUI.Update(gameTime);
 
             for (int i = 0; i < guiElements.Count; i++)
             {
@@ -58,6 +71,9 @@ namespace MountPRG
                 if (guiElements[i].Active)
                     guiElements[i].Draw(spriteBatch);
             }
+
+            if (HutUI.Active)
+                HutUI.Draw(spriteBatch);
         }
     }
 }

@@ -3,110 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class UI : IGUI
+    public abstract class UI
     {
-        private Texture2D texture;
+        public bool Active;
+        public bool Visible;
 
-        private Rectangle topLeftSrc;
-        private Rectangle leftSrc;
-        private Rectangle bottomLeftSrc;
-        private Rectangle topSrc;
-        private Rectangle bottomSrc;
-        private Rectangle topRightSrc;
-        private Rectangle rightSrc;
-        private Rectangle bottomRightSrc;
-        private Rectangle centerSrc;
-
-        private int borderSize = 8;
-
-        public int X
+        public UI()
         {
-            get; set;
+            Active = true;
+            Visible = true;
         }
 
-        public int InnerX
+        public abstract void Update(GameTime gameTime);
+
+        public abstract void Draw(SpriteBatch spriteBatch);
+
+        public void Enable()
         {
-            get { return X + borderSize; }
+            Active = true;
+            Visible = true;
         }
 
-        public int Y
+        public void Disable()
         {
-            get; set;
+            Active = false;
+            Visible = false;
         }
 
-        public int InnerY
-        {
-            get { return Y + borderSize; }
-        }
+        public abstract bool Intersects(int x, int y);
 
-        public int Width
-        {
-            get { return InnerWidth + borderSize * 2; }
-        }
-
-        public int InnerWidth
-        {
-            get; set;
-        }
-
-        public int Height
-        {
-            get { return InnerHeight + borderSize * 2; }
-        }
-
-        public int InnerHeight
-        {
-            get; set;
-        }
-
-        public UI() : base(true)
-        {
-            texture = ResourceBank.Sprites["ui"];
-
-            int elementSize = texture.Width / 3;
-
-            topLeftSrc = new Rectangle(0, 0, elementSize, elementSize);
-            leftSrc = new Rectangle(0, elementSize, elementSize, elementSize);
-            bottomLeftSrc = new Rectangle(0, elementSize * 2, elementSize, elementSize);
-
-            topSrc = new Rectangle(elementSize, 0, elementSize, elementSize);
-
-            topRightSrc = new Rectangle(elementSize * 2, 0, elementSize, elementSize);
-            rightSrc = new Rectangle(elementSize * 2, elementSize, elementSize, elementSize);
-            bottomRightSrc = new Rectangle(elementSize * 2, elementSize * 2, elementSize, elementSize);
-
-            bottomSrc = new Rectangle(elementSize, elementSize * 2, elementSize, elementSize);
-
-            centerSrc = new Rectangle(elementSize, elementSize, elementSize, elementSize);
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(texture, new Rectangle(X, Y, borderSize, borderSize), topLeftSrc, Color.White);
-            spriteBatch.Draw(texture, new Rectangle(X, Y + borderSize, borderSize, InnerHeight), leftSrc, Color.White);
-            spriteBatch.Draw(texture, new Rectangle(X, Y + borderSize + InnerHeight, borderSize, borderSize), 
-                bottomLeftSrc, Color.White);
-
-            spriteBatch.Draw(texture, new Rectangle(X + borderSize, Y, InnerWidth, borderSize), topSrc, Color.White);
-
-            spriteBatch.Draw(texture, new Rectangle(X + borderSize + InnerWidth, Y, borderSize, borderSize), topRightSrc, Color.White);
-            spriteBatch.Draw(texture, new Rectangle(X + borderSize + InnerWidth, Y + borderSize, borderSize, InnerHeight), rightSrc, Color.White);
-            spriteBatch.Draw(texture, new Rectangle(X + borderSize + InnerWidth, Y + borderSize + InnerHeight, borderSize, borderSize),
-                bottomRightSrc, Color.White);
-
-            spriteBatch.Draw(texture, new Rectangle(X + borderSize, Y + borderSize + InnerHeight, InnerWidth, borderSize), bottomSrc, Color.White);
-
-            spriteBatch.Draw(texture, new Rectangle(X + borderSize, Y + borderSize, InnerWidth, InnerHeight), centerSrc, Color.White);
-        }   
     }
 }

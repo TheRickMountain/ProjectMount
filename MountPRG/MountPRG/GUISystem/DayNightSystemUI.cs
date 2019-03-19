@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace MountPRG
 {
-    public class DayNightSystemGUI : IGUI
+    public class DayNightSystemUI : UI
     {
         private Texture2D circle;
         private Texture2D arrow;
@@ -40,7 +36,7 @@ namespace MountPRG
             get; private set;
         }
 
-        public DayNightSystemGUI(bool active) : base(active)
+        public DayNightSystemUI()
         {
             circle = ResourceBank.Sprites["day_night"];
             arrow = ResourceBank.Sprites["arrow"];
@@ -58,7 +54,7 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.0); // 0.1
+            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.01);
             int timeOfDay = -MathUtils.ToDegrees(currentTime);
             if(timeOfDay >= 80 && timeOfDay <= 110)
             {
@@ -81,6 +77,11 @@ namespace MountPRG
         {
             spriteBatch.Draw(circle, circleDestination, circleSource, Color.White, currentTime, circleOrigin, SpriteEffects.None, 1);
             spriteBatch.Draw(arrow, arrowDestination, Color.White);
+        }
+
+        public override bool Intersects(int x, int y)
+        {
+            throw new NotImplementedException();
         }
 
     }

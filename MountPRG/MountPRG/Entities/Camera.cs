@@ -86,7 +86,7 @@ namespace MountPRG
 
             if (!GUIManager.MouseOnUI)
             {
-                switch (GUIManager.ActionPanelGUI.CurrentJobType)
+                switch (GUIManager.ActionPanelUI.CurrentJobType)
                 {
                     case JobType.NONE:
                         {
@@ -94,7 +94,7 @@ namespace MountPRG
                             {
                                 if(SelectedTile.Stockpile > -1)
                                 {
-                                    GUIManager.StockpileGUI.Open(GamePlayState.StockpileList.Get(SelectedTile.Stockpile));
+                                    GUIManager.StockpileUI.Open(GamePlayState.StockpileList.Get(SelectedTile.Stockpile));
                                 }
 
                                 if(SelectedTile.Entity != null)
@@ -102,7 +102,7 @@ namespace MountPRG
                                     Hut hut = SelectedTile.Entity.Get<Hut>();
                                     if(hut != null)
                                     {
-                                        GUIManager.HutUI.Open(hut);
+                                        GUIManager.HutUI.Open(hut, GamePlayState.Settlers);
                                     }
                                 }
                             }
@@ -112,7 +112,7 @@ namespace MountPRG
                         MakeGatheringJob();
                         break;
                     case JobType.CHOP:
-                        //Console.WriteLine("Cut");
+                        MakeChopingJob();
                         break;
                     case JobType.MINE:
                         //Console.WriteLine("Mine");
@@ -328,9 +328,28 @@ namespace MountPRG
             }
         }
 
+        private void MakeChopingJob()
+        {
+            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                if(!SelectedTile.Selected)
+                {
+                    if(SelectedTile.Entity != null)
+                    {
+                        Mineable mineable = SelectedTile.Entity.Get<Mineable>();
+                        if(mineable != null)
+                        {
+                            SelectedTile.Selected = true;
+                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.CHOP));
+                        }
+                    }
+                }
+            }
+        }
+
         private void MakeBuilding()
         {
-            Entity entity = GUIManager.ActionPanelGUI.CurrentBuilding;
+            Entity entity = GUIManager.ActionPanelUI.CurrentBuilding;
             entity.X = GetCellX() * TileMap.TILE_SIZE;
             entity.Y = GetCellY() * TileMap.TILE_SIZE;
 
@@ -363,14 +382,14 @@ namespace MountPRG
                         for (int j = GetCellY(); j < GetCellY() + building.Rows; j++)
                         {
                             Tile tile = GamePlayState.TileMap.GetTile(i, j);
-                            tile.Entity = GUIManager.ActionPanelGUI.CurrentBuilding;
+                            tile.Entity = GUIManager.ActionPanelUI.CurrentBuilding;
                             tile.Walkable = false;
                         }
                     }
 
                     sprite.Color = Color.White;
-                    GUIManager.ActionPanelGUI.CurrentBuilding = null;
-                    GUIManager.ActionPanelGUI.CurrentJobType = JobType.NONE;
+                    GUIManager.ActionPanelUI.CurrentBuilding = null;
+                    GUIManager.ActionPanelUI.CurrentJobType = JobType.NONE;
                 }
             }
         }

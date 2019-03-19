@@ -16,7 +16,7 @@ namespace MountPRG
         MOVING,
     }
 
-    public enum JobState
+    public enum SettlerState
     {
         WAITING,
         WORKING,
@@ -43,7 +43,7 @@ namespace MountPRG
 
         private AnimatedSprite sprite;
         private AnimationState animationState = AnimationState.IDLE;
-        private JobState jobState = JobState.WAITING;
+        private SettlerState settlerState = SettlerState.WAITING;
 
         private Job myJob;
 
@@ -84,7 +84,7 @@ namespace MountPRG
                     }
                 }
             }*/
-            if (jobState == JobState.WAITING)
+            if (settlerState == SettlerState.WAITING)
             {
                 if (myJob == null && (GamePlayState.JobSystem.Count > 0))
                 {
@@ -102,14 +102,27 @@ namespace MountPRG
                                 GamePlayState.JobSystem.Remove(i);
                                 myJob = job;
                                 SetDestTile(myJob.Tile);
-                                jobState = JobState.WORKING;
+                                settlerState = SettlerState.WORKING;
+                                break;
+                            }
+                        }
+                        else if(job.JobType == JobType.CHOP)
+                        {
+                            Tile tile = job.Tile;
+                            // Если путь к одной из сторон дерева найден, то берем работу
+                            if(CheckWalkablePath(tile.GetNeighbours(false)[i]))
+                            {
+                                GamePlayState.JobSystem.Remove(i);
+                                myJob = job;
+                                SetDestTile(myJob.Tile.GetNeighbours(false)[i]);
+                                settlerState = SettlerState.WORKING;
                                 break;
                             }
                         }
                     }
                 }
             }
-            else if (jobState == JobState.WORKING)
+            else if (settlerState == SettlerState.WORKING)
             {
                 if (myJob.JobType == JobType.HARVEST)
                 {
@@ -145,13 +158,33 @@ namespace MountPRG
                             cargo = null;
                             myJob = null;
 
-                            jobState = JobState.WAITING;
+                            settlerState = SettlerState.WAITING;
                         }
+                    }
+                }
+                else if(myJob.JobType == JobType.CHOP)
+                {
+                    if(currTile.Equals(destTile))
+                    {
+                        myJob.Tile.Selected = false;
+
+                        GamePlayState.TileMap.RemoveEntity(myJob.Tile.X, myJob.Tile.Y);
+                        GamePlayState.TileMap.AddEntity(myJob.Tile.X, myJob.Tile.Y, new Wood());
+
+                        myJob = null;
+
+                        settlerState = SettlerState.WAITING;
                     }
                 }
             }
 
             MovementUpdate(gameTime);
+        }
+
+        private bool CheckWalkablePath(Tile tile)
+        {
+            PathAStar pAS = new PathAStar(currTile, tile, tile.Tilemap.GetTileGraph().Nodes, tile.Tilemap);
+            return pAS.Length != -1;
         }
 
         private void SetDestTile(Tile tile)

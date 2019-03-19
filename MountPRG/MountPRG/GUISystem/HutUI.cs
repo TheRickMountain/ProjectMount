@@ -1,120 +1,137 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace MountPRG
 {
-    public class HutUI : IGUI
+    public class HutUI
     {
-        private UI background;
 
-        private SpriteFont font;
+        private PanelUI panel;
 
-        private List<Slot> avatars;
-        private List<string> names;
-        private List<Button> checkboxes;
+        private List<SpriteUI> avatars = new List<SpriteUI>();
+        private List<TextUI> names = new List<TextUI>();
+        private List<CheckboxUI> checkboxes = new List<CheckboxUI>();
 
-        public HutUI(bool active) : base(active)
+        private List<SettlerController> settlers;
+
+        private Hut hut;
+
+        private const int AVATAR_SIZE = 48;
+        private const int TEXT_WIDTH = 80;
+
+        private const int ELEMENTS_COUNT = 4;
+
+        private int scrollPos;
+
+        public bool Active
         {
-            background = new UI();
-
-            font = ResourceBank.Fonts["mountFont"];
+            get; set;
         }
 
-        public override void Update(GameTime gameTime)
+        public HutUI()
         {
-            if (InputManager.GetKeyDown(Keys.E) || InputManager.GetMouseButtonDown(MouseInput.RightButton))
-            {
-                Active = false;
+            panel = new PanelUI();
 
-                avatars.Clear();
-                names.Clear();
-                checkboxes.Clear();
+            panel.InnerWidth = AVATAR_SIZE + GUIManager.OFFSET + TEXT_WIDTH + GUIManager.OFFSET + GUIManager.CHECKBOX_SIZE;
+
+            panel.InnerHeight = ELEMENTS_COUNT * AVATAR_SIZE + (ELEMENTS_COUNT - 1) * GUIManager.OFFSET;
+
+            panel.X = Game1.ScreenRectangle.Width - panel.Width;
+            panel.Y = Game1.ScreenRectangle.Height - panel.Height;
+
+            settlers = new List<SettlerController>();
+
+            for(int i = 0; i < ELEMENTS_COUNT; i++)
+            {
+                avatars.Add(new SpriteUI(ResourceBank.Sprites["avatar"], AVATAR_SIZE, AVATAR_SIZE));
+                avatars[i].X = panel.InnerX;
+                avatars[i].Y = panel.InnerY + i * AVATAR_SIZE + i * GUIManager.OFFSET;
+
+                names.Add(new TextUI(ResourceBank.Fonts["mountFont"], "Name"));
+                names[i].X = avatars[i].X + AVATAR_SIZE + GUIManager.OFFSET;
+                names[i].Y = avatars[i].Y;
+
+                checkboxes.Add(new CheckboxUI());
+                checkboxes[i].X = names[i].X + TEXT_WIDTH + GUIManager.OFFSET;
+                checkboxes[i].Y = avatars[i].Y;
             }
+        }
 
-            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+        public void Update(GameTime gameTime)
+        {
+            if(Active)
             {
-                for (int i = 0; i < checkboxes.Count; i++)
+                if (panel.Intersects(InputManager.GetX(), InputManager.GetY()))
                 {
-                    if(checkboxes[i].Intersects(InputManager.GetX(), InputManager.GetY()))
+                    GUIManager.MouseOnUI = true;
+
+                    scrollPos = MathHelper.Clamp(scrollPos - InputManager.Scroll, 0, settlers.Count - ELEMENTS_COUNT);
+
+
+                    if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
                     {
-                        UnselectAll();
-                        checkboxes[i].Icon = ResourceBank.Sprites["mark"];
+                        for(int i = 0; i < ELEMENTS_COUNT; i++)
+                        {
+                            if(checkboxes[i].Intersects(InputManager.GetX(), InputManager.GetY()))
+                            {
+                                if (!checkboxes[i].Marked)
+                                    hut.SetOwner((Settler)settlers[i + scrollPos].Parent);
+                                else
+                                    hut.SetOwner(null);
+                            }
+}
                     }
+                }
+
+                for (int i = 0; i < ELEMENTS_COUNT; i++)
+                {
+                    // avatars[i].Texture = settlers[i + scrollPos].Avatar;
+                    names[i].Text = settlers[i + scrollPos].Name;
+
+                    checkboxes[i].Marked = false;
+                    if (settlers[i + scrollPos].Parent.Equals(hut.Owner))
+                        checkboxes[i].Marked = true;
                 }
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            background.Draw(spriteBatch);
-
-            for(int i = 0; i < avatars.Count; i++)
+            if (Active)
             {
-                avatars[i].Draw(spriteBatch);
-            }
+                panel.Draw(spriteBatch);
 
-            for(int i = 0; i < names.Count; i++)
-            {
-                spriteBatch.DrawString(font, names[i],
-                    new Vector2(avatars[i].X + GUIManager.SLOT_SIZE + GUIManager.OFFSET, avatars[i].Y), Color.White);
-            }
-
-            for(int i = 0; i < checkboxes.Count; i++)
-            {
-                checkboxes[i].Draw(spriteBatch);
+                for(int i = 0; i < ELEMENTS_COUNT; i++)
+                {
+                    avatars[i].Draw(spriteBatch);
+                    names[i].Draw(spriteBatch);
+                    checkboxes[i].Draw(spriteBatch);
+                }
             }
         }
 
-        private void UnselectAll()
-        {
-            for (int i = 0; i < checkboxes.Count; i++)
-            {
-                checkboxes[i].Icon = null;
-            }
-        }
-    
-
-        public void Open(Hut hut)
+      
+        public void Open(Hut hut, List<Settler> stl)
         {
             Active = true;
 
-            avatars = new List<Slot>();
-            names = new List<string>();
-            checkboxes = new List<Button>();
+            this.hut = hut;
 
-            List<Settler> settlers = GamePlayState.Settlers;
-
-            for (int i = 0; i < settlers.Count; i++)
-            {
-                avatars.Add(new Slot(ResourceBank.Sprites["avatar"], GUIManager.SLOT_SIZE, GUIManager.SLOT_SIZE, true));
-                names.Add(settlers[i].Get<SettlerController>().Name);
-                checkboxes.Add(new Button(ResourceBank.Sprites["checkbox"], "", true));
-            }
-
-            background.InnerWidth = GUIManager.SLOT_SIZE + GUIManager.OFFSET + 60 + GUIManager.OFFSET + 16;
-            background.InnerHeight = GUIManager.SLOT_SIZE * avatars.Count + GUIManager.OFFSET * (avatars.Count - 1);
-
-            background.X = Game1.ScreenRectangle.Width - background.Width;
-            background.Y = Game1.ScreenRectangle.Height - background.Height;
-
-            for (int i = 0; i < settlers.Count; i++)
-            {
-                avatars[i].X = background.InnerX;
-                avatars[i].Y = background.InnerY + GUIManager.SLOT_SIZE * i + GUIManager.OFFSET * i;
-
-                checkboxes[i].X = avatars[i].X + GUIManager.SLOT_SIZE + GUIManager.OFFSET + 50 + GUIManager.OFFSET;
-                checkboxes[i].Y = avatars[i].Y;
-                checkboxes[i].Width = 16;
-                checkboxes[i].Height = 16;
-            }
+            for (int i = 0; i < stl.Count; i++)
+                settlers.Add(stl[i].Get<SettlerController>());
         }
-    }
 
+        public void Close()
+        {
+            Active = false;
+
+            hut = null;
+
+            settlers.Clear();
+        }
+
+    }
 }
