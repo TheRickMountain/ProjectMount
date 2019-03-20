@@ -109,16 +109,16 @@ namespace MountPRG
                         }
                         break;
                     case JobType.HARVEST:
-                        MakeGatheringJob();
+                        MakeHarvestJob();
                         break;
                     case JobType.CHOP:
-                        MakeChopingJob();
+                        MakeChopJob();
                         break;
                     case JobType.MINE:
-                        //Console.WriteLine("Mine");
+                        MakeMineJob();
                         break;
                     case JobType.HAUL:
-                        //MakeBuilding();
+                        MakeHaulJob();
                         break;
                     case JobType.STOCKPILE:
                         MakeStockpile();
@@ -309,7 +309,7 @@ namespace MountPRG
             return tiles;
         }
 
-        private void MakeGatheringJob()
+        private void MakeHarvestJob()
         {
             if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
@@ -328,7 +328,22 @@ namespace MountPRG
             }
         }
 
-        private void MakeChopingJob()
+        private void MakeHaulJob()
+        {
+            if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                if (!SelectedTile.Selected)
+                {
+                    if (SelectedTile.Item != null)
+                    {
+                        SelectedTile.Selected = true;
+                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.HAUL));
+                    }
+                }
+            }
+        }
+
+        private void MakeChopJob()
         {
             if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
@@ -342,6 +357,21 @@ namespace MountPRG
                             SelectedTile.Selected = true;
                             GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.CHOP));
                         }
+                    }
+                }
+            }
+        }
+
+        private void MakeMineJob()
+        {
+            if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                if (!SelectedTile.Selected)
+                {
+                    if (SelectedTile.BuildingLayerId == TileMap.STONE_1_BLOCK || SelectedTile.BuildingLayerId == TileMap.STONE_2_BLOCK)
+                    {
+                        SelectedTile.Selected = true;
+                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.MINE));
                     }
                 }
             }

@@ -13,13 +13,14 @@ namespace MountPRG
 
         public ItemDatabase()
         {
-            items.Add(TileMap.STICK, new Item(TileMap.STICK, "stick", true, false, false));
-            items.Add(TileMap.FLINT, new Item(TileMap.FLINT, "stone", true, false, false));
-            items.Add(TileMap.BERRY, new Item(TileMap.BERRY, "berry", true, true, false));
-            items.Add(TileMap.FLINT_KNIFE, new Item(TileMap.FLINT_KNIFE, "flint_knife", false, false, true));
+            items.Add(TileMap.STICK,        new Item(TileMap.STICK,        "stick", true, false, false));
+            items.Add(TileMap.FLINT,        new Item(TileMap.FLINT,        "stone", true, false, false));
+            items.Add(TileMap.BERRY,        new Item(TileMap.BERRY,        "berry", true, true, false));
+            items.Add(TileMap.FLINT_KNIFE,  new Item(TileMap.FLINT_KNIFE,  "flint_knife", false, false, true));
             items.Add(TileMap.WOODEN_SPEAR, new Item(TileMap.WOODEN_SPEAR, "wooden_spear", false, false, true));
-            items.Add(TileMap.HAY, new Item(TileMap.HAY, "hay", true, false, false));
-            items.Add(TileMap.WOOD, new Item(TileMap.WOOD, "wood", true, false, false));
+            items.Add(TileMap.HAY,          new Item(TileMap.HAY,          "hay", true, false, false));
+            items.Add(TileMap.WOOD,         new Item(TileMap.WOOD,         "wood", true, false, false));
+            items.Add(TileMap.STONE,        new Item(TileMap.STONE,        "stone", true, false, false));
         }
 
         public static Item GetItemById(int id)

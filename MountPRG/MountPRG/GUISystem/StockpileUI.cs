@@ -30,8 +30,8 @@ namespace MountPRG
                 {
                     SlotUI slot = slots[i * tiles.GetLength(1) + j];
                     Tile tile = tiles[i, j];
-                    if (tile.Entity != null)
-                        slot.AddItem(ItemDatabase.GetItemById(tile.Entity.Id), tile.Entity.Get<Gatherable>().Count);
+                    if (tile.Item != null)
+                        slot.AddItem(tile.Item, tile.ItemCount);
                     else
                         slot.Clear();
                 }
@@ -68,8 +68,8 @@ namespace MountPRG
                     slot.Y = background.InnerY + j * GUIManager.SLOT_SIZE + j * GUIManager.OFFSET;
 
                     Tile tile = tiles[i, j];
-                    if (tile.Entity != null)
-                        slot.AddItem(ItemDatabase.GetItemById(tile.Entity.Id), tile.Entity.Get<Gatherable>().Count);
+                    if (tile.Item != null)
+                        slot.AddItem(tile.Item, tile.ItemCount);
 
                     slots.Add(slot);
                 }

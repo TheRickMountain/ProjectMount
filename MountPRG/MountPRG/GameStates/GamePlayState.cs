@@ -55,23 +55,22 @@ namespace MountPRG
             TileMap.SetTile(7, 5, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
 
             //AddEntityToTileMap(17, 15, new Campfire());
-            TileMap.AddEntity(10, 15, new Tree(), false);
+            TileMap.AddEntity(5, 20, new Tree(), false);
 
-            TileMap.AddEntity(10, 17, new Flint());
-            TileMap.AddEntity(10, 18, new Flint());
-            TileMap.AddEntity(10, 19, new Flint());
-            TileMap.AddEntity(10, 20, new Flint());
+            TileMap.GetTile(10, 17).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
+            TileMap.GetTile(10, 18).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
+            TileMap.GetTile(10, 19).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
+            TileMap.GetTile(10, 20).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
 
-            TileMap.AddEntity(11, 17, new Stick());
-            TileMap.AddEntity(11, 18, new Stick());
-            TileMap.AddEntity(11, 19, new Stick());
-            TileMap.AddEntity(11, 20, new Stick());
+            TileMap.GetTile(11, 17).AddItem(ItemDatabase.GetItemById(TileMap.STICK), 1);
+            TileMap.GetTile(11, 18).AddItem(ItemDatabase.GetItemById(TileMap.STICK), 1);
+            TileMap.GetTile(11, 19).AddItem(ItemDatabase.GetItemById(TileMap.STICK), 1);
+            TileMap.GetTile(11, 20).AddItem(ItemDatabase.GetItemById(TileMap.STICK), 1);
 
             TileMap.AddEntity(12, 17, new Grass());
             TileMap.AddEntity(12, 18, new Grass());
             TileMap.AddEntity(12, 19, new Grass());
             TileMap.AddEntity(12, 20, new Grass());
-
 
             TileMap.AddEntity(9, 17, new Bush());
             TileMap.AddEntity(9, 18, new Bush());
@@ -89,10 +88,6 @@ namespace MountPRG
             Settlers.Add(settler);
 
             settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
-            Entities.Add(settler);
-            Settlers.Add(settler);
-
-            settler = new Settler(Engine.ToWorldPos(17), Engine.ToWorldPos(17));
             Entities.Add(settler);
             Settlers.Add(settler);
 

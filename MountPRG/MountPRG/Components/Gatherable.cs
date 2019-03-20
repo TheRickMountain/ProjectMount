@@ -13,7 +13,7 @@ namespace MountPRG
 
         private Action cbCountEqualsZero;
 
-        public Entity Entity
+        public Item Item
         {
             get; private set;
         }
@@ -30,16 +30,16 @@ namespace MountPRG
             }
         }
 
-        public bool EntityHolder
+        public bool ItemHolder
         {
             get; private set;
         }
 
-        public Gatherable(Entity entity, int count, bool entityHolder = false) : base(false, false)
+        public Gatherable(Item item, int count, bool itemHolder = false) : base(false, false)
         {
-            Entity = entity;
-            this.count = count;
-            EntityHolder = entityHolder;
+            Item = item;
+            Count = count;
+            ItemHolder = itemHolder;
         } 
 
         public void OnCountEqualsZeroCallback(Action cb)

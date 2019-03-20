@@ -22,13 +22,17 @@ namespace MountPRG
         public TileMap Tilemap { get; }
         public int GroundLayerId { get; set; }
         public int BuildingLayerId { get; set; }
-        public int EdgeLayerId { get; set; }
         public Entity Entity { get; set; }
-        public Entity EntityToAdd { get; set; }
+
+        public Item Item { get; private set; }
+        public int ItemCount { get; set; }
+        public Item ItemToAdd { get; set; }
+
         public bool Walkable { get; set; }
+
         public Color GroundLayerColor { get; set; }
         public Color BuildingLayerColor { get; set; }
-        public Color EdgeLayerColor { get; set; }
+
         public bool Selected { get; set; }
         public int Stockpile { get; set; }
 
@@ -39,11 +43,25 @@ namespace MountPRG
             Tilemap = tilemap;
             GroundLayerId = groundLayerId;
             BuildingLayerId = buildingLayerId;
-            EdgeLayerId = -1;
             Walkable = true;
             GroundLayerColor = Color.White;
             BuildingLayerColor = Color.White;
             Stockpile = -1;
+        }
+
+        public void AddItem(Item item, int count)
+        {
+            Item = item;
+            ItemCount = count;
+            BuildingLayerId = item.Id;
+            Walkable = true;
+        }
+
+        public void RemoveItem()
+        {
+            Item = null;
+            ItemCount = 0;
+            BuildingLayerId = -1;
         }
 
         public List<Tile> GetNeighbours(bool withDiag)
@@ -112,11 +130,7 @@ namespace MountPRG
         public const int FLINT_KNIFE = 13;
         public const int GRASS = 14;
         public const int WOOD = 15;
-
-        public const int STRAW_HUT_0 = 16;
-        public const int STRAW_HUT_1 = 17;
-        public const int STRAW_HUT_2 = 32;
-        public const int STRAW_HUT_3 = 33;
+        public const int STONE = 20;
 
         public const int TILE_SIZE = 16;
 
@@ -294,7 +308,6 @@ namespace MountPRG
             Rectangle destination = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
             int groundIndex;
             int buildingIndex;
-            int edgeIndex;
             for (int y = min.Y; y < max.Y; y++)
             {
                 destination.Y = y * TILE_SIZE;
@@ -305,7 +318,6 @@ namespace MountPRG
                     Tile tile = GetTile(x, y);
                     groundIndex = tile.GroundLayerId;
                     buildingIndex = tile.BuildingLayerId;
-                    edgeIndex = tile.EdgeLayerId;
 
                     destination.X = x * TILE_SIZE;
 
@@ -327,15 +339,6 @@ namespace MountPRG
                             destination,
                             tileSet.SourceRectangles[buildingIndex],
                             tile.BuildingLayerColor == Color.White ? DayNightSystemUI.CurrentColor : tile.BuildingLayerColor);
-                    }
-
-                    if(edgeIndex != -1)
-                    {
-                        spriteBatch.Draw(
-                            tileSet.Texture,
-                            destination,
-                            tileSet.SourceRectangles[edgeIndex],
-                            tile.EdgeLayerColor);
                     }
 
                     if (tile.Selected)

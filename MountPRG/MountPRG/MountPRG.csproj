@@ -54,16 +54,11 @@
     <Compile Include="Components\Mineable.cs" />
     <Compile Include="Components\Sprite.cs" />
     <Compile Include="Components\Storage.cs" />
-    <Compile Include="Entities\Berry.cs" />
     <Compile Include="Entities\Bush.cs" />
-    <Compile Include="Entities\Flint.cs" />
     <Compile Include="Entities\Grass.cs" />
-    <Compile Include="Entities\Hay.cs" />
-    <Compile Include="Entities\Stick.cs" />
     <Compile Include="Entities\StrawHut.cs" />
     <Compile Include="Entities\ToolsWorkbench.cs" />
     <Compile Include="Entities\Tree.cs" />
-    <Compile Include="Entities\Wood.cs" />
     <Compile Include="GUISystem\ButtonUI.cs" />
     <Compile Include="Entities\Campfire.cs" />
     <Compile Include="Entities\Chest.cs" />

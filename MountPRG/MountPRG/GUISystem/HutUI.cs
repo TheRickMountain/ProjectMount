@@ -22,7 +22,7 @@ namespace MountPRG
         private const int AVATAR_SIZE = 48;
         private const int TEXT_WIDTH = 80;
 
-        private const int ELEMENTS_COUNT = 4;
+        private const int ELEMENTS_COUNT = 3;
 
         private int scrollPos;
 

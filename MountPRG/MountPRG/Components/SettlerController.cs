@@ -47,7 +47,9 @@ namespace MountPRG
 
         private Job myJob;
 
-        private Entity cargo;
+        private Item cargo;
+        private int cargoCount;
+
         private Tile stockpileTile;
 
         public SettlerController(AnimatedSprite sprite)
@@ -86,41 +88,7 @@ namespace MountPRG
             }*/
             if (settlerState == SettlerState.WAITING)
             {
-                if (myJob == null && (GamePlayState.JobSystem.Count > 0))
-                {
-                    for (int i = 0; i < GamePlayState.JobSystem.Count; i++)
-                    {
-                        Job job = GamePlayState.JobSystem.Get(i);
-                        if (job.JobType == JobType.HARVEST)
-                        {
-                            stockpileTile = GamePlayState.StockpileList.GetTileForEntity(job.Tile.Entity.Get<Gatherable>().Entity);
-
-                            if (stockpileTile != null)
-                            {
-                                stockpileTile.EntityToAdd = job.Tile.Entity.Get<Gatherable>().Entity;
-
-                                GamePlayState.JobSystem.Remove(i);
-                                myJob = job;
-                                SetDestTile(myJob.Tile);
-                                settlerState = SettlerState.WORKING;
-                                break;
-                            }
-                        }
-                        else if(job.JobType == JobType.CHOP)
-                        {
-                            Tile tile = job.Tile;
-                            // Если путь к одной из сторон дерева найден, то берем работу
-                            if(CheckWalkablePath(tile.GetNeighbours(false)[i]))
-                            {
-                                GamePlayState.JobSystem.Remove(i);
-                                myJob = job;
-                                SetDestTile(myJob.Tile.GetNeighbours(false)[i]);
-                                settlerState = SettlerState.WORKING;
-                                break;
-                            }
-                        }
-                    }
-                }
+                FindJob();
             }
             else if (settlerState == SettlerState.WORKING)
             {
@@ -132,9 +100,10 @@ namespace MountPRG
                         {
                             myJob.Tile.Selected = false;
 
-                            cargo = myJob.Tile.Entity.Get<Gatherable>().Entity;
-                            cargo.Get<Gatherable>().Count = myJob.Tile.Entity.Get<Gatherable>().Count;
-                            if (!myJob.Tile.Entity.Get<Gatherable>().EntityHolder)
+                            cargo = myJob.Tile.Entity.Get<Gatherable>().Item;
+                            cargoCount = myJob.Tile.Entity.Get<Gatherable>().Count;
+
+                            if (!myJob.Tile.Entity.Get<Gatherable>().ItemHolder)
                                 GamePlayState.TileMap.RemoveEntity(myJob.Tile.X, myJob.Tile.Y);
                             else
                                 myJob.Tile.Entity.Get<Gatherable>().Count = 0;
@@ -146,13 +115,49 @@ namespace MountPRG
                     {
                         if (currTile == stockpileTile)
                         {
-                            if (stockpileTile.Entity == null)
+                            if (stockpileTile.Item == null)
                             {
-                                GamePlayState.TileMap.AddEntity(stockpileTile.X, stockpileTile.Y, cargo);
+                                stockpileTile.AddItem(cargo, cargoCount);
                             }
                             else
                             {
-                                stockpileTile.Entity.Get<Gatherable>().Count += 1;
+                                stockpileTile.ItemCount += cargoCount;
+                            }
+
+                            cargo = null;
+                            myJob = null;
+
+                            settlerState = SettlerState.WAITING;
+                        }
+                    }
+                }
+                else if(myJob.JobType == JobType.HAUL)
+                {
+                    if (cargo == null)
+                    {
+                        if (myJob.Tile == currTile)
+                        {
+                            myJob.Tile.Selected = false;
+
+                            cargo = myJob.Tile.Item;
+                            cargoCount = myJob.Tile.ItemCount;
+
+                            myJob.Tile.RemoveItem();
+
+                            SetDestTile(stockpileTile);
+                        }
+                    }
+                    else
+                    {
+                        if (currTile == stockpileTile)
+                        {
+                            if (stockpileTile.Item == null)
+                            {
+                                stockpileTile.AddItem(cargo, cargoCount);
+                            }
+                            else
+                            {
+                                stockpileTile.ItemCount += cargoCount;
                             }
 
                             cargo = null;
@@ -169,7 +174,22 @@ namespace MountPRG
                         myJob.Tile.Selected = false;
 
                         GamePlayState.TileMap.RemoveEntity(myJob.Tile.X, myJob.Tile.Y);
-                        GamePlayState.TileMap.AddEntity(myJob.Tile.X, myJob.Tile.Y, new Wood());
+                        myJob.Tile.AddItem(ItemDatabase.GetItemById(TileMap.WOOD), 1);
+
+                        myJob = null;
+
+                        settlerState = SettlerState.WAITING;
+                    }
+                }
+                else if(myJob.JobType == JobType.MINE)
+                {
+                    if(currTile.Equals(destTile))
+                    {
+                        Console.WriteLine("Make mining");
+                        myJob.Tile.Selected = false;
+
+                        myJob.Tile.BuildingLayerId = -1;
+                        myJob.Tile.AddItem(ItemDatabase.GetItemById(TileMap.STONE), 1);
 
                         myJob = null;
 
@@ -181,7 +201,87 @@ namespace MountPRG
             MovementUpdate(gameTime);
         }
 
-        private bool CheckWalkablePath(Tile tile)
+        private void FindJob()
+        {
+            Console.WriteLine("Looking for job");
+
+            if ((GamePlayState.JobSystem.Count > 0) && myJob == null)
+            {
+                for (int i = 0; i < GamePlayState.JobSystem.Count; i++)
+                {
+                    Job job = GamePlayState.JobSystem.Get(i);
+                    if (job.JobType == JobType.HARVEST)
+                    {
+                        stockpileTile = GamePlayState.StockpileList.GetTileForItem(job.Tile.Entity.Get<Gatherable>().Item);
+
+                        if (stockpileTile != null)
+                        {
+                            stockpileTile.ItemToAdd = job.Tile.Entity.Get<Gatherable>().Item;
+
+                            GamePlayState.JobSystem.Remove(i);
+                            myJob = job;
+                            SetDestTile(myJob.Tile);
+                            settlerState = SettlerState.WORKING;
+                            break;
+                        }
+                    }
+                    else if(job.JobType == JobType.HAUL)
+                    {
+                        Console.WriteLine("Found haul job");
+                        stockpileTile = GamePlayState.StockpileList.GetTileForItem(job.Tile.Item);
+
+                        if (stockpileTile != null)
+                        {
+                            Console.WriteLine("Take haul job");
+                            stockpileTile.ItemToAdd = job.Tile.Item;
+
+                            GamePlayState.JobSystem.Remove(i);
+                            myJob = job;
+                            SetDestTile(myJob.Tile);
+                            settlerState = SettlerState.WORKING;
+                            break;
+                        }
+                    }
+                    else if (job.JobType == JobType.CHOP || job.JobType == JobType.MINE)
+                    {
+                        Console.WriteLine("Found mine job");
+                        Tile tile = null;
+                        // Если тайл непроходимый, то ищем путь подхода к нему
+                        if (!job.Tile.Walkable)
+                            tile = GetWalkablePathTo(job.Tile);
+                        else
+                            tile = job.Tile;
+
+                        if (tile != null)
+                        {
+                            Console.WriteLine("Take mine job");
+                            GamePlayState.JobSystem.Remove(i);
+                            myJob = job;
+                            SetDestTile(tile);
+                            settlerState = SettlerState.WORKING;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private Tile GetWalkablePathTo(Tile tile)
+        {
+            List<Tile> neighbours = tile.GetNeighbours(false);
+            for (int i = 0; i < neighbours.Count; i++)
+            {
+                if (!neighbours[i].Walkable)
+                    continue;
+                else if (CheckPathIsWalkable(neighbours[i]))
+                    return neighbours[i];
+            }
+
+            return null;
+        }
+
+
+        private bool CheckPathIsWalkable(Tile tile)
         {
             PathAStar pAS = new PathAStar(currTile, tile, tile.Tilemap.GetTileGraph().Nodes, tile.Tilemap);
             return pAS.Length != -1;
