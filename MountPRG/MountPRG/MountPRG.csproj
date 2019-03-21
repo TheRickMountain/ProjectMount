@@ -75,6 +75,7 @@
     <Compile Include="GUISystem\CheckboxUI.cs" />
     <Compile Include="GUISystem\GUIManager.cs" />
     <Compile Include="GUISystem\HutUI.cs" />
+    <Compile Include="GUISystem\SliderUI.cs" />
     <Compile Include="GUISystem\SpriteUI.cs" />
     <Compile Include="GUISystem\UI.cs" />
     <Compile Include="GUISystem\ItemDatabase.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Utils\MyRandom.cs" />
     <Compile Include="Utils\NameGenerator.cs" />
     <Compile Include="Utils\ResourceBank.cs" />
+    <Compile Include="Utils\Timer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

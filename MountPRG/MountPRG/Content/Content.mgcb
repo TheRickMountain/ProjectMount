@@ -200,6 +200,18 @@
 /processorParam:TextureFormat=Color
 /build:Sprites/day_night.png
 
+#begin Sprites/fish_icon.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/fish_icon.png
+
 #begin Sprites/harvest_icon.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -319,6 +331,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Sprites/selector.png
+
+#begin Sprites/slider.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Sprites/slider.png
 
 #begin Sprites/slider.png
 /importer:TextureImporter

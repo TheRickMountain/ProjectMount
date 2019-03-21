@@ -14,6 +14,7 @@ namespace MountPRG
         HAUL,
         STOCKPILE,
         BUILDING,
+        FISH,
         NONE
     }
 

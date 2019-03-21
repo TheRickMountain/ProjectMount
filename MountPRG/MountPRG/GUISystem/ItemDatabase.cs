@@ -21,6 +21,7 @@ namespace MountPRG
             items.Add(TileMap.HAY,          new Item(TileMap.HAY,          "hay", true, false, false));
             items.Add(TileMap.WOOD,         new Item(TileMap.WOOD,         "wood", true, false, false));
             items.Add(TileMap.STONE,        new Item(TileMap.STONE,        "stone", true, false, false));
+            items.Add(TileMap.FISH,         new Item(TileMap.FISH,         "fish", true, false, false));
         }
 
         public static Item GetItemById(int id)

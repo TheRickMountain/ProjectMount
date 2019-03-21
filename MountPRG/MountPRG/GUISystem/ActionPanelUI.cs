@@ -59,7 +59,9 @@ namespace MountPRG
             buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["mine_icon"]));
             buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["haul_icon"]));
             buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["stoсkpile_icon"]));
+            buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["fish_icon"]));
             buttons.Add(new ButtonUI(buttonBackground, ResourceBank.Sprites["build_icon"]));
+            
 
             int xStart = (Game1.ScreenRectangle.Width / 2) - (buttons.Count * GUIManager.BUTTON_SIZE + buttons.Count * GUIManager.OFFSET) / 2;
             int yStart = Game1.ScreenRectangle.Height - (GUIManager.BUTTON_SIZE + GUIManager.OFFSET);
@@ -80,8 +82,9 @@ namespace MountPRG
             ConnectButtonWithJobAction(buttons[2], JobType.MINE);
             ConnectButtonWithJobAction(buttons[3], JobType.HAUL);
             ConnectButtonWithJobAction(buttons[4], JobType.STOCKPILE);
+            ConnectButtonWithJobAction(buttons[5], JobType.FISH);
 
-            buttons[5].OnButtonDownCallback(delegate (ButtonUI button)
+            buttons[6].OnButtonDownCallback(delegate (ButtonUI button)
             {
                 button.Selected = true;
 

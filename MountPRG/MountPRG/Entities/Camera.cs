@@ -123,6 +123,9 @@ namespace MountPRG
                     case JobType.STOCKPILE:
                         MakeStockpile();
                         break;
+                    case JobType.FISH:
+                        MakeFishJob();
+                        break;
                     case JobType.BUILDING:
                         MakeBuilding();
                         break;
@@ -321,8 +324,29 @@ namespace MountPRG
                         if(gatherable != null && gatherable.Count > 0)
                         {
                             SelectedTile.Selected = true;
-                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.HARVEST));
+                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.HARVEST, 1));
                         }
+                    }
+                }
+            }
+        }
+
+        private void MakeFishJob()
+        {
+            if(InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                if(!SelectedTile.Selected)
+                {
+                    if(SelectedTile.GroundLayerId == TileMap.WATER_1_TILE
+                        || SelectedTile.GroundLayerId == TileMap.WATER_2_TILE
+                        || SelectedTile.GroundLayerId == TileMap.WATER_3_TILE
+                        || SelectedTile.GroundLayerId == TileMap.WATER_4_TILE
+                        || SelectedTile.GroundLayerId == TileMap.WATER_FRONT_TILE
+                        || SelectedTile.GroundLayerId == TileMap.WATER_LEFT_TILE
+                        || SelectedTile.GroundLayerId == TileMap.WATER_RIGHT_TILE)
+                    {
+                        SelectedTile.Selected = true;
+                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.FISH, 5));
                     }
                 }
             }
@@ -355,7 +379,7 @@ namespace MountPRG
                         if(mineable != null)
                         {
                             SelectedTile.Selected = true;
-                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.CHOP));
+                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.CHOP, 1));
                         }
                     }
                 }
@@ -371,7 +395,7 @@ namespace MountPRG
                     if (SelectedTile.BuildingLayerId == TileMap.STONE_1_BLOCK || SelectedTile.BuildingLayerId == TileMap.STONE_2_BLOCK)
                     {
                         SelectedTile.Selected = true;
-                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.MINE));
+                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.MINE, 2));
                     }
                 }
             }

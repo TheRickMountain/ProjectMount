@@ -54,6 +54,21 @@ namespace MountPRG
             TileMap.SetTile(7, 3, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
             TileMap.SetTile(7, 5, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
 
+            TileMap.SetTile(15, 4, TileMap.WATER_LEFT_TILE, Layer.GROUND, false);
+            TileMap.SetTile(16, 4, TileMap.WATER_FRONT_TILE, Layer.GROUND, false);
+            TileMap.SetTile(17, 4, TileMap.WATER_FRONT_TILE, Layer.GROUND, false);
+            TileMap.SetTile(18, 4, TileMap.WATER_RIGHT_TILE, Layer.GROUND, false);
+
+            TileMap.SetTile(15, 5, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            TileMap.SetTile(16, 5, TileMap.WATER_4_TILE, Layer.GROUND, false);
+            TileMap.SetTile(17, 5, TileMap.WATER_2_TILE, Layer.GROUND, false);
+            TileMap.SetTile(18, 5, TileMap.WATER_1_TILE, Layer.GROUND, false);
+
+            TileMap.SetTile(15, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            TileMap.SetTile(16, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            TileMap.SetTile(17, 6, TileMap.WATER_3_TILE, Layer.GROUND, false);
+            TileMap.SetTile(18, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
+
             //AddEntityToTileMap(17, 15, new Campfire());
             TileMap.AddEntity(5, 20, new Tree(), false);
 

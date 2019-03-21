@@ -131,6 +131,14 @@ namespace MountPRG
         public const int GRASS = 14;
         public const int WOOD = 15;
         public const int STONE = 20;
+        public const int WATER_FRONT_TILE = 21;
+        public const int WATER_1_TILE = 22;
+        public const int WATER_2_TILE = 23;
+        public const int WATER_3_TILE = 24;
+        public const int WATER_4_TILE = 25;
+        public const int WATER_LEFT_TILE = 26;
+        public const int WATER_RIGHT_TILE = 27;
+        public const int FISH = 28;
 
         public const int TILE_SIZE = 16;
 
