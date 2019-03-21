@@ -18,6 +18,7 @@ namespace MountPRG
     {
         public static Camera Camera;
 
+        public static WorldTimer WorldTimer;
 
         public static TileSet TileSet;
         public static TileMap TileMap;
@@ -39,6 +40,8 @@ namespace MountPRG
         public override void Initialize()
         {
             Camera = new Camera();
+
+            WorldTimer = new WorldTimer();
 
             TileSet = new TileSet(ResourceBank.Sprites["tileset"]);
             TileMap = new TileMap(32, 32, TileSet);
@@ -122,6 +125,8 @@ namespace MountPRG
             guiManager.Update(gameTime);
 
             Camera.Update(gameTime);
+
+            WorldTimer.Update(gameTime);
 
             Entities.UpdateList();
 

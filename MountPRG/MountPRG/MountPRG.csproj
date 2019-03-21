@@ -106,6 +106,7 @@
     <Compile Include="Utils\NameGenerator.cs" />
     <Compile Include="Utils\ResourceBank.cs" />
     <Compile Include="Utils\Timer.cs" />
+    <Compile Include="Utils\WorldTimer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

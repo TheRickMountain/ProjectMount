@@ -12,14 +12,10 @@ namespace MountPRG
         private Rectangle circleDestination;
         private Rectangle circleSource;
         private Vector2 circleOrigin;
-        private float currentTime;
 
         private Rectangle arrowDestination;
 
-        public float TimeOfDay
-        {
-            get; private set;
-        }
+        private float rotation;
 
         public static Color DayColor
         {
@@ -54,8 +50,9 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.01);
-            int timeOfDay = -MathUtils.ToDegrees(currentTime);
+            float timeOfDay = GamePlayState.WorldTimer.TimeOfDay;
+            rotation = -MathUtils.ToRadians(timeOfDay);
+
             if(timeOfDay >= 80 && timeOfDay <= 110)
             {
                 float amount = Math.Min(1.0f, (timeOfDay - 80.0f) / 20.0f);
@@ -66,16 +63,11 @@ namespace MountPRG
                 float amount = Math.Min(1.0f, (timeOfDay - 260.0f) / 20.0f);
                 CurrentColor = Color.Lerp(NightColor, DayColor, amount);
             }
-
-            if (timeOfDay >= 360)
-                currentTime = 0;
-
-            TimeOfDay = timeOfDay;
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(circle, circleDestination, circleSource, Color.White, currentTime, circleOrigin, SpriteEffects.None, 1);
+            spriteBatch.Draw(circle, circleDestination, circleSource, Color.White, rotation, circleOrigin, SpriteEffects.None, 1);
             spriteBatch.Draw(arrow, arrowDestination, Color.White);
         }
 

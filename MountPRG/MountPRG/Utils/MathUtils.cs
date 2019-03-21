@@ -21,14 +21,14 @@ namespace MountPRG
             return p1 + alpha * (p2 - p1);
         }
 
-        public static float ToRadians(int deg)
+        public static float ToRadians(float deg)
         {
             return (float)(deg * (Math.PI / 180.0f));
         }
 
-        public static int ToDegrees(float rad)
+        public static float ToDegrees(float rad)
         {
-            return (int)(rad * (180.0f / Math.PI));
+            return (float)(rad * (180.0f / Math.PI));
         }
 
         public static void Populate(int[] arr, int value)
