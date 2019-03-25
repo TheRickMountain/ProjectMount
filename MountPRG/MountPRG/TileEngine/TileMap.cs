@@ -12,6 +12,7 @@ namespace MountPRG
     public enum Layer
     {
         GROUND,
+        EDGE,
         BUILDING
     }
 
@@ -20,7 +21,14 @@ namespace MountPRG
         public int X { get; }
         public int Y { get; }
         public TileMap Tilemap { get; }
-        public int GroundLayerId { get; set; }
+        private int groundLayerId;
+        public int GroundLayerId {
+            get { return groundLayerId; }
+            set {
+                groundLayerId = value;
+                Update();
+            } }
+        public int EdgeLayerId { get; set; }
         public int BuildingLayerId { get; set; }
         public Entity Entity { get; set; }
 
@@ -31,6 +39,7 @@ namespace MountPRG
         public bool Walkable { get; set; }
 
         public Color GroundLayerColor { get; set; }
+        public Color EdgeLayerColor { get; set; }
         public Color BuildingLayerColor { get; set; }
 
         public bool Selected { get; set; }
@@ -42,13 +51,158 @@ namespace MountPRG
             Y = y;
             Tilemap = tilemap;
             GroundLayerId = groundLayerId;
+            EdgeLayerId = -1;
             BuildingLayerId = buildingLayerId;
             Walkable = true;
             GroundLayerColor = Color.White;
+            EdgeLayerColor = Color.White;
             BuildingLayerColor = Color.White;
             Stockpile = -1;
         }
 
+        private void Update()
+        {
+            if(groundLayerId != TileMap.GRASS_TILE && groundLayerId != TileMap.GRASS_FLOWER_TILE)
+            {
+                Update(this);
+
+                List<Tile> neighbours = GetNeighbours(false);
+                for(int i = 0; i < neighbours.Count; i++)
+                {
+                    Tile tile = neighbours[i];
+                    if (tile.groundLayerId != TileMap.GRASS_TILE && tile.groundLayerId != TileMap.GRASS_FLOWER_TILE)
+                    {
+                        Update(tile);
+                    }
+                }
+            }
+        }
+
+        private void Update(Tile tile)
+        {
+            bool up = false;
+            bool down = false;
+            bool left = false;
+            bool right = false;
+
+            Tile neigh = Tilemap.GetTile(tile.X - 1, tile.Y);
+            if (neigh != null)
+            {
+                left = (neigh.groundLayerId == TileMap.GRASS_TILE || neigh.groundLayerId == TileMap.GRASS_FLOWER_TILE);
+            }
+
+            neigh = Tilemap.GetTile(tile.X + 1, tile.Y);
+            if (neigh != null)
+            {
+                right = (neigh.groundLayerId == TileMap.GRASS_TILE || neigh.groundLayerId == TileMap.GRASS_FLOWER_TILE);
+            }
+
+            neigh = Tilemap.GetTile(tile.X, tile.Y - 1);
+            if (neigh != null)
+            {
+                up = (neigh.groundLayerId == TileMap.GRASS_TILE || neigh.groundLayerId == TileMap.GRASS_FLOWER_TILE);
+            }
+
+            neigh = Tilemap.GetTile(tile.X, tile.Y + 1);
+            if (neigh != null)
+            {
+                down = (neigh.groundLayerId == TileMap.GRASS_TILE || neigh.groundLayerId == TileMap.GRASS_FLOWER_TILE);
+            }
+
+            if (up && down && left && right)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_UDLR;
+                return;
+            }
+
+            if (up && down && left)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_UDL;
+                return;
+            }
+
+            if (up && down && right)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_UDR;
+                return;
+            }
+
+            if (up && left && right)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_ULR;
+                return;
+            }
+
+            if (down && left && right)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_DLR;
+                return;
+            }
+
+            if (up && down)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_UD;
+                return;
+            }
+
+            if (left && right)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_LR;
+                return;
+            }
+
+            if (up && left)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_UL;
+                return;
+            }
+
+            if (up && right)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_UR;
+                return;
+            }
+
+            if (down && left)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_DL;
+                return;
+            }
+
+            if (down && right)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_DR;
+                return;
+            }
+
+            if (up)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_U;
+                return;
+            }
+
+            if (down)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_D;
+                return;
+            }
+
+            if (left)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_L;
+                return;
+            }
+
+            if (right)
+            {
+                tile.EdgeLayerId = TileMap.GRASS_R;
+                return;
+            }
+
+            tile.EdgeLayerId = -1;
+        }
+
+        
         public void AddItem(Item item, int count)
         {
             Item = item;
@@ -78,16 +232,31 @@ namespace MountPRG
                             continue;
 
                         if (i >= 0 && j >= 0 && i < Tilemap.Width && j < Tilemap.Height)
-                            tiles.Add(Tilemap.GetTile(i, j));
+                        {
+                            Tile tile = Tilemap.GetTile(i, j);
+                            if (tile != null)
+                                tiles.Add(tile);
+                        }
                     }
                 }
             }
             else
             {
-                tiles.Add(Tilemap.GetTile(X - 1, Y));
-                tiles.Add(Tilemap.GetTile(X + 1, Y));
-                tiles.Add(Tilemap.GetTile(X, Y - 1));
-                tiles.Add(Tilemap.GetTile(X, Y + 1));
+                Tile tile = Tilemap.GetTile(X - 1, Y);
+                if(tile != null)
+                    tiles.Add(tile);
+
+                tile = Tilemap.GetTile(X + 1, Y);
+                if (tile != null)
+                    tiles.Add(tile);
+
+                tile = Tilemap.GetTile(X, Y - 1);
+                if (tile != null)
+                    tiles.Add(tile);
+
+                tile = Tilemap.GetTile(X, Y + 1);
+                if (tile != null)
+                    tiles.Add(tile);
             }
 
             return tiles;
@@ -139,6 +308,22 @@ namespace MountPRG
         public const int WATER_LEFT_TILE = 26;
         public const int WATER_RIGHT_TILE = 27;
         public const int FISH = 28;
+
+        public const int GRASS_U = 48;
+        public const int GRASS_D = 49;
+        public const int GRASS_UD = 50;
+        public const int GRASS_R = 51;
+        public const int GRASS_L = 52;
+        public const int GRASS_LR = 53;
+        public const int GRASS_UDLR = 54;
+        public const int GRASS_ULR = 55;
+        public const int GRASS_DLR = 56;
+        public const int GRASS_UDL = 57;
+        public const int GRASS_UDR = 58;
+        public const int GRASS_UL = 59;
+        public const int GRASS_UR = 60;
+        public const int GRASS_DL = 61;
+        public const int GRASS_DR = 62;
 
         public const int TILE_SIZE = 16;
 
@@ -201,35 +386,6 @@ namespace MountPRG
                 return null;
 
             return tiles[y * Width + x];
-        }
-
-        public void SetTile(int x, int y, int firstLayerId, int secondLayerId, bool isWalkable)
-        {
-            if (x < 0 || y < 0 || x >= Width || y >= Height)
-                return;
-
-            Tile tile = tiles[y * Width + x];
-            tile.GroundLayerId = firstLayerId;
-            tile.BuildingLayerId = secondLayerId;
-            tile.Walkable = isWalkable;
-        }
-
-        public void SetTile(int x, int y, int id, Layer layer, bool isWalkable)
-        {
-            if (x < 0 || y < 0 || x >= Width || y >= Height)
-                return;
-
-            Tile tile = tiles[y * Width + x];
-            switch(layer)
-            {
-                case Layer.GROUND:
-                    tile.GroundLayerId = id;
-                    break;
-                case Layer.BUILDING:
-                    tile.BuildingLayerId = id;
-                    break;
-            }
-            tile.Walkable = isWalkable;
         }
 
         public bool AddEntity(int x, int y, Entity entity, bool walkable = true)
@@ -315,6 +471,7 @@ namespace MountPRG
 
             Rectangle destination = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
             int groundIndex;
+            int edgeIndex;
             int buildingIndex;
             for (int y = min.Y; y < max.Y; y++)
             {
@@ -325,6 +482,7 @@ namespace MountPRG
                     // Сразу получаем Id двух текстур для отрисовки
                     Tile tile = GetTile(x, y);
                     groundIndex = tile.GroundLayerId;
+                    edgeIndex = tile.EdgeLayerId;
                     buildingIndex = tile.BuildingLayerId;
 
                     destination.X = x * TILE_SIZE;
@@ -338,6 +496,15 @@ namespace MountPRG
                             destination,
                             tileSet.SourceRectangles[groundIndex],
                             tile.GroundLayerColor == Color.White ? DayNightSystemUI.CurrentColor : tile.GroundLayerColor);
+                    }
+
+                    if (edgeIndex != -1)
+                    {
+                        spriteBatch.Draw(
+                            tileSet.Texture,
+                            destination,
+                            tileSet.SourceRectangles[edgeIndex],
+                            tile.EdgeLayerColor == Color.White ? DayNightSystemUI.CurrentColor : tile.EdgeLayerColor);
                     }
 
                     if (buildingIndex != -1)

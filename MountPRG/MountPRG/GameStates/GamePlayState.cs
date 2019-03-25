@@ -50,27 +50,43 @@ namespace MountPRG
 
             Entities = new EntityList();
 
-            TileMap.SetTile(5, 4, TileMap.STONE_1_BLOCK, Layer.BUILDING, false);
-            TileMap.SetTile(5, 5, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
-            TileMap.SetTile(5, 3, TileMap.STONE_1_BLOCK, Layer.BUILDING, false);
-            TileMap.SetTile(6, 3, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
-            TileMap.SetTile(7, 3, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
-            TileMap.SetTile(7, 5, TileMap.STONE_2_BLOCK, Layer.BUILDING, false);
+            TileMap.GetTile(5, 4).BuildingLayerId = TileMap.STONE_1_BLOCK;
+            TileMap.GetTile(5, 4).Walkable = false;
 
-            TileMap.SetTile(15, 4, TileMap.WATER_LEFT_TILE, Layer.GROUND, false);
-            TileMap.SetTile(16, 4, TileMap.WATER_FRONT_TILE, Layer.GROUND, false);
-            TileMap.SetTile(17, 4, TileMap.WATER_FRONT_TILE, Layer.GROUND, false);
-            TileMap.SetTile(18, 4, TileMap.WATER_RIGHT_TILE, Layer.GROUND, false);
+            TileMap.GetTile(5, 5).BuildingLayerId = TileMap.STONE_2_BLOCK;
+            TileMap.GetTile(5, 5).Walkable = false;
 
-            TileMap.SetTile(15, 5, TileMap.WATER_1_TILE, Layer.GROUND, false);
-            TileMap.SetTile(16, 5, TileMap.WATER_4_TILE, Layer.GROUND, false);
-            TileMap.SetTile(17, 5, TileMap.WATER_2_TILE, Layer.GROUND, false);
-            TileMap.SetTile(18, 5, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            TileMap.GetTile(5, 3).BuildingLayerId = TileMap.STONE_1_BLOCK;
+            TileMap.GetTile(5, 3).Walkable = false;
 
-            TileMap.SetTile(15, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
-            TileMap.SetTile(16, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
-            TileMap.SetTile(17, 6, TileMap.WATER_3_TILE, Layer.GROUND, false);
-            TileMap.SetTile(18, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            TileMap.GetTile(6, 3).BuildingLayerId = TileMap.STONE_2_BLOCK;
+            TileMap.GetTile(6, 3).Walkable = false;
+
+            TileMap.GetTile(7, 3).BuildingLayerId = TileMap.STONE_2_BLOCK;
+            TileMap.GetTile(7, 3).Walkable = false;
+
+            TileMap.GetTile(7, 5).BuildingLayerId = TileMap.STONE_2_BLOCK;
+            TileMap.GetTile(7, 5).Walkable = false;
+
+
+            TileMap.GetTile(15, 4).GroundLayerId = TileMap.WATER_FRONT_TILE;
+            TileMap.GetTile(15, 4).Walkable = false;
+
+            //TileMap.GetTile(15, 5).GroundLayerId = TileMap.WATER_1_TILE;
+            //TileMap.GetTile(15, 5).Walkable = false;
+
+            //TileMap.SetTile(15, 4, TileMap.WATER_LEFT_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(16, 4, TileMap.WATER_FRONT_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(17, 4, TileMap.WATER_FRONT_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(18, 4, TileMap.WATER_RIGHT_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(15, 5, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(16, 5, TileMap.WATER_4_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(17, 5, TileMap.WATER_2_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(18, 5, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(15, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(16, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(17, 6, TileMap.WATER_3_TILE, Layer.GROUND, false);
+            //TileMap.SetTile(18, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
 
             //AddEntityToTileMap(17, 15, new Campfire());
             TileMap.AddEntity(5, 20, new Tree(), false);
