@@ -138,7 +138,7 @@ namespace MountPRG
                                 switch(CurrentBuildingType)
                                 {
                                     case BuildingType.STRAW_HUT:
-                                        CurrentBuilding = new StrawHut();
+                                        CurrentBuilding = new Hut();
                                         GamePlayState.Entities.Add(CurrentBuilding);
                                         break;
                                     case BuildingType.TOOLS_WORKBENCH:

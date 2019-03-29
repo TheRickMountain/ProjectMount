@@ -20,7 +20,11 @@ namespace MountPRG
     {
         WAITING,
         WORKING,
-        SLEEPING
+        GOING_SLEEP,
+        SLEEPING,
+        GOING_EAT,
+        EATING,
+        CHECK_JOB
     }
 
     public class SettlerController : Component
@@ -39,21 +43,38 @@ namespace MountPRG
         private PathAStar pathAStar;
 
         private float movementPerc;
-        private float speed = 3f;
+        private float speed = 6f;  //3
 
         private AnimatedSprite sprite;
         private AnimationState animationState = AnimationState.IDLE;
         private SettlerState settlerState = SettlerState.WAITING;
+
+        private List<Task> tasks = new List<Task>();
+        private Task currentTask;
 
         private Job myJob;
 
         private Item cargo;
         private int cargoCount;
 
-        private Tile stockpileTile;
-
         private Timer timer;
         private SliderUI slider;
+
+        public Hut Hut;
+
+        private Timer statsTimer;
+
+        private const float MAX_SATIETY = 100f;
+        private float satiety = 100.0f;
+
+        private const float MAX_ENDURANCE = 100f;
+        private float endurance = 100.0f;
+
+        private int jobCount = 0;
+
+        private int stockpileCount = 0;
+        private int stockpileTileX = 0;
+        private int stockpileTileY = 0;
 
         public SettlerController(AnimatedSprite sprite)
             : base(true, true)
@@ -64,6 +85,9 @@ namespace MountPRG
 
             timer = new Timer();
             slider = new SliderUI(16, 3, Color.Black, Color.Orange);
+            slider.Visible = false;
+
+            statsTimer = new Timer();
         }
 
         public override void Initialize()
@@ -74,185 +98,416 @@ namespace MountPRG
 
         public override void Update(GameTime gameTime)
         {
-            /*if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            UpdateStats(gameTime);
+
+            switch(settlerState)
             {
-                // Выбираем цель для отправления персонажа
-                int x = GamePlayState.Camera.GetCellX();
-                int y = GamePlayState.Camera.GetCellY();
-                Tile tile = GamePlayState.TileMap.GetTile(x, y);
-                if (tile != null && tile.IsWalkable)
-                {
-                    if (playerState == PlayerState.MOVE)
+                case SettlerState.WAITING:
                     {
-                        newDestTile = tile;
+                        /*if(satiety <= 50)
+                        {
+                            for (int i = 0; i < GamePlayState.StockpileList.TilesWithFood.Count; i++)
+                            {
+                                Tile tile = GamePlayState.StockpileList.TilesWithFood[i];
+                                if (IsWalkable(tile))
+                                {
+                                    float hunger = MAX_SATIETY - satiety;
+                                    int foodUnits = (int)Math.Round(hunger / tile.Item.FoodValue);
+                                    if(tile.ItemCount < foodUnits)
+                                    {
+                                        //tile.ItemToRemoveCount = tile.ItemCount;
+                                    }
+                                    settlerState = SettlerState.GOING_EAT;
+                                    break;
+                                }
+                            }
+                        }*/
+                        FindJobSec();
                     }
-                    else
+                    break;
+                case SettlerState.WORKING:
                     {
-                        SetDestTile(tile);
+                        if (currentTask != null)
+                        {
+                            switch (currentTask.TaskType)
+                            {
+                                case TaskType.MOVE:
+                                    {
+                                        if (MoveTo(currentTask.Tile, gameTime))
+                                            NextTask();
+                                    }
+                                    break;
+                                case TaskType.PROCESS:
+                                    {
+                                        if (WorkProgress(currentTask.Time, gameTime))
+                                        {
+                                            Tile tile = currentTask.Tile;
+                                            tile.Selected = false;
+                                            if (tile.BuildingLayerId == TileMap.STONE_1_BLOCK || tile.BuildingLayerId == TileMap.STONE_2_BLOCK)
+                                            {
+                                                tile.AddItem(ItemDatabase.GetItemById(TileMap.STONE), 1);
+                                            }
+                                            else if (tile.Entity != null)
+                                            {
+                                                Mineable mineable = tile.Entity.Get<Mineable>();
+                                                if (mineable != null)
+                                                {
+                                                    tile.RemoveEntity();
+                                                    tile.AddItem(mineable.Item, 1);
+                                                }
+                                            }
+
+                                            NextTask();
+                                        }
+                                    }
+                                    break;
+                                case TaskType.TAKE:
+                                    {
+                                        Tile tile = currentTask.Tile;
+                                        tile.Selected = false;
+                                        cargo = tile.Item;
+                                        cargoCount = tile.ItemCount;
+                                        tile.RemoveItem();
+
+                                        // Если поселенец взял еду из тайла, то удаляем из списка тайлов с едой
+                                        if (cargo.Consumable)
+                                            GamePlayState.StockpileList.TilesWithFood.Remove(tile);
+
+                                        NextTask();
+                                    }
+                                    break;
+                                case TaskType.PUT:
+                                    {
+                                        Tile tile = currentTask.Tile;
+                                        tile.AddItem(cargo, tile.ItemCount + cargoCount);
+
+                                        // Если поселенец положил еду в тайл и он еще не был добавлен, 
+                                        // то добавляем в список тайлов с едой
+                                        if (cargo.Consumable && !GamePlayState.StockpileList.TilesWithFood.Contains(tile))
+                                            GamePlayState.StockpileList.TilesWithFood.Add(tile);
+
+                                        cargo = null;
+                                        cargoCount = 0;
+
+                                        NextTask();
+                                    }
+                                    break;
+                                case TaskType.HARVEST:
+                                    {
+                                        if (WorkProgress(currentTask.Time, gameTime))
+                                        {
+                                            Tile tile = currentTask.Tile;
+                                            tile.Selected = false;
+                                            Entity entity = tile.Entity;
+                                            Gatherable gatherable = entity.Get<Gatherable>();
+                                            cargo = gatherable.Item;
+                                            cargoCount = gatherable.Count;
+
+                                            if (gatherable.ItemHolder)
+                                            {
+                                                gatherable.Count -= 1;
+                                            }
+                                            else
+                                            {
+                                                tile.RemoveEntity();
+                                            }
+
+                                            NextTask();
+                                        }
+                                    }
+                                    break;
+                                case TaskType.FISH:
+                                    {
+                                        if (WorkProgress(currentTask.Time, gameTime))
+                                        {
+                                            Tile tile = currentTask.Tile;
+                                            tile.Selected = false;
+                                            cargo = ItemDatabase.GetItemById(TileMap.FISH);
+                                            cargoCount = 1;
+
+                                            NextTask();
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
                     }
-                }
-            }*/
-            if (settlerState == SettlerState.WAITING)
-            {
-                FindJob();
+                    break;
+                case SettlerState.CHECK_JOB:
+                    {
+                        switch(myJob.JobType)
+                        {
+                            case JobType.MINE:
+                            case JobType.CHOP:
+                                {
+                                    // Получаем рабочий тайл
+                                    Tile jobTile = myJob.Tile;
+                                    // Делаем его проходимым, чтобы получить доступ к его соседнему тайлу
+                                    jobTile.Walkable = true;
+                                    PathAStar pathAStar = new PathAStar(currTile, jobTile, jobTile.Tilemap.GetTileGraph().Nodes, jobTile.Tilemap);
+                                    jobTile.Walkable = false;
+                                    if (pathAStar.Length != -1)
+                                    {
+                                        List<Tile> path = pathAStar.Path.ToList();
+                                        // Означает что тайл находится прямо рядом с поселенцем
+                                        if (path.Count > 1)
+                                            tasks.Add(new Task(TaskType.MOVE, path[path.Count - 2], 0));
+
+                                        tasks.Add(new Task(TaskType.PROCESS, jobTile, myJob.JobTime));
+                                        currentTask = tasks[0];
+
+                                        settlerState = SettlerState.WORKING;
+                                    }
+                                    else
+                                    {
+                                        settlerState = SettlerState.WAITING;
+                                        myJob.Owner = null;
+                                        myJob = null;
+                                        jobCount++;
+                                    }
+                                }
+                                break;
+                            case JobType.HAUL:
+                                {
+                                    // Получаем рабочий тайл
+                                    Tile jobTile = myJob.Tile;
+
+                                    if (IsWalkable(jobTile) && GamePlayState.StockpileList.Count > 0)
+                                    {
+                                        Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
+
+                                        if (stockpileTile.ItemToAdd == null && IsWalkable(stockpileTile))
+                                        {
+                                            // Тайл получает информацию о том какой предмет туда нужно добавить и сколько
+                                            stockpileTile.ItemToAdd = jobTile.Item;
+
+                                            // делаем работу текущей для данного поселенца
+                                            settlerState = SettlerState.WORKING;
+
+                                            tasks.Add(new Task(TaskType.MOVE, jobTile, 0));
+                                            tasks.Add(new Task(TaskType.TAKE, jobTile, myJob.JobTime));
+                                            tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
+                                            tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
+                                            currentTask = tasks[0];
+                                        }
+                                        else
+                                        {
+                                            stockpileTileX++;
+                                            if(stockpileTileX == GamePlayState.StockpileList.Get(stockpileCount).GetLength(0))
+                                            {
+                                                stockpileTileY++;
+
+                                                if (stockpileTileY == GamePlayState.StockpileList.Get(stockpileCount).GetLength(1))
+                                                {
+                                                    stockpileCount++;
+                                                    if(stockpileCount == GamePlayState.StockpileList.Count)
+                                                    {
+                                                        settlerState = SettlerState.WAITING;
+                                                        myJob.Owner = null;
+                                                        myJob = null;
+                                                        jobCount++;
+
+                                                        stockpileCount = 0;
+                                                    }
+                                                    stockpileTileY = 0;
+                                                }
+
+                                                stockpileTileX = 0;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        settlerState = SettlerState.WAITING;
+                                        myJob.Owner = null;
+                                        myJob = null;
+                                        jobCount++;
+
+                                        stockpileCount = 0;
+                                        stockpileTileX = 0;
+                                        stockpileTileY = 0;
+                                    }
+                                }
+                                break;
+                            case JobType.HARVEST:
+                                {
+                                    Tile jobTile = myJob.Tile;
+
+                                    if (IsWalkable(jobTile) && GamePlayState.StockpileList.Count > 0)
+                                    {
+                                        Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
+
+                                        if (stockpileTile.ItemToAdd == null && IsWalkable(stockpileTile))
+                                        {
+                                            stockpileTile.ItemToAdd = jobTile.Entity.Get<Gatherable>().Item;
+
+                                            settlerState = SettlerState.WORKING;
+
+                                            tasks.Add(new Task(TaskType.MOVE, jobTile, 0));
+                                            tasks.Add(new Task(TaskType.HARVEST, jobTile, myJob.JobTime));
+                                            tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
+                                            tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
+                                            currentTask = tasks[0];
+                                        }
+                                        else
+                                        {
+                                            stockpileTileX++;
+                                            if (stockpileTileX == GamePlayState.StockpileList.Get(stockpileCount).GetLength(0))
+                                            {
+                                                stockpileTileY++;
+
+                                                if (stockpileTileY == GamePlayState.StockpileList.Get(stockpileCount).GetLength(1))
+                                                {
+                                                    stockpileCount++;
+                                                    if (stockpileCount == GamePlayState.StockpileList.Count)
+                                                    {
+                                                        settlerState = SettlerState.WAITING;
+                                                        myJob.Owner = null;
+                                                        myJob = null;
+                                                        jobCount++;
+
+                                                        stockpileCount = 0;
+                                                    }
+                                                    stockpileTileY = 0;
+                                                }
+
+                                                stockpileTileX = 0;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        settlerState = SettlerState.WAITING;
+                                        myJob.Owner = null;
+                                        myJob = null;
+                                        jobCount++;
+
+                                        stockpileCount = 0;
+                                        stockpileTileX = 0;
+                                        stockpileTileY = 0;
+                                    }
+                                }
+                                break;
+                            case JobType.FISH:
+                                {
+                                    // Получаем рабочий тайл
+                                    Tile jobTile = myJob.Tile;
+
+                                    jobTile.Walkable = true;
+                                    PathAStar pathAStar = new PathAStar(currTile, jobTile, jobTile.Tilemap.GetTileGraph().Nodes, jobTile.Tilemap);
+                                    jobTile.Walkable = false;
+                                    if (pathAStar.Length != -1 && GamePlayState.StockpileList.Count > 0)
+                                    {
+
+                                        Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
+
+                                        if (stockpileTile.ItemToAdd == null && IsWalkable(stockpileTile))
+                                        {
+                                            stockpileTile.ItemToAdd = ItemDatabase.GetItemById(TileMap.FISH);
+
+                                            settlerState = SettlerState.WORKING;
+
+                                            List<Tile> path = pathAStar.Path.ToList();
+
+                                            if (path.Count > 1)
+                                                tasks.Add(new Task(TaskType.MOVE, path[path.Count - 2], 0));
+
+                                            tasks.Add(new Task(TaskType.FISH, jobTile, myJob.JobTime));
+                                            tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
+                                            tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
+                                            currentTask = tasks[0];
+                                        }
+                                        else
+                                        {
+                                            stockpileTileX++;
+                                            if (stockpileTileX == GamePlayState.StockpileList.Get(stockpileCount).GetLength(0))
+                                            {
+                                                stockpileTileY++;
+
+                                                if (stockpileTileY == GamePlayState.StockpileList.Get(stockpileCount).GetLength(1))
+                                                {
+                                                    stockpileCount++;
+                                                    if (stockpileCount == GamePlayState.StockpileList.Count)
+                                                    {
+                                                        settlerState = SettlerState.WAITING;
+                                                        myJob.Owner = null;
+                                                        myJob = null;
+                                                        jobCount++;
+
+                                                        stockpileCount = 0;
+                                                    }
+                                                    stockpileTileY = 0;
+                                                }
+
+                                                stockpileTileX = 0;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        settlerState = SettlerState.WAITING;
+                                        myJob.Owner = null;
+                                        myJob = null;
+                                        jobCount++;
+
+                                        stockpileCount = 0;
+                                        stockpileTileX = 0;
+                                        stockpileTileY = 0;
+                                    }
+                                }
+                                break;
+                        }
+                    }
+                    break;
             }
-            else if (settlerState == SettlerState.WORKING)
-            {
-                if (myJob.JobType == JobType.HARVEST)
-                {
-                    if (cargo == null)
-                    {
-                        if (myJob.Tile == currTile)
-                        {
-                            myJob.Tile.Selected = false;
-
-                            if (WorkProgress(gameTime, myJob))
-                            {
-                                cargo = myJob.Tile.Entity.Get<Gatherable>().Item;
-                                cargoCount = myJob.Tile.Entity.Get<Gatherable>().Count;
-
-                                if (!myJob.Tile.Entity.Get<Gatherable>().ItemHolder)
-                                    GamePlayState.TileMap.RemoveEntity(myJob.Tile.X, myJob.Tile.Y);
-                                else
-                                    myJob.Tile.Entity.Get<Gatherable>().Count = 0;
-
-                                SetDestTile(stockpileTile);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (currTile == stockpileTile)
-                        {
-                            if (stockpileTile.Item == null)
-                            {
-                                stockpileTile.AddItem(cargo, cargoCount);
-                            }
-                            else
-                            {
-                                stockpileTile.ItemCount += cargoCount;
-                            }
-
-                            cargo = null;
-                            myJob = null;
-
-                            settlerState = SettlerState.WAITING;
-                        }
-                    }
-                }
-                else if(myJob.JobType == JobType.HAUL)
-                {
-                    if (cargo == null)
-                    {
-                        if (myJob.Tile == currTile)
-                        {
-                            myJob.Tile.Selected = false;
-
-                            cargo = myJob.Tile.Item;
-                            cargoCount = myJob.Tile.ItemCount;
-
-                            myJob.Tile.RemoveItem();
-
-                            SetDestTile(stockpileTile);
-                        }
-                    }
-                    else
-                    {
-                        if (currTile == stockpileTile)
-                        {
-                            if (stockpileTile.Item == null)
-                            {
-                                stockpileTile.AddItem(cargo, cargoCount);
-                            }
-                            else
-                            {
-                                stockpileTile.ItemCount += cargoCount;
-                            }
-
-                            cargo = null;
-                            myJob = null;
-
-                            settlerState = SettlerState.WAITING;
-                        }
-                    }
-                }
-                else if(myJob.JobType == JobType.CHOP)
-                {
-                    if(currTile.Equals(destTile))
-                    {
-                        myJob.Tile.Selected = false;
-
-                        if (WorkProgress(gameTime, myJob))
-                        {
-                            GamePlayState.TileMap.RemoveEntity(myJob.Tile.X, myJob.Tile.Y);
-                            myJob.Tile.AddItem(ItemDatabase.GetItemById(TileMap.WOOD), 1);
-
-                            myJob = null;
-
-                            settlerState = SettlerState.WAITING;
-                        }
-                    }
-                }
-                else if(myJob.JobType == JobType.MINE)
-                {
-                    if(currTile.Equals(destTile))
-                    {
-                        myJob.Tile.Selected = false;
-
-                        if (WorkProgress(gameTime, myJob))
-                        {
-                            myJob.Tile.BuildingLayerId = -1;
-                            myJob.Tile.AddItem(ItemDatabase.GetItemById(TileMap.STONE), 1);
-
-                            myJob = null;
-
-                            settlerState = SettlerState.WAITING;
-                        }
-                    }
-                }
-                else if(myJob.JobType == JobType.FISH)
-                {
-                    if (cargo == null)
-                    {
-                        if (currTile.Equals(destTile))
-                        {
-                            myJob.Tile.Selected = false;
-
-                            if (WorkProgress(gameTime, myJob))
-                            {
-                                cargo = ItemDatabase.GetItemById(TileMap.FISH);
-                                cargoCount = 1;
-
-                                SetDestTile(stockpileTile);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (currTile == stockpileTile)
-                        {
-                            if (stockpileTile.Item == null)
-                            {
-                                stockpileTile.AddItem(cargo, cargoCount);
-                            }
-                            else
-                            {
-                                stockpileTile.ItemCount += cargoCount;
-                            }
-
-                            cargo = null;
-                            myJob = null;
-
-                            settlerState = SettlerState.WAITING;
-                        }
-                    }
-                }
-            }
-
-            MovementUpdate(gameTime);
         }
 
-        private bool WorkProgress(GameTime gameTime, Job job)
+        private void UpdateStats(GameTime gameTime)
+        {
+            float time = statsTimer.GetTime(gameTime);
+            if (time > 1.0f)
+            {
+                endurance -= 0.1f;
+                satiety -= 0.05f;
+                statsTimer.Reset();
+            }
+
+        }
+
+        private void NextTask()
+        {
+            tasks.Remove(currentTask);
+            if (tasks.Count > 0)
+            {
+                currentTask = tasks[0];
+            }
+            else
+            {
+                settlerState = SettlerState.WAITING;
+                GamePlayState.JobList.Remove(myJob);
+                myJob = null;
+                jobCount = 0; 
+            }
+        }
+
+        private bool MoveTo(Tile tile, GameTime gameTime)
+        {
+            if(!currTile.Equals(tile) && pathAStar == null)
+            {
+                SetDestTile(tile);
+            }
+            else
+            {
+                MovementUpdate(gameTime);
+
+                if (currTile.Equals(tile))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private bool WorkProgress(float taskTime, GameTime gameTime)
         {
             float time = timer.GetTime(gameTime);
             slider.SetValue(time, myJob.JobTime);
@@ -260,7 +515,7 @@ namespace MountPRG
             slider.X = Parent.X;
             slider.Y = Parent.Y - 10;
 
-            if (time >= job.JobTime)
+            if (time >= taskTime)
             {
                 timer.Reset();
                 slider.Reset();
@@ -279,106 +534,40 @@ namespace MountPRG
             }
         }
 
-        private void FindJob()
+        private void FindJobSec()
         {
-            if ((GamePlayState.JobSystem.Count > 0) && myJob == null)
+            if (myJob == null)
             {
-                for (int i = 0; i < GamePlayState.JobSystem.Count; i++)
+                Job job = GamePlayState.JobList.Get(jobCount);
+                if (job != null)
                 {
-                    Job job = GamePlayState.JobSystem.Get(i);
-                    if (job.JobType == JobType.HARVEST)
+                    if (job.Owner == null)
                     {
-                        stockpileTile = GamePlayState.StockpileList.GetTileForItem(job.Tile.Entity.Get<Gatherable>().Item);
-
-                        if (stockpileTile != null)
-                        {
-                            stockpileTile.ItemToAdd = job.Tile.Entity.Get<Gatherable>().Item;
-
-                            GamePlayState.JobSystem.Remove(i);
-                            myJob = job;
-                            SetDestTile(myJob.Tile);
-                            settlerState = SettlerState.WORKING;
-                            break;
-                        }
+                        job.Owner = (Settler)Parent;
+                        myJob = job;
+                        settlerState = SettlerState.CHECK_JOB;
                     }
-                    else if(job.JobType == JobType.FISH)
+                    else
                     {
-                        stockpileTile = GamePlayState.StockpileList.GetTileForItem(ItemDatabase.GetItemById(TileMap.FISH));
-
-                        Tile tile = null;
-                        // Если тайл непроходимый, то ищем путь подхода к нему
-                        if (!job.Tile.Walkable)
-                            tile = GetWalkablePathTo(job.Tile);
-                        else
-                            tile = job.Tile;
-
-                        if (stockpileTile != null && tile != null)
-                        {
-                            stockpileTile.ItemToAdd = ItemDatabase.GetItemById(TileMap.FISH);
-
-                            GamePlayState.JobSystem.Remove(i);
-                            myJob = job;
-                            SetDestTile(tile);
-                            settlerState = SettlerState.WORKING;
-                            break;
-                        }
+                        jobCount++;
                     }
-                    else if(job.JobType == JobType.HAUL)
-                    {
-                        stockpileTile = GamePlayState.StockpileList.GetTileForItem(job.Tile.Item);
-
-                        if (stockpileTile != null)
-                        {
-                            stockpileTile.ItemToAdd = job.Tile.Item;
-
-                            GamePlayState.JobSystem.Remove(i);
-                            myJob = job;
-                            SetDestTile(myJob.Tile);
-                            settlerState = SettlerState.WORKING;
-                            break;
-                        }
-                    }
-                    else if (job.JobType == JobType.CHOP || job.JobType == JobType.MINE)
-                    {
-                        Tile tile = null;
-                        // Если тайл непроходимый, то ищем путь подхода к нему
-                        if (!job.Tile.Walkable)
-                            tile = GetWalkablePathTo(job.Tile);
-                        else
-                            tile = job.Tile;
-
-                        if (tile != null)
-                        {
-                            GamePlayState.JobSystem.Remove(i);
-                            myJob = job;
-                            SetDestTile(tile);
-                            settlerState = SettlerState.WORKING;
-                            break;
-                        }
-                    }
+                }
+                else
+                {
+                    jobCount = 0;
                 }
             }
         }
 
-        private Tile GetWalkablePathTo(Tile tile)
+        private bool IsWalkable(Tile tile)
         {
-            List<Tile> neighbours = tile.GetNeighbours(false);
-            for (int i = 0; i < neighbours.Count; i++)
-            {
-                if (!neighbours[i].Walkable)
-                    continue;
-                else if (CheckPathIsWalkable(neighbours[i]))
-                    return neighbours[i];
-            }
+            if (tile == null)
+                return false;
+            else if (!tile.Walkable)
+                return false;
 
-            return null;
-        }
-
-
-        private bool CheckPathIsWalkable(Tile tile)
-        {
-            PathAStar pAS = new PathAStar(currTile, tile, tile.Tilemap.GetTileGraph().Nodes, tile.Tilemap);
-            return pAS.Length != -1;
+            PathAStar pathAStar = new PathAStar(currTile, tile, tile.Tilemap.GetTileGraph().Nodes, tile.Tilemap);
+            return pathAStar.Length != -1;
         }
 
         private void SetDestTile(Tile tile)

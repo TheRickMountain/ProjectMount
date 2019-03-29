@@ -27,12 +27,20 @@ namespace MountPRG
 
         public Job Get(int i)
         {
+            if (i >= Count)
+                return null;
+
             return jobList[i];
         }
 
         public void Remove(int i)
         {
             jobList.Remove(jobList[i]);
+        }
+
+        public void Remove(Job job)
+        {
+            jobList.Remove(job);
         }
 
     }

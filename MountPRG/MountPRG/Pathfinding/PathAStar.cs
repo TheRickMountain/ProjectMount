@@ -8,7 +8,7 @@ namespace MountPRG
 {
     public class PathAStar
     {
-        private Stack<Tile> path;
+        public Stack<Tile> Path;
 
         public PathAStar(Tile tileStart, Tile tileEnd, Dictionary<Tile, Node<Tile>> nodes, TileMap tileMap)
         {
@@ -68,12 +68,12 @@ namespace MountPRG
 
         private void RetracePath(Node<Tile> startNode, Node<Tile> endNode)
         {
-            path = new Stack<Tile>();
+            Path = new Stack<Tile>();
             Node<Tile> currentNode = endNode;
 
             while (!currentNode.Equals(startNode))
             {
-                path.Push(currentNode.data);
+                Path.Push(currentNode.data);
                 currentNode = currentNode.parent;
             }
         }
@@ -82,8 +82,8 @@ namespace MountPRG
         {
             get
             {
-                if (path != null)
-                    return path.Count;
+                if (Path != null)
+                    return Path.Count;
 
                 return -1;
             }
@@ -93,7 +93,7 @@ namespace MountPRG
         {
             get
             {
-                return path.Pop();
+                return Path.Pop();
             }
         }
 

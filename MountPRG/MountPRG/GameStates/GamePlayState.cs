@@ -29,8 +29,12 @@ namespace MountPRG
 
         public static List<Settler> Settlers;
 
-        public static JobList JobSystem;
+        public static List<HutCmp> Huts;
+
+        public static JobList JobList;
         public static StockpileList StockpileList;
+
+        private Effect effect;
 
         public GamePlayState(Game game) : base(game)
         {
@@ -62,34 +66,57 @@ namespace MountPRG
             TileMap.GetTile(6, 3).BuildingLayerId = TileMap.STONE_2_BLOCK;
             TileMap.GetTile(6, 3).Walkable = false;
 
-            TileMap.GetTile(7, 3).BuildingLayerId = TileMap.STONE_2_BLOCK;
+            TileMap.GetTile(6, 6).BuildingLayerId = TileMap.STONE_2_BLOCK;
+            TileMap.GetTile(6, 6).Walkable = false;
+
+            TileMap.GetTile(7, 3).BuildingLayerId = TileMap.STONE_1_BLOCK;
             TileMap.GetTile(7, 3).Walkable = false;
+
+            TileMap.GetTile(7, 4).BuildingLayerId = TileMap.STONE_1_BLOCK;
+            TileMap.GetTile(7, 4).Walkable = false;
 
             TileMap.GetTile(7, 5).BuildingLayerId = TileMap.STONE_2_BLOCK;
             TileMap.GetTile(7, 5).Walkable = false;
 
 
-            TileMap.GetTile(15, 4).GroundLayerId = TileMap.WATER_FRONT_TILE;
+            TileMap.GetTile(15, 4).GroundLayerId = TileMap.WATER_LEFT_TILE;
             TileMap.GetTile(15, 4).Walkable = false;
 
-            //TileMap.GetTile(15, 5).GroundLayerId = TileMap.WATER_1_TILE;
-            //TileMap.GetTile(15, 5).Walkable = false;
+            TileMap.GetTile(16, 4).GroundLayerId = TileMap.WATER_FRONT_TILE;
+            TileMap.GetTile(16, 4).Walkable = false;
 
-            //TileMap.SetTile(15, 4, TileMap.WATER_LEFT_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(16, 4, TileMap.WATER_FRONT_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(17, 4, TileMap.WATER_FRONT_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(18, 4, TileMap.WATER_RIGHT_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(15, 5, TileMap.WATER_1_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(16, 5, TileMap.WATER_4_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(17, 5, TileMap.WATER_2_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(18, 5, TileMap.WATER_1_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(15, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(16, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(17, 6, TileMap.WATER_3_TILE, Layer.GROUND, false);
-            //TileMap.SetTile(18, 6, TileMap.WATER_1_TILE, Layer.GROUND, false);
+            TileMap.GetTile(17, 4).GroundLayerId = TileMap.WATER_FRONT_TILE;
+            TileMap.GetTile(17, 4).Walkable = false;
+
+            TileMap.GetTile(18, 4).GroundLayerId = TileMap.WATER_RIGHT_TILE;
+            TileMap.GetTile(18, 4).Walkable = false;
+
+            TileMap.GetTile(15, 5).GroundLayerId = TileMap.WATER_1_TILE;
+            TileMap.GetTile(15, 5).Walkable = false;
+
+            TileMap.GetTile(16, 5).GroundLayerId = TileMap.WATER_4_TILE;
+            TileMap.GetTile(16, 5).Walkable = false;
+
+            TileMap.GetTile(17, 5).GroundLayerId = TileMap.WATER_2_TILE;
+            TileMap.GetTile(17, 5).Walkable = false;
+
+            TileMap.GetTile(18, 5).GroundLayerId = TileMap.WATER_1_TILE;
+            TileMap.GetTile(18, 5).Walkable = false;
+
+            TileMap.GetTile(15, 6).GroundLayerId = TileMap.WATER_1_TILE;
+            TileMap.GetTile(15, 6).Walkable = false;
+
+            TileMap.GetTile(16, 6).GroundLayerId = TileMap.WATER_1_TILE;
+            TileMap.GetTile(16, 6).Walkable = false;
+
+            TileMap.GetTile(17, 6).GroundLayerId = TileMap.WATER_3_TILE;
+            TileMap.GetTile(17, 6).Walkable = false;
+
+            TileMap.GetTile(18, 6).GroundLayerId = TileMap.WATER_1_TILE;
+            TileMap.GetTile(18, 6).Walkable = false;
 
             //AddEntityToTileMap(17, 15, new Campfire());
-            TileMap.AddEntity(5, 20, new Tree(), false);
+            TileMap.AddEntity(6, 4, new Tree(), false);
 
             TileMap.GetTile(10, 17).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
             TileMap.GetTile(10, 18).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
@@ -125,8 +152,11 @@ namespace MountPRG
             Entities.Add(settler);
             Settlers.Add(settler);
 
-            JobSystem = new JobList();
+            JobList = new JobList();
             StockpileList = new StockpileList();
+            Huts = new List<HutCmp>();
+
+            effect = ResourceBank.Effects["File"];
 
             base.Initialize();
         }
@@ -159,9 +189,17 @@ namespace MountPRG
                 SamplerState.PointClamp,
                 null, null, null, Camera.Transformation);
 
+            effect.Parameters["ambientColor"].SetValue(GUIManager.DayNightSystemUI.CurrentColor.ToVector4());
+
+            effect.CurrentTechnique.Passes[0].Apply();
+
             TileMap.Draw(GameRef.SpriteBatch, Camera);
 
             Entities.Render(GameRef.SpriteBatch);
+
+            effect.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
+
+            effect.CurrentTechnique.Passes[0].Apply();
 
             Camera.Draw(GameRef.SpriteBatch);
 

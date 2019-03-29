@@ -9,7 +9,7 @@ namespace MountPRG
     public class Mineable : Component
     {
 
-        public Item Resource
+        public Item Item
         {
             get; private set;
         }
@@ -22,7 +22,7 @@ namespace MountPRG
         public Mineable(Item resource, int health)
             : base(false, false)
         {
-            Resource = resource;
+            Item = resource;
             Health = health;
         }
 

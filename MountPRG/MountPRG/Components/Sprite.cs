@@ -48,32 +48,7 @@ namespace MountPRG
             {
                 Destination.X = (int)(Parent.X - Origin.X);
                 Destination.Y = (int)(Parent.Y - Origin.Y);
-                Parent.Depth = Destination.Bottom;
-
-                // TODO: Исправить код смены канала Alpha при нахождении за спратом персонажей
-                // Переместить в Update
-                /*if(Parent.Tag != "Character" && Parent.Tag == "Tree")
-                {
-                    for(int i = 0; i < GamePlayState.Characters.Count; i++)
-                    {
-                        Sprite charSprite = GamePlayState.Characters[i].Get<Sprite>();
-                        Rectangle charDest = charSprite.Destination;
-                        if((charDest.Bottom > Destination.Y && charDest.Bottom < Destination.Bottom)
-                            && ((charDest.X > Destination.X && charDest.X < Destination.Right)
-                                || (charDest.Right > Destination.X && charDest.Right < Destination.Right)))
-                        {
-                            Alpha = (float)Math.Max(0.4, Alpha -= 0.05f);
-                        }
-                        else
-                        {
-                            if(Alpha < 1.0)
-                                Alpha += 0.05f;
-                        }
-                    }
-                }*/
-                // TODO: Конец
-
-                
+                Parent.Depth = Destination.Bottom;   
             }
 
             spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);

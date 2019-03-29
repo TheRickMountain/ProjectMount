@@ -25,7 +25,7 @@ namespace MountPRG
 
         public void Update(GameTime gameTime)
         {
-            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.1);
+            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.05);
             float timeOfDay = -MathUtils.ToDegrees(currentTime);
 
             if (timeOfDay >= 360)

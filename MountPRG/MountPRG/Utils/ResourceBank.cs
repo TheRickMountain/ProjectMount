@@ -16,6 +16,7 @@ namespace MountPRG
         public static Dictionary<string, Texture2D> Sprites = new Dictionary<string, Texture2D>();
         public static Dictionary<string, SoundEffect> SoundEffects = new Dictionary<string, SoundEffect>();
         public static Dictionary<string, SpriteFont> Fonts = new Dictionary<string, SpriteFont>();
+        public static Dictionary<string, Effect> Effects = new Dictionary<string, Effect>();
 
         private static ResourceBank _instance;
 
@@ -30,6 +31,7 @@ namespace MountPRG
             Sprites = LoadContent<Texture2D>(content, "Sprites");
             SoundEffects = LoadContent<SoundEffect>(content, "SoundEffects");
             Fonts = LoadContent<SpriteFont>(content, "Fonts");
+            Effects = LoadContent<Effect>(content, "Effects");
         }
 
         private Dictionary<string, T> LoadContent<T>(ContentManager contentManager, string contentFolder)
@@ -38,7 +40,7 @@ namespace MountPRG
             if (!dir.Exists)
                 throw new DirectoryNotFoundException();
 
-            Dictionary<string, T> result = new Dictionary<String, T>();
+            Dictionary<string, T> result = new Dictionary<string, T>();
             FileInfo[] files = dir.GetFiles("*.*");
             foreach (FileInfo file in files)
             {

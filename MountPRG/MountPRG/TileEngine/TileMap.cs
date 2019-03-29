@@ -35,6 +35,7 @@ namespace MountPRG
         public Item Item { get; private set; }
         public int ItemCount { get; set; }
         public Item ItemToAdd { get; set; }
+        public int ItemToAddCount { get; set; }
 
         public bool Walkable { get; set; }
 
@@ -218,6 +219,16 @@ namespace MountPRG
             BuildingLayerId = -1;
         }
 
+        public void RemoveEntity()
+        {
+            if (Entity != null)
+            {
+                GamePlayState.Entities.Remove(Entity);
+                Entity = null;
+                Walkable = true;
+            }
+        }
+
         public List<Tile> GetNeighbours(bool withDiag)
         {
             List<Tile> tiles = new List<Tile>();
@@ -278,6 +289,15 @@ namespace MountPRG
         public override string ToString()
         {
             return X + " " + Y;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if ((obj == null) || !GetType().Equals(obj.GetType()))
+                return false;
+
+            Tile tile = (Tile)obj;
+            return tile.X == X && tile.Y == Y;
         }
     }
 
@@ -418,31 +438,6 @@ namespace MountPRG
             return false;
         }
 
-        public void RemoveEntity(int x, int y)
-        {
-            Tile tile = GetTile(x, y);
-
-            if (tile != null)
-            {
-                if (tile.Entity != null)
-                {
-                    GamePlayState.Entities.Remove(tile.Entity);
-                    tile.Entity = null;
-                    tile.Walkable = true;
-                }
-            }
-        }
-
-        public Entity GetEntity(int x, int y)
-        {
-            Tile tile = GetTile(x, y);
-
-            if (tile != null)
-                return tile.Entity;
-
-            return null;
-        }
-
         public int WidthInPixels
         {
             get { return Width * TILE_SIZE; }
@@ -495,7 +490,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[groundIndex],
-                            tile.GroundLayerColor == Color.White ? DayNightSystemUI.CurrentColor : tile.GroundLayerColor);
+                            tile.GroundLayerColor);
                     }
 
                     if (edgeIndex != -1)
@@ -504,7 +499,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[edgeIndex],
-                            tile.EdgeLayerColor == Color.White ? DayNightSystemUI.CurrentColor : tile.EdgeLayerColor);
+                            tile.EdgeLayerColor);
                     }
 
                     if (buildingIndex != -1)
@@ -513,7 +508,7 @@ namespace MountPRG
                             tileSet.Texture,
                             destination,
                             tileSet.SourceRectangles[buildingIndex],
-                            tile.BuildingLayerColor == Color.White ? DayNightSystemUI.CurrentColor : tile.BuildingLayerColor);
+                            tile.BuildingLayerColor);
                     }
 
                     if (tile.Selected)

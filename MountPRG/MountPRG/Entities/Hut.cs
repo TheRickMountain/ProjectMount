@@ -8,14 +8,14 @@ using Microsoft.Xna.Framework;
 
 namespace MountPRG
 {
-    public class StrawHut : Entity
+    public class Hut : Entity
     {
 
-        public StrawHut()
+        public Hut()
         {
             Add(new Sprite(GamePlayState.TileSet.Texture, new Rectangle(0, 16, 32, 32), 32, 32, true));
             Add(new Building(2, 2));
-            Add(new Hut());
+            Add(new HutCmp());
         }
 
     }

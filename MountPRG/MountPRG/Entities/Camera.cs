@@ -94,14 +94,20 @@ namespace MountPRG
                             {
                                 if(SelectedTile.Stockpile > -1)
                                 {
+                                    GUIManager.HutUI.Close();
+                                    GUIManager.StockpileUI.Close();
+
                                     GUIManager.StockpileUI.Open(GamePlayState.StockpileList.Get(SelectedTile.Stockpile));
                                 }
 
                                 if(SelectedTile.Entity != null)
                                 {
-                                    Hut hut = SelectedTile.Entity.Get<Hut>();
+                                    HutCmp hut = SelectedTile.Entity.Get<HutCmp>();
                                     if(hut != null)
                                     {
+                                        GUIManager.HutUI.Close();
+                                        GUIManager.StockpileUI.Close();
+
                                         GUIManager.HutUI.Open(hut, GamePlayState.Settlers);
                                     }
                                 }
@@ -230,7 +236,7 @@ namespace MountPRG
                     int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
                     int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
 
-                    if (width < 2 || width > 5 || height < 2 || height > 5)
+                    if (width < 1 || width > 5 || height < 1 || height > 5)
                     {
                         SelectArea(firstSelectedTile, SelectedTile, Color.IndianRed);
                     }
@@ -247,7 +253,7 @@ namespace MountPRG
                     int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
                     int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
 
-                    if (width >= 2 && width <= 5 && height >= 2 && height <= 5)
+                    if (width >= 1 && width <= 5 && height >= 1 && height <= 5)
                     {
                         GamePlayState.StockpileList.Add(GetAreaTiles(firstSelectedTile, SelectedTile));
                     }
@@ -324,7 +330,7 @@ namespace MountPRG
                         if(gatherable != null && gatherable.Count > 0)
                         {
                             SelectedTile.Selected = true;
-                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.HARVEST, 1));
+                            GamePlayState.JobList.Add(new Job(SelectedTile, JobType.HARVEST, 1));
                         }
                     }
                 }
@@ -346,7 +352,7 @@ namespace MountPRG
                         || SelectedTile.GroundLayerId == TileMap.WATER_RIGHT_TILE)
                     {
                         SelectedTile.Selected = true;
-                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.FISH, 5));
+                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.FISH, 5));
                     }
                 }
             }
@@ -361,7 +367,7 @@ namespace MountPRG
                     if (SelectedTile.Item != null)
                     {
                         SelectedTile.Selected = true;
-                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.HAUL));
+                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.HAUL));
                     }
                 }
             }
@@ -379,7 +385,7 @@ namespace MountPRG
                         if(mineable != null)
                         {
                             SelectedTile.Selected = true;
-                            GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.CHOP, 1));
+                            GamePlayState.JobList.Add(new Job(SelectedTile, JobType.CHOP, 1));
                         }
                     }
                 }
@@ -395,7 +401,7 @@ namespace MountPRG
                     if (SelectedTile.BuildingLayerId == TileMap.STONE_1_BLOCK || SelectedTile.BuildingLayerId == TileMap.STONE_2_BLOCK)
                     {
                         SelectedTile.Selected = true;
-                        GamePlayState.JobSystem.Add(new Job(SelectedTile, JobType.MINE, 2));
+                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.MINE, 2));
                     }
                 }
             }
@@ -431,6 +437,7 @@ namespace MountPRG
             {
                 if(validToBuild)
                 {
+                    List<Tile> tiles = new List<Tile>();
                     for (int i = GetCellX(); i < GetCellX() + building.Columns; i++)
                     {
                         for (int j = GetCellY(); j < GetCellY() + building.Rows; j++)
@@ -438,8 +445,12 @@ namespace MountPRG
                             Tile tile = GamePlayState.TileMap.GetTile(i, j);
                             tile.Entity = GUIManager.ActionPanelUI.CurrentBuilding;
                             tile.Walkable = false;
+                            tiles.Add(tile);
                         }
                     }
+
+                    if (GUIManager.ActionPanelUI.CurrentBuilding is Hut)
+                        GUIManager.ActionPanelUI.CurrentBuilding.Get<HutCmp>().AddTiles(tiles);
 
                     sprite.Color = Color.White;
                     GUIManager.ActionPanelUI.CurrentBuilding = null;

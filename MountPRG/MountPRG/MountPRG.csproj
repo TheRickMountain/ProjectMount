@@ -49,14 +49,14 @@
     <Compile Include="Components\Component.cs" />
     <Compile Include="Components\ComponentList.cs" />
     <Compile Include="Components\Gatherable.cs" />
-    <Compile Include="Components\Hut.cs" />
+    <Compile Include="Components\HutCmp.cs" />
     <Compile Include="Components\SettlerController.cs" />
     <Compile Include="Components\Mineable.cs" />
     <Compile Include="Components\Sprite.cs" />
     <Compile Include="Components\Storage.cs" />
     <Compile Include="Entities\Bush.cs" />
     <Compile Include="Entities\Grass.cs" />
-    <Compile Include="Entities\StrawHut.cs" />
+    <Compile Include="Entities\Hut.cs" />
     <Compile Include="Entities\ToolsWorkbench.cs" />
     <Compile Include="Entities\Tree.cs" />
     <Compile Include="GUISystem\ButtonUI.cs" />
@@ -88,6 +88,7 @@
     <Compile Include="JobSystem\Job.cs" />
     <Compile Include="JobSystem\JobList.cs" />
     <Compile Include="JobSystem\StockpileList.cs" />
+    <Compile Include="JobSystem\Task.cs" />
     <Compile Include="Pathfinding\Heap.cs" />
     <Compile Include="Pathfinding\Node.cs" />
     <Compile Include="Pathfinding\PathAStar.cs" />

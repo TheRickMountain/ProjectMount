@@ -11,9 +11,13 @@ namespace MountPRG
 
         private Dictionary<int, Tile[,]> stockpiles;
 
+        public List<Tile> TilesWithFood;
+
         public StockpileList()
         {
             stockpiles = new Dictionary<int, Tile[,]>();
+
+            TilesWithFood = new List<Tile>();
         }
 
         public void Add(Tile[,] tiles)
@@ -28,37 +32,6 @@ namespace MountPRG
         public Tile[,] Get(int val)
         {
             return stockpiles[val];
-        }
-
-        // Если в хранилище есть такой предмет, то возвращает тайл с этим предметом
-        // Иначе возвращает любой пустой тайл
-        public Tile GetTileForItem(Item item)
-        {
-            if (stockpiles.Count == 0)
-                return null;
-
-            Tile[,] tiles = stockpiles[0];
-            for (int i = 0; i < tiles.GetLength(0); i++)
-            {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    Tile tile = tiles[i, j];
-                    if (tile.ItemToAdd != null && tile.ItemToAdd.Id == item.Id)
-                        return tile;
-                }
-            }
-
-            for (int i = 0; i < tiles.GetLength(0); i++)
-            {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    Tile tile = tiles[i, j];
-                    if (tile.ItemToAdd == null)
-                        return tile;
-                }
-            }
-
-            return null;
         }
 
         public int Count

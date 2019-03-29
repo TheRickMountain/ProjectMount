@@ -17,17 +17,17 @@ namespace MountPRG
 
         private float rotation;
 
-        public static Color DayColor
+        public Color DayColor
         {
             get; private set;
         }
 
-        public static Color NightColor
+        public Color NightColor
         {
             get; private set;
         }
 
-        public static Color CurrentColor
+        public Color CurrentColor
         {
             get; private set;
         }

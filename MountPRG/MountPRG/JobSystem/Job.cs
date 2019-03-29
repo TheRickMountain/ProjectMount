@@ -24,17 +24,13 @@ namespace MountPRG
         public Tile Tile { get; private set; }
         public float JobTime { get; private set; }
         public JobType JobType { get; private set; }
+        public Settler Owner { get; set; }
 
         public Job(Tile tile, JobType jobType, float jobTime = 1f)
         {
             Tile = tile;
             JobType = jobType;
             JobTime = jobTime;
-        }
-
-        public void DoWork(SettlerController player)
-        {
-
         }
 
     }

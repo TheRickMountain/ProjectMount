@@ -17,7 +17,7 @@ namespace MountPRG
 
         private List<SettlerController> settlers;
 
-        private Hut hut;
+        private HutCmp hut;
 
         private const int AVATAR_SIZE = 48;
         private const int TEXT_WIDTH = 80;
@@ -78,9 +78,13 @@ namespace MountPRG
                             if(checkboxes[i].Intersects(InputManager.GetX(), InputManager.GetY()))
                             {
                                 if (!checkboxes[i].Marked)
+                                {
                                     hut.SetOwner((Settler)settlers[i + scrollPos].Parent);
+                                }
                                 else
+                                {
                                     hut.SetOwner(null);
+                                }
                             }
 }
                     }
@@ -114,7 +118,7 @@ namespace MountPRG
         }
 
       
-        public void Open(Hut hut, List<Settler> stl)
+        public void Open(HutCmp hut, List<Settler> stl)
         {
             Active = true;
 

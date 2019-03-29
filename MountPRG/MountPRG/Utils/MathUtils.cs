@@ -46,5 +46,10 @@ namespace MountPRG
             y = tmp;
         }
 
+        public static bool InRange(float value, float min, float max)
+        {
+            return value >= min && value <= max;
+        }
+
     }
 }

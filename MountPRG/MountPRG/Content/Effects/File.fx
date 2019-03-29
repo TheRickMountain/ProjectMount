@@ -8,10 +8,12 @@
 #endif
 
 sampler s0;
+float4 ambientColor;
 
 float4 PixelShaderFunction(float4 pos : SV_POSITION, float4 color1 : COLOR0, float2 coords: TEXCOORD0) : COLOR0
 {
-	return tex2D(s0, coords);
+	float4 color = tex2D(s0, coords);
+	return (color * ambientColor) * color1;
 }
 
 technique BasicColorDrawing
