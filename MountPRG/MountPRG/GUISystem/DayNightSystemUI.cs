@@ -53,14 +53,14 @@ namespace MountPRG
             float timeOfDay = GamePlayState.WorldTimer.TimeOfDay;
             rotation = -MathUtils.ToRadians(timeOfDay);
 
-            if(timeOfDay >= 80 && timeOfDay <= 110)
+            if(timeOfDay >= 180 && timeOfDay <= 185)
             {
-                float amount = Math.Min(1.0f, (timeOfDay - 80.0f) / 20.0f);
+                float amount = Math.Min(1.0f, (timeOfDay - 180.0f) / 5.0f);
                 CurrentColor = Color.Lerp(DayColor, NightColor, amount);
             }
-            else if(timeOfDay >= 260 && timeOfDay <= 280)
+            else if(timeOfDay >= 0 && timeOfDay <= 5)
             {
-                float amount = Math.Min(1.0f, (timeOfDay - 260.0f) / 20.0f);
+                float amount = Math.Min(1.0f, timeOfDay / 5.0f);
                 CurrentColor = Color.Lerp(NightColor, DayColor, amount);
             }
         }

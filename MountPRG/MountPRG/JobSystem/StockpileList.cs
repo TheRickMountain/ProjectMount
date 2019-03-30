@@ -10,14 +10,10 @@ namespace MountPRG
     {
 
         private Dictionary<int, Tile[,]> stockpiles;
-
-        public List<Tile> TilesWithFood;
-
+        
         public StockpileList()
         {
             stockpiles = new Dictionary<int, Tile[,]>();
-
-            TilesWithFood = new List<Tile>();
         }
 
         public void Add(Tile[,] tiles)

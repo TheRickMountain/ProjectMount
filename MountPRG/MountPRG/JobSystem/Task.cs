@@ -13,7 +13,9 @@ namespace MountPRG
         TAKE,
         PUT,
         HARVEST,
-        FISH
+        FISH,
+        EAT,
+        SLEEP,
     }
 
     public class Task

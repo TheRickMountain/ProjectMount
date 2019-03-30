@@ -34,6 +34,8 @@ namespace MountPRG
         public static JobList JobList;
         public static StockpileList StockpileList;
 
+        public static WorldManager WorldManager;
+
         private Effect effect;
 
         public GamePlayState(Game game) : base(game)
@@ -44,6 +46,7 @@ namespace MountPRG
         public override void Initialize()
         {
             Camera = new Camera();
+            WorldManager = new WorldManager(Camera);
 
             WorldTimer = new WorldTimer();
 
@@ -138,19 +141,24 @@ namespace MountPRG
             TileMap.AddEntity(9, 19, new Bush());
             TileMap.AddEntity(9, 20, new Bush());
 
+            TileMap.AddEntity(14, 20, new Wheat());
+            TileMap.AddEntity(15, 20, new Wheat());
+            TileMap.AddEntity(14, 21, new Wheat());
+            TileMap.AddEntity(15, 21, new Wheat());
+
             Settlers = new List<Settler>();
 
             Settler settler = new Settler(Engine.ToWorldPos(18), Engine.ToWorldPos(15));
             Entities.Add(settler);
             Settlers.Add(settler);
 
-            settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
-            Entities.Add(settler);
-            Settlers.Add(settler);
+            //settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
+            //Entities.Add(settler);
+            //Settlers.Add(settler);
 
-            settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
-            Entities.Add(settler);
-            Settlers.Add(settler);
+            //settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
+            //Entities.Add(settler);
+            //Settlers.Add(settler);
 
             JobList = new JobList();
             StockpileList = new StockpileList();
@@ -171,6 +179,7 @@ namespace MountPRG
             guiManager.Update(gameTime);
 
             Camera.Update(gameTime);
+            WorldManager.Update(gameTime);
 
             WorldTimer.Update(gameTime);
 
@@ -201,7 +210,7 @@ namespace MountPRG
 
             effect.CurrentTechnique.Passes[0].Apply();
 
-            Camera.Draw(GameRef.SpriteBatch);
+            WorldManager.Draw(GameRef.SpriteBatch);
 
             base.Draw(gameTime);
 

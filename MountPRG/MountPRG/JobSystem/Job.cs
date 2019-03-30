@@ -13,8 +13,9 @@ namespace MountPRG
         MINE,
         HAUL,
         STOCKPILE,
-        BUILDING,
+        BUILD,
         FISH,
+        PLANT,
         NONE
     }
 

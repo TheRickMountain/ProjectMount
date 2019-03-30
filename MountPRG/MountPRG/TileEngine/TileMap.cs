@@ -35,7 +35,7 @@ namespace MountPRG
         public Item Item { get; private set; }
         public int ItemCount { get; set; }
         public Item ItemToAdd { get; set; }
-        public int ItemToAddCount { get; set; }
+        public Item ItemToRemove { get; set; }
 
         public bool Walkable { get; set; }
 
@@ -307,7 +307,7 @@ namespace MountPRG
         public const int GRASS_FLOWER_TILE = 1;
         public const int STONE_1_BLOCK = 2;
         public const int STONE_2_BLOCK = 3;
-        public const int GROUND_TILE = 4;
+        public const int DIRT_TILE = 4;
         public const int BUSH = 5;
         public const int RASPBERRY_BUSH = 6;
         public const int BLUEBERRY_BUSH = 7;
@@ -328,6 +328,9 @@ namespace MountPRG
         public const int WATER_LEFT_TILE = 26;
         public const int WATER_RIGHT_TILE = 27;
         public const int FISH = 28;
+        public const int WHEAT = 29;
+        public const int WHEAT_SEED = 30;
+        public const int FARMLAND_TILE = 31;
 
         public const int GRASS_U = 48;
         public const int GRASS_D = 49;

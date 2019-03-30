@@ -124,9 +124,15 @@ namespace MountPRG
             cbButtonDown += cb;
         }
 
-        public void ButtonDown()
+        public bool GetButtonDown()
         {
-            cbButtonDown(this);
+            if (Intersects(InputManager.GetX(), InputManager.GetY()))
+            {
+                cbButtonDown(this);
+                return true;
+            }
+
+            return false;
         }
     }
 }

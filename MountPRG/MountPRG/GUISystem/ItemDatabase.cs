@@ -13,15 +13,17 @@ namespace MountPRG
 
         public ItemDatabase()
         {
-            items.Add(TileMap.STICK,        new Item(TileMap.STICK,        "stick", true, false,         0, false));
-            items.Add(TileMap.FLINT,        new Item(TileMap.FLINT,        "stone", true, false,         0, false));
-            items.Add(TileMap.BERRY,        new Item(TileMap.BERRY,        "berry", true, true,          10, false));
-            items.Add(TileMap.FLINT_KNIFE,  new Item(TileMap.FLINT_KNIFE,  "flint_knife", false, false,  0, true));
-            items.Add(TileMap.WOODEN_SPEAR, new Item(TileMap.WOODEN_SPEAR, "wooden_spear", false, false, 0, true));
-            items.Add(TileMap.HAY,          new Item(TileMap.HAY,          "hay", true, false,           0, false));
-            items.Add(TileMap.WOOD,         new Item(TileMap.WOOD,         "wood", true, false,          0, false));
-            items.Add(TileMap.STONE,        new Item(TileMap.STONE,        "stone", true, false,         0, false));
-            items.Add(TileMap.FISH,         new Item(TileMap.FISH,         "fish", true, false,          20, false));
+            AddItem(TileMap.STICK, "Stick", true, false, 0, false);
+            AddItem(TileMap.FLINT, "Flint", true, false, 0, false);
+            AddItem(TileMap.BERRY, "Berry", true, true, 10, false);
+            AddItem(TileMap.FLINT_KNIFE,  "Flint knife",  false, false, 0, true);
+            AddItem(TileMap.WOODEN_SPEAR, "Wooden spear", false, false, 0, true);
+            AddItem(TileMap.HAY, "Hay", true, false, 0, false);
+            AddItem(TileMap.WOOD, "Wood", true, false, 0, false);
+            AddItem(TileMap.STONE, "Stone", true, false, 0, false);
+            AddItem(TileMap.FISH, "Fish", true, true, 20, false);
+            AddItem(TileMap.WHEAT, "Wheat", true, false, 0, false);
+            AddItem(TileMap.WHEAT_SEED, "Wheat seed", true, false, 0, false);
         }
 
         public static Item GetItemById(int id)
@@ -30,6 +32,20 @@ namespace MountPRG
                 return items[id];
 
             return null;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id">ID</param>
+        /// <param name="name">Name</param>
+        /// <param name="stackable">Stackable</param>
+        /// <param name="consumable">Consumable</param>
+        /// <param name="foodValue">Food value</param>
+        /// <param name="weapon">Weapon</param>
+        private void AddItem(int id, string name, bool stackable, bool consumable, int foodValue, bool weapon)
+        {
+            items.Add(id, new Item(id, name, stackable, consumable, foodValue, weapon));
         }
 
     }

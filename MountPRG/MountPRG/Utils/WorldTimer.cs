@@ -11,8 +11,6 @@ namespace MountPRG
     public class WorldTimer
     {
 
-        private float currentTime;
-
         public float TimeOfDay
         {
             get; private set;
@@ -25,13 +23,11 @@ namespace MountPRG
 
         public void Update(GameTime gameTime)
         {
-            currentTime -= (float)(gameTime.ElapsedGameTime.TotalSeconds * 0.05);
-            float timeOfDay = -MathUtils.ToDegrees(currentTime);
+            TimeOfDay += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (timeOfDay >= 360)
-                currentTime = 0;
-
-            TimeOfDay = timeOfDay;
+            if (TimeOfDay >= 360)
+                TimeOfDay = 0;
+            
         }
     }
 }

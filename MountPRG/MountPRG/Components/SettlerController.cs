@@ -20,11 +20,7 @@ namespace MountPRG
     {
         WAITING,
         WORKING,
-        GOING_SLEEP,
-        SLEEPING,
-        GOING_EAT,
-        EATING,
-        CHECK_JOB
+        CHECK_JOB,
     }
 
     public class SettlerController : Component
@@ -43,7 +39,7 @@ namespace MountPRG
         private PathAStar pathAStar;
 
         private float movementPerc;
-        private float speed = 6f;  //3
+        private float speed = 3f; 
 
         private AnimatedSprite sprite;
         private AnimationState animationState = AnimationState.IDLE;
@@ -104,25 +100,76 @@ namespace MountPRG
             {
                 case SettlerState.WAITING:
                     {
-                        /*if(satiety <= 50)
+                        if (MathUtils.InRange(GamePlayState.WorldTimer.TimeOfDay, 180, 359))
                         {
-                            for (int i = 0; i < GamePlayState.StockpileList.TilesWithFood.Count; i++)
+                            // Получаем рабочий тайл
+                            if (Hut != null)
                             {
-                                Tile tile = GamePlayState.StockpileList.TilesWithFood[i];
-                                if (IsWalkable(tile))
+                                Tile hutTile = Hut.Get<HutCmp>().Tiles[1];
+                                // Делаем его проходимым, чтобы получить доступ к его соседнему тайлу
+                                hutTile.Walkable = true;
+                                PathAStar pathAStar = new PathAStar(currTile, hutTile, hutTile.Tilemap.GetTileGraph().Nodes, hutTile.Tilemap);
+                                hutTile.Walkable = false;
+                                if (pathAStar.Length != -1)
                                 {
-                                    float hunger = MAX_SATIETY - satiety;
-                                    int foodUnits = (int)Math.Round(hunger / tile.Item.FoodValue);
-                                    if(tile.ItemCount < foodUnits)
-                                    {
-                                        //tile.ItemToRemoveCount = tile.ItemCount;
-                                    }
-                                    settlerState = SettlerState.GOING_EAT;
-                                    break;
+                                    List<Tile> path = pathAStar.Path.ToList();
+                                    // Означает что тайл находится прямо рядом с поселенцем
+                                    if (path.Count > 1)
+                                        tasks.Add(new Task(TaskType.MOVE, path[path.Count - 2], 0));
+
+                                    tasks.Add(new Task(TaskType.SLEEP, hutTile, 0));
+                                    currentTask = tasks[0];
+
+                                    settlerState = SettlerState.WORKING;
                                 }
                             }
-                        }*/
-                        FindJobSec();
+                        }
+                        else if (satiety <= 50 && GamePlayState.StockpileList.Count > 0)
+                        {
+                            Tile tile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
+
+                            if (tile.Item != null && tile.Item.Consumable && tile.ItemToRemove == null && IsWalkable(tile))
+                            {
+                                tile.ItemToRemove = tile.Item;
+
+                                settlerState = SettlerState.WORKING;
+
+                                //float hunger = MAX_SATIETY - satiety;
+                                //int foodUnits = (int)Math.Round(hunger / tile.Item.FoodValue);
+
+                                tasks.Add(new Task(TaskType.MOVE, tile, 0));
+                                tasks.Add(new Task(TaskType.EAT, tile, 5));
+                                currentTask = tasks[0];
+
+                                ResetStockpileCounter();
+                            }
+                            else
+                            {
+                                stockpileTileX++;
+                                if (stockpileTileX == GamePlayState.StockpileList.Get(stockpileCount).GetLength(0))
+                                {
+                                    stockpileTileY++;
+
+                                    if (stockpileTileY == GamePlayState.StockpileList.Get(stockpileCount).GetLength(1))
+                                    {
+                                        stockpileCount++;
+                                        if (stockpileCount == GamePlayState.StockpileList.Count)
+                                        {
+                                            // Если еды в складах нету, то поселенец продолжает работать
+                                            FindJob();
+
+                                            stockpileCount = 0;
+                                        }
+                                        stockpileTileY = 0;
+                                    }
+                                    stockpileTileX = 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            FindJob();
+                        }
                     }
                     break;
                 case SettlerState.WORKING:
@@ -169,10 +216,6 @@ namespace MountPRG
                                         cargoCount = tile.ItemCount;
                                         tile.RemoveItem();
 
-                                        // Если поселенец взял еду из тайла, то удаляем из списка тайлов с едой
-                                        if (cargo.Consumable)
-                                            GamePlayState.StockpileList.TilesWithFood.Remove(tile);
-
                                         NextTask();
                                     }
                                     break;
@@ -180,11 +223,6 @@ namespace MountPRG
                                     {
                                         Tile tile = currentTask.Tile;
                                         tile.AddItem(cargo, tile.ItemCount + cargoCount);
-
-                                        // Если поселенец положил еду в тайл и он еще не был добавлен, 
-                                        // то добавляем в список тайлов с едой
-                                        if (cargo.Consumable && !GamePlayState.StockpileList.TilesWithFood.Contains(tile))
-                                            GamePlayState.StockpileList.TilesWithFood.Add(tile);
 
                                         cargo = null;
                                         cargoCount = 0;
@@ -229,6 +267,30 @@ namespace MountPRG
                                         }
                                     }
                                     break;
+                                case TaskType.EAT:
+                                    {
+                                        if (WorkProgress(currentTask.Time, gameTime))
+                                        {
+                                            Tile tile = currentTask.Tile;
+                                            satiety += tile.Item.FoodValue;
+                                            tile.RemoveItem();
+
+                                            NextTask();
+                                        }
+                                    }
+                                    break;
+                                case TaskType.SLEEP:
+                                    {
+                                        if (Hut != null)
+                                            Parent.Visible = false;
+
+                                        if(MathUtils.InRange(GamePlayState.WorldTimer.TimeOfDay, 0, 180))
+                                        {
+                                            Parent.Visible = true;
+                                            NextTask();
+                                        }
+                                    }
+                                    break;
                             }
                         }
                     }
@@ -260,10 +322,7 @@ namespace MountPRG
                                     }
                                     else
                                     {
-                                        settlerState = SettlerState.WAITING;
-                                        myJob.Owner = null;
-                                        myJob = null;
-                                        jobCount++;
+                                        NextJob();
                                     }
                                 }
                                 break;
@@ -302,10 +361,7 @@ namespace MountPRG
                                                     stockpileCount++;
                                                     if(stockpileCount == GamePlayState.StockpileList.Count)
                                                     {
-                                                        settlerState = SettlerState.WAITING;
-                                                        myJob.Owner = null;
-                                                        myJob = null;
-                                                        jobCount++;
+                                                        NextJob();
 
                                                         stockpileCount = 0;
                                                     }
@@ -318,14 +374,9 @@ namespace MountPRG
                                     }
                                     else
                                     {
-                                        settlerState = SettlerState.WAITING;
-                                        myJob.Owner = null;
-                                        myJob = null;
-                                        jobCount++;
+                                        NextJob();
 
-                                        stockpileCount = 0;
-                                        stockpileTileX = 0;
-                                        stockpileTileY = 0;
+                                        ResetStockpileCounter();
                                     }
                                 }
                                 break;
@@ -361,10 +412,7 @@ namespace MountPRG
                                                     stockpileCount++;
                                                     if (stockpileCount == GamePlayState.StockpileList.Count)
                                                     {
-                                                        settlerState = SettlerState.WAITING;
-                                                        myJob.Owner = null;
-                                                        myJob = null;
-                                                        jobCount++;
+                                                        NextJob();
 
                                                         stockpileCount = 0;
                                                     }
@@ -377,14 +425,9 @@ namespace MountPRG
                                     }
                                     else
                                     {
-                                        settlerState = SettlerState.WAITING;
-                                        myJob.Owner = null;
-                                        myJob = null;
-                                        jobCount++;
+                                        NextJob();
 
-                                        stockpileCount = 0;
-                                        stockpileTileX = 0;
-                                        stockpileTileY = 0;
+                                        ResetStockpileCounter();
                                     }
                                 }
                                 break;
@@ -429,10 +472,7 @@ namespace MountPRG
                                                     stockpileCount++;
                                                     if (stockpileCount == GamePlayState.StockpileList.Count)
                                                     {
-                                                        settlerState = SettlerState.WAITING;
-                                                        myJob.Owner = null;
-                                                        myJob = null;
-                                                        jobCount++;
+                                                        NextJob();
 
                                                         stockpileCount = 0;
                                                     }
@@ -445,14 +485,9 @@ namespace MountPRG
                                     }
                                     else
                                     {
-                                        settlerState = SettlerState.WAITING;
-                                        myJob.Owner = null;
-                                        myJob = null;
-                                        jobCount++;
+                                        NextJob();
 
-                                        stockpileCount = 0;
-                                        stockpileTileX = 0;
-                                        stockpileTileY = 0;
+                                        ResetStockpileCounter();
                                     }
                                 }
                                 break;
@@ -460,6 +495,24 @@ namespace MountPRG
                     }
                     break;
             }
+
+            if (animationState == AnimationState.IDLE)
+                sprite.ResetAnimation();
+        }
+
+        private void NextJob()
+        {
+            settlerState = SettlerState.WAITING;
+            myJob.Owner = null;
+            myJob = null;
+            jobCount++;
+        }
+
+        private void ResetStockpileCounter()
+        {
+            stockpileCount = 0;
+            stockpileTileX = 0;
+            stockpileTileY = 0;
         }
 
         private void UpdateStats(GameTime gameTime)
@@ -468,8 +521,21 @@ namespace MountPRG
             if (time > 1.0f)
             {
                 endurance -= 0.1f;
-                satiety -= 0.05f;
+                satiety -= 0.1f;
                 statsTimer.Reset();
+
+                if(currentTask != null)
+                {
+                    switch(currentTask.TaskType)
+                    {
+                        case TaskType.EAT:
+                            satiety += 0.05f;
+                            break;
+                        case TaskType.SLEEP:
+                            endurance = Math.Min(endurance + 0.6f, MAX_ENDURANCE);
+                            break;
+                    }
+                }
             }
 
         }
@@ -484,24 +550,33 @@ namespace MountPRG
             else
             {
                 settlerState = SettlerState.WAITING;
-                GamePlayState.JobList.Remove(myJob);
-                myJob = null;
-                jobCount = 0; 
+                if (myJob != null)
+                {
+                    GamePlayState.JobList.Remove(myJob);
+                    myJob = null;
+                    jobCount = 0;
+                }
             }
         }
 
         private bool MoveTo(Tile tile, GameTime gameTime)
         {
-            if(!currTile.Equals(tile) && pathAStar == null)
+            if (!currTile.Equals(tile) && pathAStar == null)
             {
                 SetDestTile(tile);
             }
             else
             {
+                animationState = AnimationState.MOVING;
+
                 MovementUpdate(gameTime);
 
                 if (currTile.Equals(tile))
+                {
+                    pathAStar = null;
+                    animationState = AnimationState.IDLE;
                     return true;
+                }
             }
 
             return false;
@@ -510,7 +585,7 @@ namespace MountPRG
         private bool WorkProgress(float taskTime, GameTime gameTime)
         {
             float time = timer.GetTime(gameTime);
-            slider.SetValue(time, myJob.JobTime);
+            slider.SetValue(time, taskTime);
             slider.Visible = true;
             slider.X = Parent.X;
             slider.Y = Parent.Y - 10;
@@ -534,7 +609,7 @@ namespace MountPRG
             }
         }
 
-        private void FindJobSec()
+        private void FindJob()
         {
             if (myJob == null)
             {
@@ -599,48 +674,34 @@ namespace MountPRG
 
         private void MovementUpdate(GameTime gameTime)
         {
-            if (currTile.Equals(destTile))
+            if (nextTile.Equals(currTile))
+                nextTile = pathAStar.NextTile;
+
+
+            float distToTravel = MathUtils.Distance(currTile.X, currTile.Y, nextTile.X, nextTile.Y);
+
+            float distThisFrame = speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            float percThisFrame = distThisFrame / distToTravel;
+
+            movementPerc += percThisFrame;
+            if (movementPerc >= 1)
             {
-                pathAStar = null;
-                animationState = AnimationState.IDLE;
-            }
+                currTile = nextTile;
 
-            if (pathAStar != null)
-            {
-                if (nextTile.Equals(currTile))
-                    nextTile = pathAStar.NextTile;
-
-
-                float distToTravel = MathUtils.Distance(currTile.X, currTile.Y, nextTile.X, nextTile.Y);
-
-                float distThisFrame = speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-                float percThisFrame = distThisFrame / distToTravel;
-
-                movementPerc += percThisFrame;
-                if (movementPerc >= 1)
+                if (newDestTile != null)
                 {
-                    currTile = nextTile;
-
-                    if (newDestTile != null)
-                    {
-                        SetDestTile(currTile, newDestTile,
-                            GamePlayState.TileMap.GetTileGraph().Nodes,
-                                GamePlayState.TileMap);
-                        newDestTile = null;
-                    }
-
-                    movementPerc = 0;
+                    SetDestTile(currTile, newDestTile,
+                        GamePlayState.TileMap.GetTileGraph().Nodes,
+                            GamePlayState.TileMap);
+                    newDestTile = null;
                 }
 
-                Parent.X = MathUtils.Lerp(currTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
-                Parent.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
-
-                animationState = AnimationState.MOVING;
+                movementPerc = 0;
             }
 
-            if (animationState == AnimationState.IDLE)
-                sprite.ResetAnimation();
+            Parent.X = MathUtils.Lerp(currTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
+            Parent.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
         }
     }
 }
