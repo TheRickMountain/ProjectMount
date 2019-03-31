@@ -36,7 +36,7 @@ namespace MountPRG
         private PathAStar pathAStar;
 
         private float movementPerc;
-        private float speed = 3f; 
+        private float speed = 3f;
 
         private AnimatedSprite sprite;
         private AnimationState animationState = AnimationState.IDLE;
@@ -124,10 +124,8 @@ namespace MountPRG
                         {
                             Tile tile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
 
-                            if (tile.Item != null && tile.Item.Consumable && tile.ItemToRemove == null && IsWalkable(tile))
+                            if (tile.Item != null && tile.Item.Consumable && IsWalkable(tile))
                             {
-                                tile.ItemToRemove = tile.Item;
-
                                 settlerState = SettlerState.WORKING;
 
                                 //float hunger = MAX_SATIETY - satiety;
@@ -208,9 +206,24 @@ namespace MountPRG
                                     {
                                         Tile tile = currentTask.Tile;
                                         tile.Selected = false;
+
                                         cargo = tile.Item;
-                                        cargoCount = tile.ItemCount;
-                                        tile.RemoveItem();
+                                        cargoCount = 1;
+
+                                        tile.ItemToRemoveCount--;
+                                        tile.ItemCount--;
+                                        tile.ItemToAddCount--;
+
+                                        if (tile.ItemCount == 0)
+                                        {
+                                            tile.Item = null;
+                                            tile.BuildingLayerId = -1;
+
+                                            if (tile.ItemToAddCount == 0)
+                                                tile.ItemToAdd = null;
+
+                                            tile.ItemToRemoveCount = 0;
+                                        }
 
                                         NextTask();
                                     }
@@ -267,9 +280,9 @@ namespace MountPRG
                                     {
                                         if (WorkProgress(currentTask.Time, gameTime))
                                         {
-                                            Tile tile = currentTask.Tile;
-                                            satiety += tile.Item.FoodValue;
-                                            tile.RemoveItem();
+                                            //Tile tile = currentTask.Tile;
+                                            //satiety += tile.Item.FoodValue;
+                                            //tile.RemoveItem();
 
                                             NextTask();
                                         }
@@ -350,20 +363,22 @@ namespace MountPRG
                                     // Получаем рабочий тайл
                                     Tile jobTile = myJob.Tile;
 
-                                    if (IsWalkable(jobTile) && GamePlayState.StockpileList.Count > 0)
+                                    if (GamePlayState.StockpileList.Count > 0 && IsWalkable(jobTile))
                                     {
                                         Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
 
-                                        if (stockpileTile.ItemToAdd == null && IsWalkable(stockpileTile))
+                                        if (StockpileIsAvailableFor(stockpileTile, jobTile.Item)
+                                            && IsWalkable(stockpileTile))
                                         {
                                             // Тайл получает информацию о том какой предмет туда нужно добавить и сколько
                                             stockpileTile.ItemToAdd = jobTile.Item;
+                                            stockpileTile.ItemToAddCount++;
 
                                             // делаем работу текущей для данного поселенца
                                             settlerState = SettlerState.WORKING;
 
                                             tasks.Add(new Task(TaskType.MOVE, jobTile, 0));
-                                            tasks.Add(new Task(TaskType.TAKE, jobTile, myJob.JobTime));
+                                            tasks.Add(new Task(TaskType.TAKE, jobTile, 0));
                                             tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
                                             tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
                                             currentTask = tasks[0];
@@ -409,9 +424,11 @@ namespace MountPRG
                                     {
                                         Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
 
-                                        if (stockpileTile.ItemToAdd == null && IsWalkable(stockpileTile))
+                                        if (StockpileIsAvailableFor(stockpileTile, jobTile.Entity.Get<Gatherable>().Item) 
+                                            && IsWalkable(stockpileTile))
                                         {
                                             stockpileTile.ItemToAdd = jobTile.Entity.Get<Gatherable>().Item;
+                                            stockpileTile.ItemToAddCount++;
 
                                             settlerState = SettlerState.WORKING;
 
@@ -467,9 +484,11 @@ namespace MountPRG
 
                                         Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
 
-                                        if (stockpileTile.ItemToAdd == null && IsWalkable(stockpileTile))
+                                        if(StockpileIsAvailableFor(stockpileTile, ItemDatabase.GetItemById(TileMap.FISH)) &&
+                                            IsWalkable(stockpileTile))
                                         {
                                             stockpileTile.ItemToAdd = ItemDatabase.GetItemById(TileMap.FISH);
+                                            stockpileTile.ItemToAddCount++;
 
                                             settlerState = SettlerState.WORKING;
 
@@ -523,13 +542,18 @@ namespace MountPRG
                                     // Тайл не засеян
                                     if(jobTile.BuildingLayerId == -1 && IsWalkable(jobTile))
                                     {
-                                        // На складе есть необходимый предмет
+                                        // Есть ли на складе необходимые семена
                                         if (GamePlayState.StockpileList.HasItem(ItemDatabase.GetItemById(TileMap.WHEAT_SEED)))
                                         {
                                             Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
 
-                                            if (stockpileTile.Item == ItemDatabase.GetItemById(TileMap.WHEAT_SEED) && IsWalkable(stockpileTile))
+                                            // Находим тайл который содержит необходимые нам никем не занятые семена 
+                                            if (stockpileTile.Item == ItemDatabase.GetItemById(TileMap.WHEAT_SEED) 
+                                                && ((stockpileTile.ItemCount - stockpileTile.ItemToRemoveCount) > 0)
+                                                && IsWalkable(stockpileTile))
                                             {
+                                                stockpileTile.ItemToRemoveCount++;
+
                                                 settlerState = SettlerState.WORKING;
 
                                                 tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
@@ -582,6 +606,16 @@ namespace MountPRG
 
             if (animationState == AnimationState.IDLE)
                 sprite.ResetAnimation();
+        }
+
+        private bool StockpileIsAvailableFor(Tile tile, Item item)
+        {
+                if (tile.ItemToAdd == null)
+                    return true;
+                else if (tile.ItemToAdd == item && tile.ItemToAddCount < 10)
+                    return true;
+
+                return false;
         }
 
         private void NextJob()

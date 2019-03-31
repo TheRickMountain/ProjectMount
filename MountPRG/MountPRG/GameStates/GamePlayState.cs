@@ -146,6 +146,31 @@ namespace MountPRG
             TileMap.AddEntity(15, 20, new Wheat());
             TileMap.AddEntity(14, 21, new Wheat());
             TileMap.AddEntity(15, 21, new Wheat());
+            TileMap.AddEntity(14, 22, new Wheat());
+            TileMap.AddEntity(15, 22, new Wheat());
+            TileMap.AddEntity(14, 23, new Wheat());
+            TileMap.AddEntity(15, 23, new Wheat());
+            TileMap.AddEntity(14, 24, new Wheat());
+            TileMap.AddEntity(15, 24, new Wheat());
+            TileMap.AddEntity(14, 25, new Wheat());
+            TileMap.AddEntity(15, 25, new Wheat());
+            TileMap.AddEntity(14, 26, new Wheat());
+            TileMap.AddEntity(15, 26, new Wheat());
+
+            TileMap.AddEntity(14, 27, new Wheat());
+            TileMap.AddEntity(15, 27, new Wheat());
+            TileMap.AddEntity(14, 28, new Wheat());
+            TileMap.AddEntity(15, 28, new Wheat());
+            TileMap.AddEntity(14, 29, new Wheat());
+            TileMap.AddEntity(15, 29, new Wheat());
+            TileMap.AddEntity(14, 30, new Wheat());
+            TileMap.AddEntity(15, 30, new Wheat());
+            TileMap.AddEntity(14, 31, new Wheat());
+            TileMap.AddEntity(15, 31, new Wheat());
+            TileMap.AddEntity(14, 32, new Wheat());
+            TileMap.AddEntity(15, 32, new Wheat());
+            TileMap.AddEntity(14, 33, new Wheat());
+            TileMap.AddEntity(15, 33, new Wheat());
 
             Settlers = new List<Settler>();
 
@@ -153,13 +178,13 @@ namespace MountPRG
             Entities.Add(settler);
             Settlers.Add(settler);
 
-            //settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
-            //Entities.Add(settler);
-            //Settlers.Add(settler);
+            settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
+            Entities.Add(settler);
+            Settlers.Add(settler);
 
-            //settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
-            //Entities.Add(settler);
-            //Settlers.Add(settler);
+            settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
+            Entities.Add(settler);
+            Settlers.Add(settler);
 
             JobList = new JobList();
             StockpileList = new StockpileList();

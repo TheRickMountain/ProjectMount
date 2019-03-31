@@ -32,10 +32,11 @@ namespace MountPRG
         public int BuildingLayerId { get; set; }
         public Entity Entity { get; set; }
 
-        public Item Item { get; private set; }
+        public Item Item { get; set; }
         public int ItemCount { get; set; }
-        public Item ItemToAdd { get; set; }
-        public Item ItemToRemove { get; set; }
+        public Item ItemToAdd { get; set; } // прелдмет который собираются добавит
+        public int ItemToAddCount { get; set; } // количество предметов которые собираются добавить
+        public int ItemToRemoveCount { get; set; } // количество предметов которые собираются забрать
 
         public bool Walkable { get; set; }
 
@@ -210,13 +211,6 @@ namespace MountPRG
             ItemCount = count;
             BuildingLayerId = item.Id;
             Walkable = true;
-        }
-
-        public void RemoveItem()
-        {
-            Item = null;
-            ItemCount = 0;
-            BuildingLayerId = -1;
         }
 
         public void RemoveEntity()
