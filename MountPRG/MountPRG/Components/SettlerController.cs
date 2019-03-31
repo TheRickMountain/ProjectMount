@@ -32,9 +32,6 @@ namespace MountPRG
 
         private Tile currTile;
         private Tile nextTile;
-        private Tile destTile;
-
-        private Tile newDestTile;
 
         private PathAStar pathAStar;
 
@@ -88,8 +85,7 @@ namespace MountPRG
 
         public override void Initialize()
         {
-            currTile = destTile = nextTile = GamePlayState.TileMap
-                .GetTile((int)(Parent.X / TileMap.TILE_SIZE), (int)(Parent.Y / TileMap.TILE_SIZE));
+            currTile = nextTile = GamePlayState.TileMap.GetTile((int)(Parent.X / TileMap.TILE_SIZE), (int)(Parent.Y / TileMap.TILE_SIZE));
         }
 
         public override void Update(GameTime gameTime)
@@ -156,7 +152,7 @@ namespace MountPRG
                                         if (stockpileCount == GamePlayState.StockpileList.Count)
                                         {
                                             // Если еды в складах нету, то поселенец продолжает работать
-                                            FindJob();
+                                            GetNewJob();
 
                                             stockpileCount = 0;
                                         }
@@ -168,7 +164,7 @@ namespace MountPRG
                         }
                         else
                         {
-                            FindJob();
+                            GetNewJob();
                         }
                     }
                     break;
@@ -291,6 +287,29 @@ namespace MountPRG
                                         }
                                     }
                                     break;
+                                case TaskType.PLOW:
+                                    {
+                                        if (WorkProgress(currentTask.Time, gameTime))
+                                        {
+                                            currentTask.Tile.GroundLayerId = TileMap.FARM_TILE;
+
+                                            NextTask();
+                                        }
+                                    }
+                                    break;
+                                case TaskType.PLANT:
+                                    {
+                                        if (WorkProgress(currentTask.Time, gameTime))
+                                        {
+                                            currentTask.Tile.BuildingLayerId = TileMap.WHEAT_SEED_TILE;
+                                            
+                                            cargo = null;
+                                            cargoCount = 0;
+
+                                            NextTask();
+                                        }
+                                    }
+                                    break;
                             }
                         }
                     }
@@ -348,6 +367,8 @@ namespace MountPRG
                                             tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
                                             tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
                                             currentTask = tasks[0];
+
+                                            ResetStockpileCounter();
                                         }
                                         else
                                         {
@@ -384,7 +405,7 @@ namespace MountPRG
                                 {
                                     Tile jobTile = myJob.Tile;
 
-                                    if (IsWalkable(jobTile) && GamePlayState.StockpileList.Count > 0)
+                                    if (GamePlayState.StockpileList.Count > 0 && IsWalkable(jobTile))
                                     {
                                         Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
 
@@ -399,6 +420,8 @@ namespace MountPRG
                                             tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
                                             tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
                                             currentTask = tasks[0];
+
+                                            ResetStockpileCounter();
                                         }
                                         else
                                         {
@@ -459,6 +482,8 @@ namespace MountPRG
                                             tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
                                             tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
                                             currentTask = tasks[0];
+
+                                            ResetStockpileCounter();
                                         }
                                         else
                                         {
@@ -491,6 +516,65 @@ namespace MountPRG
                                     }
                                 }
                                 break;
+                            case JobType.PLANT:
+                                {
+                                    Tile jobTile = myJob.Tile;
+
+                                    // Тайл не засеян
+                                    if(jobTile.BuildingLayerId == -1 && IsWalkable(jobTile))
+                                    {
+                                        // На складе есть необходимый предмет
+                                        if (GamePlayState.StockpileList.HasItem(ItemDatabase.GetItemById(TileMap.WHEAT_SEED)))
+                                        {
+                                            Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
+
+                                            if (stockpileTile.Item == ItemDatabase.GetItemById(TileMap.WHEAT_SEED) && IsWalkable(stockpileTile))
+                                            {
+                                                settlerState = SettlerState.WORKING;
+
+                                                tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
+                                                tasks.Add(new Task(TaskType.TAKE, stockpileTile, 0));
+                                                tasks.Add(new Task(TaskType.MOVE, jobTile, 0));
+                                                tasks.Add(new Task(TaskType.PLOW, jobTile, 2));
+                                                tasks.Add(new Task(TaskType.PLANT, jobTile, 2));
+                                                currentTask = tasks[0];
+
+                                                ResetStockpileCounter();
+                                            }
+                                            else
+                                            {
+                                                stockpileTileX++;
+                                                if (stockpileTileX == GamePlayState.StockpileList.Get(stockpileCount).GetLength(0))
+                                                {
+                                                    stockpileTileY++;
+
+                                                    if (stockpileTileY == GamePlayState.StockpileList.Get(stockpileCount).GetLength(1))
+                                                    {
+                                                        stockpileCount++;
+                                                        if (stockpileCount == GamePlayState.StockpileList.Count)
+                                                        {
+                                                            NextJob();
+
+                                                            stockpileCount = 0;
+                                                        }
+                                                        stockpileTileY = 0;
+                                                    }
+
+                                                    stockpileTileX = 0;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            NextJob();
+                                        }
+                                    }
+                                    else
+                                    {
+                                        NextJob();
+                                    }
+                                }
+                                break;
                         }
                     }
                     break;
@@ -506,6 +590,34 @@ namespace MountPRG
             myJob.Owner = null;
             myJob = null;
             jobCount++;
+        }
+
+        private void GetNewJob()
+        {
+            if (myJob == null)
+            {
+                if (GamePlayState.JobList.Count != 0)
+                {
+                    if (jobCount >= GamePlayState.JobList.Count)
+                        jobCount = 0;
+
+                    Job job = GamePlayState.JobList.Get(jobCount);
+                    if (job.Owner == null)
+                    {
+                        job.Owner = (Settler)Parent;
+                        myJob = job;
+                        settlerState = SettlerState.CHECK_JOB;
+                    }
+                    else
+                    {
+                        jobCount++;
+                    }
+                }
+                else
+                {
+                    jobCount = 0;
+                }
+            }
         }
 
         private void ResetStockpileCounter()
@@ -559,27 +671,97 @@ namespace MountPRG
             }
         }
 
-        private bool MoveTo(Tile tile, GameTime gameTime)
+        private bool MoveTo(Tile destTile, GameTime gameTime)
         {
-            if (!currTile.Equals(tile) && pathAStar == null)
+            if (!currTile.Equals(destTile) && pathAStar == null)
             {
-                SetDestTile(tile);
+                SetDestTile(destTile);
             }
             else
             {
                 animationState = AnimationState.MOVING;
 
-                MovementUpdate(gameTime);
-
-                if (currTile.Equals(tile))
+                if (currTile.Equals(destTile))
                 {
                     pathAStar = null;
                     animationState = AnimationState.IDLE;
                     return true;
+                } else
+                {
+                    MovementUpdate(gameTime);
                 }
             }
 
             return false;
+        }
+
+        private void SetDestTile(Tile destTile)
+        {
+            if (destTile.Walkable)
+            {
+                currTile = nextTile = destTile.Tilemap.GetTile((int)(Parent.X / TileMap.TILE_SIZE), (int)(Parent.Y / TileMap.TILE_SIZE));
+
+                pathAStar = new PathAStar(currTile, destTile, destTile.Tilemap.GetTileGraph().Nodes, destTile.Tilemap);
+
+                if (pathAStar.Length == -1)
+                    pathAStar = null;
+            }
+        }
+
+        private void MovementUpdate(GameTime gameTime)
+        {
+            if (nextTile.Equals(currTile))
+            {
+                nextTile = pathAStar.NextTile;
+
+                if ((currTile.X - nextTile.X) == 1)
+                {
+                    sprite.CurrentAnimation = AnimationKey.Left;
+                }
+                else if ((currTile.X - nextTile.X) == -1)
+                {
+                    sprite.CurrentAnimation = AnimationKey.Right;
+                }
+
+                if ((currTile.Y - nextTile.Y) == 1)
+                {
+                    sprite.CurrentAnimation = AnimationKey.Up;
+                }
+                else if ((currTile.Y - nextTile.Y) == -1)
+                {
+                    sprite.CurrentAnimation = AnimationKey.Down;
+                }
+            }
+
+
+            float distToTravel = MathUtils.Distance(currTile.X, currTile.Y, nextTile.X, nextTile.Y);
+
+            float distThisFrame = speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            float percThisFrame = distThisFrame / distToTravel;
+
+            movementPerc += percThisFrame;
+            if (movementPerc >= 1)
+            {
+                currTile = nextTile;
+                movementPerc = 0;
+            }
+
+            Parent.X = MathUtils.Lerp(currTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
+            Parent.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
+
+            
+        }
+
+        private bool IsWalkable(Tile destTile)
+        {
+            if (destTile == null)
+                return false;
+            else if (!destTile.Walkable)
+                return false;
+
+            PathAStar pathAStar = new PathAStar(currTile, destTile, destTile.Tilemap.GetTileGraph().Nodes, destTile.Tilemap);
+            return pathAStar.Length != -1;
         }
 
         private bool WorkProgress(float taskTime, GameTime gameTime)
@@ -608,100 +790,6 @@ namespace MountPRG
                 slider.Draw(spriteBatch);
             }
         }
-
-        private void FindJob()
-        {
-            if (myJob == null)
-            {
-                Job job = GamePlayState.JobList.Get(jobCount);
-                if (job != null)
-                {
-                    if (job.Owner == null)
-                    {
-                        job.Owner = (Settler)Parent;
-                        myJob = job;
-                        settlerState = SettlerState.CHECK_JOB;
-                    }
-                    else
-                    {
-                        jobCount++;
-                    }
-                }
-                else
-                {
-                    jobCount = 0;
-                }
-            }
-        }
-
-        private bool IsWalkable(Tile tile)
-        {
-            if (tile == null)
-                return false;
-            else if (!tile.Walkable)
-                return false;
-
-            PathAStar pathAStar = new PathAStar(currTile, tile, tile.Tilemap.GetTileGraph().Nodes, tile.Tilemap);
-            return pathAStar.Length != -1;
-        }
-
-        private void SetDestTile(Tile tile)
-        {
-            if (tile.Walkable)
-            {
-                currTile = nextTile = tile.Tilemap.GetTile((int)(Parent.X / TileMap.TILE_SIZE),
-                    (int)(Parent.Y / TileMap.TILE_SIZE));
-                pathAStar = new PathAStar(currTile, tile, tile.Tilemap.GetTileGraph().Nodes, tile.Tilemap);
-                if (pathAStar.Length != -1)
-                    destTile = tile;
-                else
-                    pathAStar = null;
-            }
-        }
-
-        private void SetDestTile(Tile cTile, Tile dTile, Dictionary<Tile, Node<Tile>> nodes, TileMap tilemap)
-        {
-            if (dTile.Walkable)
-            {
-                currTile = nextTile = cTile;
-                pathAStar = new PathAStar(currTile, dTile, nodes, tilemap);
-                if (pathAStar.Length != -1)
-                    destTile = dTile;
-                else
-                    pathAStar = null;
-            }
-        }
-
-        private void MovementUpdate(GameTime gameTime)
-        {
-            if (nextTile.Equals(currTile))
-                nextTile = pathAStar.NextTile;
-
-
-            float distToTravel = MathUtils.Distance(currTile.X, currTile.Y, nextTile.X, nextTile.Y);
-
-            float distThisFrame = speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            float percThisFrame = distThisFrame / distToTravel;
-
-            movementPerc += percThisFrame;
-            if (movementPerc >= 1)
-            {
-                currTile = nextTile;
-
-                if (newDestTile != null)
-                {
-                    SetDestTile(currTile, newDestTile,
-                        GamePlayState.TileMap.GetTileGraph().Nodes,
-                            GamePlayState.TileMap);
-                    newDestTile = null;
-                }
-
-                movementPerc = 0;
-            }
-
-            Parent.X = MathUtils.Lerp(currTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
-            Parent.Y = MathUtils.Lerp(currTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
-        }
+        
     }
 }

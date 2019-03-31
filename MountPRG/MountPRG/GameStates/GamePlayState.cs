@@ -33,6 +33,7 @@ namespace MountPRG
 
         public static JobList JobList;
         public static StockpileList StockpileList;
+        public static FarmList FarmList;
 
         public static WorldManager WorldManager;
 
@@ -162,6 +163,7 @@ namespace MountPRG
 
             JobList = new JobList();
             StockpileList = new StockpileList();
+            FarmList = new FarmList();
             Huts = new List<HutCmp>();
 
             effect = ResourceBank.Effects["File"];

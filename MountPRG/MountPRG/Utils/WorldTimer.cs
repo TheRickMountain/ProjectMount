@@ -18,7 +18,7 @@ namespace MountPRG
 
         public WorldTimer()
         {
-
+            TimeOfDay = 20;
         }
 
         public void Update(GameTime gameTime)

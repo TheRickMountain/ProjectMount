@@ -23,6 +23,7 @@ namespace MountPRG
         public static ActionPanelUI ActionPanelUI;
         public static StockpileUI StockpileUI;
         public static HutUI HutUI;
+        public static FarmUI FarmUI;
 
         public static bool MouseOnUI { get; set; }
 
@@ -42,6 +43,7 @@ namespace MountPRG
             guiElements.Add(StockpileUI);
 
             HutUI = new HutUI();
+            FarmUI = new FarmUI();
         }
 
         public void Update(GameTime gameTime)
@@ -52,10 +54,13 @@ namespace MountPRG
             {
                 StockpileUI.Close();
                 HutUI.Close();
+                FarmUI.Close();
             }
 
             if (HutUI.Active)
                 HutUI.Update(gameTime);
+            else if (FarmUI.Active)
+                FarmUI.Update(gameTime);
 
             for (int i = 0; i < guiElements.Count; i++)
             {
@@ -74,6 +79,8 @@ namespace MountPRG
 
             if (HutUI.Active)
                 HutUI.Draw(spriteBatch);
+            else if (FarmUI.Active)
+                FarmUI.Draw(spriteBatch);
         }
     }
 }

@@ -20,9 +20,27 @@ namespace MountPRG
         {
             for (int i = 0; i < tiles.GetLength(0); i++)
                 for (int j = 0; j < tiles.GetLength(1); j++)
-                    tiles[i, j].Stockpile = Count;
+                    tiles[i, j].Area.Set(AreaType.STOCKPILE, Count);
 
             stockpiles.Add(Count, tiles);
+        }
+
+        public bool HasItem(Item item)
+        {
+            for (int k = 0; k < stockpiles.Count; k++)
+            {
+                Tile[,] tiles = stockpiles[k];
+                for (int i = 0; i < tiles.GetLength(0); i++)
+                {
+                    for (int j = 0; j < tiles.GetLength(1); j++)
+                    {
+                        if (tiles[i, j].Item == item)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public Tile[,] Get(int val)

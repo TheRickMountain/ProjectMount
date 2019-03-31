@@ -79,6 +79,8 @@ namespace MountPRG
             {
                 selectedButton.Selected = false;
                 selectedButton = null;
+
+                GamePlayState.WorldManager.SetJobType(JobType.NONE);
             }
         }
 

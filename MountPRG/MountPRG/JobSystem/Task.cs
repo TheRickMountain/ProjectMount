@@ -16,6 +16,8 @@ namespace MountPRG
         FISH,
         EAT,
         SLEEP,
+        PLOW,
+        PLANT,
     }
 
     public class Task

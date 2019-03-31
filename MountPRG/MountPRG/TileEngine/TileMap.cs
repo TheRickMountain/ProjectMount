@@ -44,7 +44,7 @@ namespace MountPRG
         public Color BuildingLayerColor { get; set; }
 
         public bool Selected { get; set; }
-        public int Stockpile { get; set; }
+        public Area Area { get; private set; }
 
         public Tile(int x, int y, int groundLayerId, int buildingLayerId, TileMap tilemap)
         {
@@ -58,7 +58,7 @@ namespace MountPRG
             GroundLayerColor = Color.White;
             EdgeLayerColor = Color.White;
             BuildingLayerColor = Color.White;
-            Stockpile = -1;
+            Area = new Area();
         }
 
         private void Update()
@@ -330,7 +330,8 @@ namespace MountPRG
         public const int FISH = 28;
         public const int WHEAT = 29;
         public const int WHEAT_SEED = 30;
-        public const int FARMLAND_TILE = 31;
+        public const int FARM_TILE = 31;
+        public const int WHEAT_SEED_TILE = 36;
 
         public const int GRASS_U = 48;
         public const int GRASS_D = 49;

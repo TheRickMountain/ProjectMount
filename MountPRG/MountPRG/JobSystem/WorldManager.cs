@@ -56,25 +56,37 @@ namespace MountPRG
                         {
                             if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
                             {
-                                if (SelectedTile.Stockpile > -1)
+                                switch(SelectedTile.Area.AreaType)
                                 {
-                                    GUIManager.HutUI.Close();
-                                    GUIManager.StockpileUI.Close();
-
-                                    GUIManager.StockpileUI.Open(GamePlayState.StockpileList.Get(SelectedTile.Stockpile));
-                                }
-
-                                if (SelectedTile.Entity != null)
-                                {
-                                    HutCmp hut = SelectedTile.Entity.Get<HutCmp>();
-                                    if (hut != null)
-                                    {
+                                    case AreaType.STOCKPILE:
+                                        //TODO: make it on gui manenger
+                                        GUIManager.FarmUI.Close();
                                         GUIManager.HutUI.Close();
                                         GUIManager.StockpileUI.Close();
 
-                                        GUIManager.HutUI.Open(hut, GamePlayState.Settlers);
-                                    }
-                                }
+                                        GUIManager.StockpileUI.Open(GamePlayState.StockpileList.Get(SelectedTile.Area.Num));
+                                        break;
+                                    case AreaType.FARM:
+                                        GUIManager.FarmUI.Close();
+                                        GUIManager.HutUI.Close();
+                                        GUIManager.StockpileUI.Close();
+
+                                        GUIManager.FarmUI.Open(SelectedTile.Area.Num);
+                                        break;
+                                    case AreaType.NONE:
+                                        if (SelectedTile.Entity != null)
+                                        {
+                                            HutCmp hut = SelectedTile.Entity.Get<HutCmp>();
+                                            if (hut != null)
+                                            {
+                                                GUIManager.HutUI.Close();
+                                                GUIManager.StockpileUI.Close();
+
+                                                GUIManager.HutUI.Open(hut, GamePlayState.Settlers);
+                                            }
+                                        }
+                                        break;
+                                }   
                             }
                         }
                         break;
@@ -98,6 +110,9 @@ namespace MountPRG
                         break;
                     case JobType.BUILD:
                         //MakeBuilding();
+                        break;
+                    case JobType.PLANT:
+                        MakePlantJob();
                         break;
                 }
             }
@@ -260,7 +275,7 @@ namespace MountPRG
             {
                 if (!SelectedTile.Selected)
                 {
-                    if (SelectedTile.Stockpile == -1 && SelectedTile.Item != null)
+                    if (SelectedTile.Item != null)
                     {
                         SelectedTile.Selected = true;
                         GamePlayState.JobList.Add(new Job(SelectedTile, JobType.HAUL));
@@ -355,5 +370,51 @@ namespace MountPRG
         //    }
         //}
 
+        private void MakePlantJob()
+        {
+            if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+            {
+                firstSelectedTile = lastSelectedTile = SelectedTile;
+            }
+
+            if (firstSelectedTile != null)
+            {
+                if (InputManager.GetMouseButton(MouseInput.LeftButton))
+                {
+                    SelectArea(firstSelectedTile, lastSelectedTile, Color.White);
+
+                    int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
+                    int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
+
+                    if (width < 1 || width > 5 || height < 1 || height > 5)
+                    {
+                        SelectArea(firstSelectedTile, SelectedTile, Color.IndianRed);
+                    }
+                    else
+                    {
+                        SelectArea(firstSelectedTile, SelectedTile, Color.Turquoise);
+                    }
+
+                    lastSelectedTile = SelectedTile;
+                }
+
+                if (InputManager.GetMouseButtonReleased(MouseInput.LeftButton))
+                {
+                    int width = Math.Abs(firstSelectedTile.X - SelectedTile.X);
+                    int height = Math.Abs(firstSelectedTile.Y - SelectedTile.Y);
+
+                    if (width >= 1 && width <= 5 && height >= 1 && height <= 5)
+                    {
+
+                        GamePlayState.FarmList.Add(GetAreaTiles(firstSelectedTile, SelectedTile));
+                    }
+
+                    SelectArea(firstSelectedTile, SelectedTile, Color.White);
+
+                    firstSelectedTile = null;
+                    lastSelectedTile = null;
+                }
+            }
+        }
     }
 }

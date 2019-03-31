@@ -15,6 +15,8 @@ namespace MountPRG
 
         private Rectangle dest;
 
+        private Action<CheckboxUI> cbCheckboxDown;
+
         public bool Marked
         {
             get; set;
@@ -72,6 +74,29 @@ namespace MountPRG
             spriteBatch.Draw(background, dest, Color);
             if (Marked)
                 spriteBatch.Draw(mark, dest, Color);
+        }
+
+        public void OnCheckboxDownCallback(Action<CheckboxUI> cb)
+        {
+            cbCheckboxDown += cb;
+        }
+
+        public bool GetCheckboxDown()
+        {
+            if (Intersects(InputManager.GetX(), InputManager.GetY()))
+            {
+                if (!Marked)
+                {
+                    cbCheckboxDown(this);
+                    return Marked = true;
+                }
+                else
+                {
+                    return Marked = false;
+                }
+            }
+
+            return false;
         }
 
         public override bool Intersects(int x, int y)
