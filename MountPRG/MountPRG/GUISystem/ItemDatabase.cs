@@ -24,6 +24,8 @@ namespace MountPRG
             AddItem(TileMap.FISH, "Fish", true, true, 20, false);
             AddItem(TileMap.WHEAT, "Wheat", true, false, 0, false);
             AddItem(TileMap.WHEAT_SEED, "Wheat seed", true, false, 0, false);
+            AddItem(TileMap.BARLEY, "Barley", true, false, 0, false);
+            AddItem(TileMap.BARLEY_SEED, "Barley seed", true, false, 0, false);
         }
 
         public static Item GetItemById(int id)

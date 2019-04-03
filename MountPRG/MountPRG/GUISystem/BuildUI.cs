@@ -34,6 +34,7 @@ namespace MountPRG
 
             AddElement("Hut", new Hut());
             AddElement("Workbench", new Workbench());
+            AddElement("Quern stone", new QuernStone());
         }
 
         public void Update(GameTime gameTime)

@@ -30,8 +30,8 @@ namespace MountPRG
         public static List<Settler> Settlers;
 
         public static JobList JobList;
-        public static StockpileList StockpileList;
-        public static FarmList FarmList;
+        public static List<Stockpile> Stockpiles;
+        public static List<Farm> Farms;
 
         public static WorldManager WorldManager;
 
@@ -156,20 +156,17 @@ namespace MountPRG
             TileMap.AddEntity(14, 26, new Wheat());
             TileMap.AddEntity(15, 26, new Wheat());
 
-            TileMap.AddEntity(14, 27, new Wheat());
-            TileMap.AddEntity(15, 27, new Wheat());
-            TileMap.AddEntity(14, 28, new Wheat());
-            TileMap.AddEntity(15, 28, new Wheat());
-            TileMap.AddEntity(14, 29, new Wheat());
-            TileMap.AddEntity(15, 29, new Wheat());
-            TileMap.AddEntity(14, 30, new Wheat());
-            TileMap.AddEntity(15, 30, new Wheat());
-            TileMap.AddEntity(14, 31, new Wheat());
-            TileMap.AddEntity(15, 31, new Wheat());
-            TileMap.AddEntity(14, 32, new Wheat());
-            TileMap.AddEntity(15, 32, new Wheat());
-            TileMap.AddEntity(14, 33, new Wheat());
-            TileMap.AddEntity(15, 33, new Wheat());
+            TileMap.AddEntity(14, 27, new Barley());
+            TileMap.AddEntity(15, 27, new Barley());
+            TileMap.AddEntity(14, 28, new Barley());
+            TileMap.AddEntity(15, 28, new Barley());
+            TileMap.AddEntity(14, 29, new Barley());
+            TileMap.AddEntity(15, 29, new Barley());
+            TileMap.AddEntity(14, 30, new Barley());
+            TileMap.AddEntity(15, 30, new Barley());
+            TileMap.AddEntity(14, 31, new Barley());
+            TileMap.AddEntity(15, 31, new Barley());
+
 
             Settler settler = new Settler(Engine.ToWorldPos(18), Engine.ToWorldPos(15));
             Entities.Add(settler);
@@ -184,8 +181,8 @@ namespace MountPRG
             Settlers.Add(settler);
 
             JobList = new JobList();
-            StockpileList = new StockpileList();
-            FarmList = new FarmList();
+            Stockpiles = new List<Stockpile>();
+            Farms = new List<Farm>();
 
             effect = ResourceBank.Effects["File"];
 

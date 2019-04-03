@@ -62,9 +62,10 @@ namespace MountPRG
         public Color EdgeLayerColor { get; set; }
         public Color BuildingLayerColor { get; set; }
 
-        public bool IsSelected { get; set; }
+        public bool Selected { get; set; }
 
-        public Area Area { get; private set; }
+        public Stockpile Stockpile { get; set; }
+        public Farm Farm { get; set; }
 
         public Tile(int x, int y, int groundLayerId, int buildingLayerId, TileMap tilemap)
         {
@@ -78,7 +79,6 @@ namespace MountPRG
             GroundLayerColor = Color.White;
             EdgeLayerColor = Color.White;
             BuildingLayerColor = Color.White;
-            Area = new Area();
         }
 
         private void Update()

@@ -54,11 +54,7 @@ namespace MountPRG
 
         public bool Intersects(int x, int y)
         {
-            if (x >= Destination.X && x <= Destination.Right
-                && y >= Destination.Y && y <= Destination.Bottom)
-                return true;
-
-            return false;
+            return Destination.Contains(new Point(x, y));
         }
 
         public override Component Clone()

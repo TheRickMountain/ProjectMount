@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace MountPRG
 {
@@ -12,6 +13,36 @@ namespace MountPRG
         public MineJob(Tile tile) : base(tile, JobType.MINE)
         {
 
+        }
+
+        public override void DoJob(SettlerControllerCmp settler, GameTime gameTime)
+        {
+            switch(CurrentTask.TaskType)
+            {
+                case TaskType.MOVE_TO_TILE:
+                    {
+                        if(settler.MoveTo(CurrentTask.Tile, gameTime))
+                        {
+                            Tasks.Remove(CurrentTask);
+                            CurrentTask = Tasks[0];
+                        }
+                    }
+                    break;
+                case TaskType.MINE:
+                    {
+                        if (settler.WorkProgress(2, gameTime))
+                        {
+                            CurrentTask.Tile.Selected = false;
+                            CurrentTask.Tile.AddItem(ItemDatabase.GetItemById(TileMap.STONE), 1);
+                            Tasks.Clear();
+
+                            JobState = JobState.COMPLETED;
+                            settler.SettlerState = SettlerState.WAITING;
+                            settler.MyJob = null;
+                        }
+                    }
+                    break;
+            }
         }
 
         public override void CheckJob(SettlerControllerCmp settler)
@@ -24,10 +55,10 @@ namespace MountPRG
                 List<Tile> path = pathAStar.GetList();
 
                 if (path.Count > 1)
-                    settler.Tasks.Add(new Task(TaskType.MOVE, path[path.Count - 2], 0));
+                    Tasks.Add(new Task(TaskType.MOVE_TO_TILE, path[path.Count - 2], 0));
 
-                settler.Tasks.Add(new Task(TaskType.MINE, TargetTile, 2));
-                settler.CurrentTask = settler.Tasks[0];
+                Tasks.Add(new Task(TaskType.MINE, TargetTile, 2));
+                CurrentTask = Tasks[0];
 
                 settler.SettlerState = SettlerState.WORKING;
             }

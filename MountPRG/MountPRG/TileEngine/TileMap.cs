@@ -41,6 +41,9 @@ namespace MountPRG
         public const int WHEAT_SEED = 30;
         public const int FARM_TILE = 31;
         public const int WHEAT_SEED_TILE = 36;
+        public const int BARLEY = 38;
+        public const int BARLEY_SEED = 39;
+        public const int BARLEY_SEED_TILE = 40;
 
         public const int GRASS_U = 48;
         public const int GRASS_D = 49;
@@ -224,7 +227,7 @@ namespace MountPRG
                             tile.BuildingLayerColor);
                     }
 
-                    if (tile.IsSelected)
+                    if (tile.Selected)
                         spriteBatch.Draw(selectorTexture, destination, Color.Yellow);
                 }
             }

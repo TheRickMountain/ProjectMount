@@ -44,6 +44,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Area\Farm.cs" />
+    <Compile Include="Area\Stockpile.cs" />
     <Compile Include="Components\AnimatedSpriteCmp.cs" />
     <Compile Include="Components\BuildingCmp.cs" />
     <Compile Include="Components\Component.cs" />
@@ -52,17 +54,17 @@
     <Compile Include="Components\SettlerControllerCmp.cs" />
     <Compile Include="Components\MineableCmp.cs" />
     <Compile Include="Components\SpriteCmp.cs" />
-    <Compile Include="Components\StorageCmp.cs" />
     <Compile Include="Entities\Bush.cs" />
     <Compile Include="Entities\Grass.cs" />
     <Compile Include="Entities\Hut.cs" />
+    <Compile Include="Entities\QuernStone.cs" />
+    <Compile Include="Entities\Barley.cs" />
     <Compile Include="Entities\Workbench.cs" />
     <Compile Include="Entities\Tree.cs" />
     <Compile Include="Entities\Wheat.cs" />
     <Compile Include="GUISystem\BuildUI.cs" />
     <Compile Include="GUISystem\ButtonUI.cs" />
     <Compile Include="Entities\Campfire.cs" />
-    <Compile Include="Entities\Chest.cs" />
     <Compile Include="Entities\Camera.cs" />
     <Compile Include="Entities\Entity.cs" />
     <Compile Include="Entities\EntityList.cs" />
@@ -79,6 +81,7 @@
     <Compile Include="GUISystem\HutUI.cs" />
     <Compile Include="GUISystem\SliderUI.cs" />
     <Compile Include="GUISystem\SpriteUI.cs" />
+    <Compile Include="GUISystem\StatusUI.cs" />
     <Compile Include="GUISystem\UI.cs" />
     <Compile Include="GUISystem\ItemDatabase.cs" />
     <Compile Include="GUISystem\TimeSystemUI.cs" />
@@ -94,8 +97,6 @@
     <Compile Include="JobSystem\HaulJob.cs" />
     <Compile Include="JobSystem\Job.cs" />
     <Compile Include="JobSystem\JobList.cs" />
-    <Compile Include="Area\FarmList.cs" />
-    <Compile Include="Area\StockpileList.cs" />
     <Compile Include="JobSystem\MineJob.cs" />
     <Compile Include="JobSystem\PlantJob.cs" />
     <Compile Include="JobSystem\SupplyJob.cs" />
@@ -109,7 +110,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StateManager\GameState.cs" />
     <Compile Include="StateManager\GameStateManager.cs" />
-    <Compile Include="TileEngine\Area.cs" />
     <Compile Include="TileEngine\Tile.cs" />
     <Compile Include="TileEngine\TileMap.cs" />
     <Compile Include="TileEngine\Engine.cs" />

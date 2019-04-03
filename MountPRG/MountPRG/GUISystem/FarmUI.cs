@@ -11,14 +11,11 @@ namespace MountPRG
 
         private PanelUI panel;
 
-        private const int ELEMENTS_COUNT = 5;
+        private Farm farm;
 
-        private List<TextUI> names = new List<TextUI>();
-        private List<CheckboxUI> checkboxes = new List<CheckboxUI>();
+        private const int ELEMENTS_COUNT = 10;
 
-        private const int TEXT_WIDTH = 80;
-
-        private int farmNum;
+        private List<ElementUI> elements = new List<ElementUI>();
 
         public bool Active
         {
@@ -29,14 +26,14 @@ namespace MountPRG
         {
             panel = new PanelUI();
 
-            panel.InnerWidth = TEXT_WIDTH + GUIManager.CHECKBOX_SIZE;
+            panel.InnerWidth = GUIManager.CHECKBOX_SIZE + GUIManager.OFFSET + ElementUI.ICON_SIZE + GUIManager.OFFSET + ElementUI.TEXT_WIDTH;
             panel.InnerHeight = GUIManager.CHECKBOX_SIZE * ELEMENTS_COUNT + GUIManager.OFFSET * (ELEMENTS_COUNT - 1);
 
             panel.X = Game1.ScreenRectangle.Width - panel.Width;
             panel.Y = Game1.ScreenRectangle.Height - panel.Height;
 
-            AddElement("Wheat");
-            AddElement("Barley");
+            AddElement(ItemDatabase.GetItemById(TileMap.WHEAT), Plant.WHEAT);
+            AddElement(ItemDatabase.GetItemById(TileMap.BARLEY), Plant.BARLEY);
         }
 
         public void Update(GameTime gameTime)
@@ -49,9 +46,9 @@ namespace MountPRG
                     {
                         GUIManager.MouseOnUI = true;
 
-                        for (int i = 0; i < checkboxes.Count; i++)
+                        for (int i = 0; i < elements.Count; i++)
                         {
-                            checkboxes[i].GetCheckboxDown();
+                            elements[i].Checkbox.GetCheckboxDown();
                         }
                     }
                 }
@@ -64,18 +61,30 @@ namespace MountPRG
             {
                 panel.Draw(spriteBatch);
 
-                for (int i = 0; i < names.Count; i++)
+                for (int i = 0; i < elements.Count; i++)
                 {
-                    names[i].Draw(spriteBatch);
-                    checkboxes[i].Draw(spriteBatch);
+                    elements[i].Draw(spriteBatch);
                 }
             }
         }
 
       
-        public void Open(int num)
+        public void Open(Farm farm)
         {
-            farmNum = num;
+            this.farm = farm;
+
+            UnmarkAllCheckboxes();
+
+            switch(farm.TargetPlant)
+            {
+                case Plant.WHEAT:
+                    elements[0].Checkbox.Marked = true;
+                    break;
+                case Plant.BARLEY:
+                    elements[1].Checkbox.Marked = true;
+                    break;
+            }
+
             Active = true;
         }
 
@@ -84,41 +93,84 @@ namespace MountPRG
             Active = false;
         }
 
-        private void AddElement(string name)
+        private void AddElement(Item item, Plant targetPlant)
         {
-            TextUI text = new TextUI(ResourceBank.Fonts["mountFont"], name);
-            CheckboxUI checkbox = new CheckboxUI();
+            ElementUI element = new ElementUI(item.Sprite, item.Name);
+            element.X = panel.InnerX;
+            element.Y = panel.InnerY + (elements.Count * GUIManager.CHECKBOX_SIZE + elements.Count * GUIManager.OFFSET);
 
-
-            checkbox.X = panel.InnerX + TEXT_WIDTH;
-            checkbox.Y = panel.InnerY + (checkboxes.Count * GUIManager.CHECKBOX_SIZE) + (checkboxes.Count * GUIManager.OFFSET);
-
-            checkbox.OnCheckboxDownCallback(delegate
+            element.Checkbox.OnCheckboxDownCallback(delegate
             {
                 UnmarkAllCheckboxes();
 
-                Tile[,] tiles = GamePlayState.FarmList.Get(farmNum);
-                for (int i = 0; i < tiles.GetLength(0); i++)
-                {
-                    for(int j = 0; j < tiles.GetLength(1); j++)
-                    {
-                        GamePlayState.JobList.Add(new PlantJob(tiles[i, j]));
-                    } 
-                }
+                farm.SetTargetPlant(targetPlant);
             });
 
-            text.X = panel.InnerX;
-            text.Y = checkbox.Y;
-
-            names.Add(text);
-            checkboxes.Add(checkbox);
+            elements.Add(element);
         }
 
         private void UnmarkAllCheckboxes()
         {
-            for (int i = 0; i < checkboxes.Count; i++)
-                checkboxes[i].Marked = false;
+            for (int i = 0; i < elements.Count; i++)
+                elements[i].Checkbox.Marked = false;
         }
 
+        class ElementUI
+        {
+            private Rectangle dest;
+
+            public CheckboxUI Checkbox;
+            private SpriteUI sprite;
+            private TextUI text;
+
+            public int X
+            {
+                get { return dest.X; }
+                set
+                {
+                    if (dest.X != value)
+                    {
+                        dest.X = value;
+                        Checkbox.X = dest.X;
+                        sprite.X = Checkbox.X + Checkbox.Width + GUIManager.OFFSET;
+                        text.X = sprite.X + sprite.Width + GUIManager.OFFSET;
+                    }
+                }
+            }
+
+            public int Y
+            {
+                get { return dest.Y; }
+                set
+                {
+                    if (dest.Y != value)
+                    {
+                        dest.Y = value;
+                        sprite.Y = dest.Y;
+                        text.Y = dest.Y;
+                        Checkbox.Y = dest.Y;
+                    }
+                }
+            }
+
+            public const int TEXT_WIDTH = 200;
+            public const int ICON_SIZE = 16;
+
+            public ElementUI(SpriteCmp spriteCmp, string name)
+            {
+                Checkbox = new CheckboxUI();
+                sprite = new SpriteUI(spriteCmp.Texture, spriteCmp.Source, ICON_SIZE, ICON_SIZE);
+                text = new TextUI(ResourceBank.Fonts["mountFont"], name);
+
+                dest = new Rectangle(0, 0, GUIManager.CHECKBOX_SIZE +  GUIManager.OFFSET + ICON_SIZE + GUIManager.OFFSET + TEXT_WIDTH, ICON_SIZE);
+            }
+
+            public void Draw(SpriteBatch spriteBatch)
+            {
+                Checkbox.Draw(spriteBatch);
+                sprite.Draw(spriteBatch);
+                text.Draw(spriteBatch);  
+            }
+        }
     }
 }

@@ -18,6 +18,8 @@ namespace MountPRG
 
         private Rectangle dest;
 
+        private Rectangle source;
+
         public Color Color = Color.White;
 
         public float X
@@ -48,10 +50,17 @@ namespace MountPRG
         {
         }
 
-        public SpriteUI(Texture2D texture, int width, int height)
+        public SpriteUI(Texture2D texture, int width, int height) 
+            : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), width, height)
+        {
+            
+        }
+
+        public SpriteUI(Texture2D texture, Rectangle source, int width, int height)
         {
             Texture = texture;
             dest = new Rectangle(0, 0, width, height);
+            this.source = source;
         }
 
         public override void Update(GameTime gameTime)
@@ -62,7 +71,7 @@ namespace MountPRG
         public override void Draw(SpriteBatch spriteBatch)
         {
             if(Texture != null)
-                spriteBatch.Draw(Texture, dest, Color);
+                spriteBatch.Draw(Texture, dest, source, Color);
         }
 
         public override bool Intersects(int x, int y)

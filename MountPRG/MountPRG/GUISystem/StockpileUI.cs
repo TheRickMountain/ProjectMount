@@ -11,84 +11,126 @@ namespace MountPRG
 {
     public class StockpileUI : UI
     {
+        private List<Tile> tiles;
 
-        private List<SlotUI> slots = new List<SlotUI>();
-        private Tile[,] tiles;
+        private PanelUI panel;
 
-        private PanelUI background;
+        private List<ElementUI> elements = new List<ElementUI>();
+
+        private const int ELEMENTS_COUNT = 10;
 
         public StockpileUI()
         {
-            background = new PanelUI();
+            panel = new PanelUI();
         }
 
         public override void Update(GameTime gameTime)
         {
-            for (int i = 0; i < tiles.GetLength(0); i++)
-            {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    SlotUI slot = slots[i * tiles.GetLength(1) + j];
-                    Tile tile = tiles[i, j];
-                    if (tile.Item != null)
-                        slot.AddItem(tile.Item, tile.ItemCount);
-                    else
-                        slot.Clear();
-                }
-            }
+            // TODO: update content 
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            background.Draw(spriteBatch);
+            panel.Draw(spriteBatch);
 
-            for (int i = 0; i < slots.Count; i++)
+            for (int i = 0; i < elements.Count; i++)
             {
-                slots[i].Draw(spriteBatch);
+                elements[i].Draw(spriteBatch);
             }
 
         }
 
-        public void Open(Tile[,] tiles)
+        public void Open(Stockpile stockpile)
         {
-            this.tiles = tiles;
+            Active = true;
 
-            background.InnerWidth = tiles.GetLength(0) * GUIManager.SLOT_SIZE + (tiles.GetLength(0) - 1) * GUIManager.OFFSET;
-            background.InnerHeight = tiles.GetLength(1) * GUIManager.SLOT_SIZE + (tiles.GetLength(1) - 1) * GUIManager.OFFSET;
+            tiles = stockpile.GetTiles();
 
-            background.X = Game1.ScreenRectangle.Width- background.Width;
-            background.Y = Game1.ScreenRectangle.Height - background.Height;
+            panel.InnerWidth = ElementUI.ICON_SIZE + GUIManager.OFFSET + ElementUI.TEXT_WIDTH;
+            panel.InnerHeight = ELEMENTS_COUNT * ElementUI.ICON_SIZE + (ELEMENTS_COUNT - 1) * GUIManager.OFFSET;
 
-            for (int i = 0; i < tiles.GetLength(0); i++)
+            panel.X = Game1.ScreenRectangle.Width - panel.Width;
+            panel.Y = Game1.ScreenRectangle.Height - panel.Height;
+
+
+            for(int i = 0, count = 0; i < tiles.Count; i++)
             {
-                for (int j = 0; j < tiles.GetLength(1); j++)
-                {
-                    SlotUI slot = new SlotUI(ResourceBank.Sprites["slot"], GUIManager.SLOT_SIZE, GUIManager.SLOT_SIZE);
-                    slot.X = background.InnerX + i * GUIManager.SLOT_SIZE + i * GUIManager.OFFSET;
-                    slot.Y = background.InnerY + j * GUIManager.SLOT_SIZE + j * GUIManager.OFFSET;
-
-                    Tile tile = tiles[i, j];
-                    if (tile.Item != null)
-                        slot.AddItem(tile.Item, tile.ItemCount);
-
-                    slots.Add(slot);
+                Tile tile = tiles[i];
+                if(tile.Item != null)
+                {  
+                    ElementUI element = new ElementUI(tile.Item.Sprite, tile.Item.Name, tile.ItemCount);
+                    element.X = panel.InnerX;
+                    element.Y = panel.InnerY + count * ElementUI.ICON_SIZE + count * GUIManager.OFFSET;
+                    elements.Add(element);
+                    count++;
                 }
             }
-
-            Active = true;
         }
 
         public void Close()
         {
             Active = false;
 
-            slots.Clear();
+            elements.Clear();
             tiles = null;
         }
 
         public override bool Intersects(int x, int y)
         {
             throw new NotImplementedException();
+        }
+
+        class ElementUI
+        {
+            private Rectangle dest;
+
+            private SpriteUI sprite;
+            private TextUI text;
+
+            public int X
+            {
+                get { return dest.X; }
+                set
+                {
+                    if(dest.X != value)
+                    {
+                        dest.X = value;
+                        sprite.X = dest.X;
+                        text.X = sprite.X + sprite.Width + GUIManager.OFFSET;
+                    }
+                }
+            }
+
+            public int Y
+            {
+                get { return dest.Y; }
+                set
+                {
+                    if (dest.Y != value)
+                    {
+                        dest.Y = value;
+                        sprite.Y = dest.Y;
+                        text.Y = dest.Y;
+                    }
+                }
+            }
+
+            public const int TEXT_WIDTH = 200;
+            public const int ICON_SIZE = 16;
+
+            public ElementUI(SpriteCmp spriteCmp, string name, int count)
+            {
+                sprite = new SpriteUI(spriteCmp.Texture, spriteCmp.Source, ICON_SIZE, ICON_SIZE);
+                text = new TextUI(ResourceBank.Fonts["mountFont"], name + " " + count);
+
+                dest = new Rectangle(0, 0, ICON_SIZE + GUIManager.OFFSET + TEXT_WIDTH, ICON_SIZE);
+            }
+
+            public void Draw(SpriteBatch spriteBatch)
+            {
+                sprite.Draw(spriteBatch);
+                text.Draw(spriteBatch);
+            }
         }
     }
 }

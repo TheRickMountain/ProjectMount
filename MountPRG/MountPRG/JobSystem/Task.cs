@@ -8,7 +8,7 @@ namespace MountPRG
 {
     public enum TaskType
     {
-        MOVE,
+        MOVE_TO_TILE,
         MINE,
         CHOP,
         TAKE,
@@ -20,6 +20,7 @@ namespace MountPRG
         PLOW,
         PLANT,
         BUILD,
+        MOVE_TO_STOCKPILE
     }
 
     public class Task

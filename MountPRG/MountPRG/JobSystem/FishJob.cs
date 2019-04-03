@@ -3,18 +3,81 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework;
 
 namespace MountPRG
 {
     public class FishJob : Job
     {
         private int stockpileCount = 0;
-        private int stockpileTileX = 0;
-        private int stockpileTileY = 0;
+        private int stockpileTileCount = 0;
 
         public FishJob(Tile tile) : base(tile, JobType.FISH)
         {
+            
+        }
 
+        public override void DoJob(SettlerControllerCmp settler, GameTime gameTime)
+        {
+            switch (CurrentTask.TaskType)
+            {
+                case TaskType.MOVE_TO_TILE:
+                    {
+                        if (settler.MoveTo(CurrentTask.Tile, gameTime))
+                        {
+                            Tasks.Remove(CurrentTask);
+                            CurrentTask = Tasks[0];
+                        }
+                    }
+                    break;
+                case TaskType.FISH:
+                    {
+                        if (settler.WorkProgress(CurrentTask.Time, gameTime))
+                        {
+                            Tile tile = CurrentTask.Tile;
+                            tile.Selected = false;
+                            settler.Cargo = ItemDatabase.GetItemById(TileMap.FISH);
+                            settler.CargoCount = 1;
+
+                            Tasks.Remove(CurrentTask);
+                            CurrentTask = Tasks[0];
+                        }
+                    }
+                    break;
+                case TaskType.MOVE_TO_STOCKPILE:
+                    {
+                        if (settler.MoveTo(CurrentTask.Tile, gameTime))
+                        {
+                            Tasks.Remove(CurrentTask);
+                            CurrentTask = Tasks[0];
+                        }
+                    }
+                    break;
+                case TaskType.PUT:
+                    {
+                        Tile tile = CurrentTask.Tile;
+                        if (tile.Entity != null)
+                        {
+                            BuildingCmp building = tile.Entity.Get<BuildingCmp>();
+                            building.AddItem(settler.Cargo, settler.CargoCount);
+                        }
+                        else
+                        {
+                            tile.Item = settler.Cargo;
+                            tile.ItemCount++;
+                            tile.ItemToAdd = settler.Cargo;
+                            tile.BuildingLayerId = settler.Cargo.Id;
+                        }
+
+                        settler.Cargo = null;
+                        settler.CargoCount = 0;
+
+                        JobState = JobState.COMPLETED;
+                        settler.SettlerState = SettlerState.WAITING;
+                        settler.MyJob = null;
+                    }
+                    break;
+            }
         }
 
         public override void CheckJob(SettlerControllerCmp settler)
@@ -22,9 +85,9 @@ namespace MountPRG
             TargetTile.Walkable = true;
             PathAStar pathAStar = new PathAStar(settler.CurrentTile, TargetTile, TargetTile.Tilemap.GetTileGraph().Nodes, TargetTile.Tilemap);
             TargetTile.Walkable = false;
-            if (pathAStar.Length != -1 && GamePlayState.StockpileList.Count > 0)
+            if (pathAStar.Length != -1 && GamePlayState.Stockpiles.Count > 0)
             {
-                Tile stockpileTile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
+                Tile stockpileTile = GamePlayState.Stockpiles[stockpileCount].GetTiles()[stockpileTileCount];
 
                 if (StockpileIsAvailableFor(stockpileTile, ItemDatabase.GetItemById(TileMap.FISH)) &&
                     settler.IsWalkable(stockpileTile))
@@ -37,12 +100,12 @@ namespace MountPRG
                     List<Tile> path = pathAStar.GetList();
 
                     if (path.Count > 1)
-                        settler.Tasks.Add(new Task(TaskType.MOVE, path[path.Count - 2], 0));
+                        Tasks.Add(new Task(TaskType.MOVE_TO_TILE, path[path.Count - 2], 0));
 
-                    settler.Tasks.Add(new Task(TaskType.FISH, TargetTile, 5));
-                    settler.Tasks.Add(new Task(TaskType.MOVE, stockpileTile, 0));
-                    settler.Tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
-                    settler.CurrentTask = settler.Tasks[0];
+                    Tasks.Add(new Task(TaskType.FISH, TargetTile, 5));
+                    Tasks.Add(new Task(TaskType.MOVE_TO_STOCKPILE, stockpileTile, 0));
+                    Tasks.Add(new Task(TaskType.PUT, stockpileTile, 0));
+                    CurrentTask = Tasks[0];
 
                     ResetStockpileCounter();
                 }
@@ -72,28 +135,22 @@ namespace MountPRG
         private void ResetStockpileCounter()
         {
             stockpileCount = 0;
-            stockpileTileX = 0;
-            stockpileTileY = 0;
+            stockpileTileCount = 0;
         }
 
         private bool NextStockpileTile()
         {
-            stockpileTileX++;
-            if (stockpileTileX == GamePlayState.StockpileList.Get(stockpileCount).GetLength(0))
+            stockpileTileCount++;
+            if(stockpileTileCount >= GamePlayState.Stockpiles[stockpileCount].GetTiles().Count)
             {
-                stockpileTileY++;
+                stockpileTileCount = 0;
 
-                if (stockpileTileY == GamePlayState.StockpileList.Get(stockpileCount).GetLength(1))
+                stockpileCount++;
+                if (stockpileCount >= GamePlayState.Stockpiles.Count)
                 {
-                    stockpileCount++;
-                    if (stockpileCount == GamePlayState.StockpileList.Count)
-                    {
-                        ResetStockpileCounter();
-                        return false;
-                    }
-                    stockpileTileY = 0;
+                    ResetStockpileCounter();
+                    return false;
                 }
-                stockpileTileX = 0;
             }
 
             return true;
