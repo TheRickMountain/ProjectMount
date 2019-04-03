@@ -89,7 +89,7 @@ namespace MountPRG
 
             if(ReadyToBuild)
             {
-                GamePlayState.JobList.Add(new Job(Tiles[0], JobType.BUILD));
+                GamePlayState.JobList.Add(new BuildJob(Tiles[0]));
             }
                 
         }

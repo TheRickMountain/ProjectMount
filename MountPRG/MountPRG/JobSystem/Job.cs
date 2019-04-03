@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Microsoft.Xna.Framework;
+
 namespace MountPRG
 {
     public enum JobType
@@ -30,11 +32,10 @@ namespace MountPRG
     public class Job
     {
         public Item Item { get; private set; }
-        public Tile Tile { get; private set; }
+        public Tile TargetTile { get; private set; }
         public JobType JobType { get; private set; }
-        public JobState JobState { get; protected set; }
-        public Settler Owner { get; set; }
-
+        public JobState JobState { get; set; }
+        
         public Job(Tile tile, JobType jobType)
             : this(null, tile, jobType)
         {
@@ -44,19 +45,13 @@ namespace MountPRG
         public Job(Item item, Tile tile, JobType jobType)
         {
             Item = item;
-            Tile = tile;
+            TargetTile = tile;
             JobType = jobType;
         }
 
-        public virtual void DoJob(SettlerControllerCmp settler)
+        public virtual void CheckJob(SettlerControllerCmp settler)
         {
-            
-        }
 
-        public virtual bool CheckJob(SettlerControllerCmp settler)
-        {
-            return false;
         }
-
     }
 }

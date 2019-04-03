@@ -223,11 +223,12 @@ namespace MountPRG
             tile.EdgeLayerId = -1;
         }
 
-
         public void AddItem(Item item, int count)
         {
             Item = item;
             ItemCount = count;
+            ItemToAdd = item;
+            ItemToAddCount = count;
             BuildingLayerId = item.Id;
             Walkable = true;
         }

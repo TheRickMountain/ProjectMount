@@ -261,7 +261,7 @@ namespace MountPRG
                         if (gatherable != null && gatherable.Count > 0)
                         {
                             SelectedTile.IsSelected = true;
-                            GamePlayState.JobList.Add(new Job(SelectedTile, JobType.HARVEST));
+                            GamePlayState.JobList.Add(new HarvestJob(SelectedTile));
                         }
                     }
                 }
@@ -283,7 +283,7 @@ namespace MountPRG
                         || SelectedTile.GroundLayerId == TileMap.WATER_RIGHT_TILE)
                     {
                         SelectedTile.IsSelected = true;
-                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.FISH));
+                        GamePlayState.JobList.Add(new FishJob(SelectedTile));
                     }
                 }
             }
@@ -298,7 +298,7 @@ namespace MountPRG
                     if (SelectedTile.Item != null)
                     {
                         SelectedTile.IsSelected = true;
-                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.HAUL));
+                        GamePlayState.JobList.Add(new HaulJob(SelectedTile));
                     }
                 }
             }
@@ -316,7 +316,7 @@ namespace MountPRG
                         if (mineable != null)
                         {
                             SelectedTile.IsSelected = true;
-                            GamePlayState.JobList.Add(new Job(SelectedTile, JobType.CHOP));
+                            GamePlayState.JobList.Add(new ChopJob(SelectedTile));
                         }
                     }
                 }
@@ -332,7 +332,7 @@ namespace MountPRG
                     if (SelectedTile.BuildingLayerId == TileMap.STONE_1_BLOCK || SelectedTile.BuildingLayerId == TileMap.STONE_2_BLOCK)
                     {
                         SelectedTile.IsSelected = true;
-                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.MINE));
+                        GamePlayState.JobList.Add(new MineJob(SelectedTile));
                     }
                 }
             }
@@ -389,7 +389,7 @@ namespace MountPRG
                         {
                             for(int j = 0; j < building.RequiredResources[i].Count; j++)
                             {
-                                GamePlayState.JobList.Add(new Job(building.RequiredResources[i].Item, tiles[0], JobType.SUPPLY));
+                                GamePlayState.JobList.Add(new SupplyJob(building.RequiredResources[i].Item, tiles[0]));
                             }
                         }
 

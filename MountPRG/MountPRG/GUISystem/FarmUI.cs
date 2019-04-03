@@ -102,7 +102,7 @@ namespace MountPRG
                 {
                     for(int j = 0; j < tiles.GetLength(1); j++)
                     {
-                        GamePlayState.JobList.Add(new Job(tiles[i, j], JobType.PLANT));
+                        GamePlayState.JobList.Add(new PlantJob(tiles[i, j]));
                     } 
                 }
             });

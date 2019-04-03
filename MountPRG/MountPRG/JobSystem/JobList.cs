@@ -20,6 +20,13 @@ namespace MountPRG
             jobList = new List<Job>();
         }
 
+        public void Update()
+        {
+            for (int i = 0; i < Count; i++)
+                if (Get(i).JobState == JobState.COMPLETED)
+                    Remove(i);
+        }
+
         public void Add(Job j)
         {
             jobList.Add(j);

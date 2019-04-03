@@ -9,7 +9,8 @@ namespace MountPRG
     public enum TaskType
     {
         MOVE,
-        PROCESS,
+        MINE,
+        CHOP,
         TAKE,
         PUT,
         HARVEST,

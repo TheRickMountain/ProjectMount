@@ -70,9 +70,6 @@ namespace MountPRG
             TileMap.GetTile(6, 3).BuildingLayerId = TileMap.STONE_2_BLOCK;
             TileMap.GetTile(6, 3).Walkable = false;
 
-            TileMap.GetTile(6, 6).BuildingLayerId = TileMap.STONE_2_BLOCK;
-            TileMap.GetTile(6, 6).Walkable = false;
-
             TileMap.GetTile(7, 3).BuildingLayerId = TileMap.STONE_1_BLOCK;
             TileMap.GetTile(7, 3).Walkable = false;
 
@@ -121,6 +118,8 @@ namespace MountPRG
 
             //AddEntityToTileMap(17, 15, new Campfire());
             TileMap.AddEntity(6, 4, new Tree(), false);
+
+            TileMap.AddEntity(6, 9, new Tree(), false);
 
             TileMap.GetTile(10, 17).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
             TileMap.GetTile(10, 18).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
@@ -176,13 +175,13 @@ namespace MountPRG
             Entities.Add(settler);
             Settlers.Add(settler);
 
-            //settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
-            //Entities.Add(settler);
-            //Settlers.Add(settler);
+            settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
+            Entities.Add(settler);
+            Settlers.Add(settler);
 
-            //settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
-            //Entities.Add(settler);
-            //Settlers.Add(settler);
+            settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
+            Entities.Add(settler);
+            Settlers.Add(settler);
 
             JobList = new JobList();
             StockpileList = new StockpileList();
@@ -210,6 +209,8 @@ namespace MountPRG
             Entities.UpdateList();
 
             Entities.Update(gameTime);
+
+            JobList.Update();
 
             base.Update(gameTime);
         }
