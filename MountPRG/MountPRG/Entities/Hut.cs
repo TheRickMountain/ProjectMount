@@ -13,9 +13,11 @@ namespace MountPRG
 
         public Hut()
         {
-            Add(new Sprite(GamePlayState.TileSet.Texture, new Rectangle(0, 16, 32, 32), 32, 32, true));
-            Add(new Building(2, 2));
-            Add(new HutCmp());
+            Add(new SpriteCmp(GamePlayState.TileSet.Texture, new Rectangle(0, 16, 32, 32), 32, 32, true));
+            BuildingCmp buildingCmp = new BuildingCmp(2, 2);
+            buildingCmp.AddRequiredResource(ItemDatabase.GetItemById(TileMap.HAY), 4);
+            buildingCmp.AddRequiredResource(ItemDatabase.GetItemById(TileMap.STICK), 4);
+            Add(buildingCmp);
         }
 
     }

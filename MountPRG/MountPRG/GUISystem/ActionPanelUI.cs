@@ -73,7 +73,7 @@ namespace MountPRG
             buttons.Add(button);
         }
 
-        private void UnselectLastButton()
+        public void UnselectLastButton()
         {
             if (selectedButton != null)
             {

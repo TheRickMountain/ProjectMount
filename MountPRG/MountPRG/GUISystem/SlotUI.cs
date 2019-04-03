@@ -25,7 +25,7 @@ namespace MountPRG
         private Texture2D background;
         private Rectangle dest;
 
-        private Sprite itemSprite;
+        private SpriteCmp itemSprite;
 
         public bool HasItem
         {

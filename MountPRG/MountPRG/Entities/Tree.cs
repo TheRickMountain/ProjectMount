@@ -11,8 +11,7 @@ namespace MountPRG
 
         public Tree()
         {
-            Tag = "Tree";
-            Sprite sprite = new Sprite(ResourceBank.Sprites["tree"], false);
+            SpriteCmp sprite = new SpriteCmp(ResourceBank.Sprites["tree"], false);
             sprite.Origin.X = 8;
             sprite.Origin.Y = 32;
             Add(sprite);

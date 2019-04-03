@@ -18,6 +18,7 @@ namespace MountPRG
         SLEEP,
         PLOW,
         PLANT,
+        BUILD,
     }
 
     public class Task

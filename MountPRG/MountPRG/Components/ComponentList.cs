@@ -80,5 +80,16 @@ namespace MountPRG
             return null;
         }
 
+        public Component this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= components.Count)
+                    throw new IndexOutOfRangeException();
+                else
+                    return components[index];
+            }
+        }
+
     }
 }

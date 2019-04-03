@@ -47,5 +47,7 @@ namespace MountPRG
 
         }
 
+        public abstract Component Clone();
+
     }
 }

@@ -33,5 +33,9 @@ namespace MountPRG
             ResourceBank.SoundEffects["chop"].Play();
         }
 
+        public override Component Clone()
+        {
+            throw null;
+        }
     }
 }

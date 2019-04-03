@@ -31,6 +31,11 @@ namespace MountPRG
             get; set;
         }
 
+        public Entity CurrentBuilding
+        {
+            get; set;
+        }
+
         public WorldManager(Camera camera)
         {
             this.camera = camera;
@@ -50,6 +55,12 @@ namespace MountPRG
 
             if (!GUIManager.MouseOnUI)
             {
+                if (InputManager.GetMouseButtonDown(MouseInput.MiddleButton))
+                {
+                    SelectedTile.BuildingLayerId = TileMap.STONE_1_BLOCK;
+                    SelectedTile.Walkable = false;
+                }
+
                 switch (CurrentJobType)
                 {
                     case JobType.NONE:
@@ -76,14 +87,14 @@ namespace MountPRG
                                     case AreaType.NONE:
                                         if (SelectedTile.Entity != null)
                                         {
-                                            HutCmp hut = SelectedTile.Entity.Get<HutCmp>();
+                                            /*HutCmp hut = SelectedTile.Entity.Get<HutCmp>();
                                             if (hut != null)
                                             {
                                                 GUIManager.HutUI.Close();
                                                 GUIManager.StockpileUI.Close();
 
                                                 GUIManager.HutUI.Open(hut, GamePlayState.Settlers);
-                                            }
+                                            }*/
                                         }
                                         break;
                                 }   
@@ -109,7 +120,7 @@ namespace MountPRG
                         MakeFishJob();
                         break;
                     case JobType.BUILD:
-                        //MakeBuilding();
+                        MakeBuilding();
                         break;
                     case JobType.PLANT:
                         MakePlantJob();
@@ -121,7 +132,16 @@ namespace MountPRG
         public void SetJobType(JobType jobType)
         {
             CurrentJobType = jobType;
-            Console.WriteLine(CurrentJobType.ToString());
+            switch(CurrentJobType)
+            {
+                case JobType.BUILD:
+                    GUIManager.BuildUI.Open();
+                    break;
+                case JobType.NONE:
+                    if (CurrentBuilding != null)
+                        GamePlayState.Entities.Remove(CurrentBuilding);
+                    break;
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -233,15 +253,15 @@ namespace MountPRG
         {
             if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                if (!SelectedTile.Selected)
+                if (!SelectedTile.IsSelected)
                 {
                     if (SelectedTile.Entity != null)
                     {
-                        Gatherable gatherable = SelectedTile.Entity.Get<Gatherable>();
+                        GatherableCmp gatherable = SelectedTile.Entity.Get<GatherableCmp>();
                         if (gatherable != null && gatherable.Count > 0)
                         {
-                            SelectedTile.Selected = true;
-                            GamePlayState.JobList.Add(new Job(SelectedTile, JobType.HARVEST, 1));
+                            SelectedTile.IsSelected = true;
+                            GamePlayState.JobList.Add(new Job(SelectedTile, JobType.HARVEST));
                         }
                     }
                 }
@@ -252,7 +272,7 @@ namespace MountPRG
         {
             if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                if (!SelectedTile.Selected)
+                if (!SelectedTile.IsSelected)
                 {
                     if (SelectedTile.GroundLayerId == TileMap.WATER_1_TILE
                         || SelectedTile.GroundLayerId == TileMap.WATER_2_TILE
@@ -262,8 +282,8 @@ namespace MountPRG
                         || SelectedTile.GroundLayerId == TileMap.WATER_LEFT_TILE
                         || SelectedTile.GroundLayerId == TileMap.WATER_RIGHT_TILE)
                     {
-                        SelectedTile.Selected = true;
-                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.FISH, 5));
+                        SelectedTile.IsSelected = true;
+                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.FISH));
                     }
                 }
             }
@@ -273,11 +293,11 @@ namespace MountPRG
         {
             if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                if (!SelectedTile.Selected)
+                if (!SelectedTile.IsSelected)
                 {
                     if (SelectedTile.Item != null)
                     {
-                        SelectedTile.Selected = true;
+                        SelectedTile.IsSelected = true;
                         GamePlayState.JobList.Add(new Job(SelectedTile, JobType.HAUL));
                     }
                 }
@@ -288,15 +308,15 @@ namespace MountPRG
         {
             if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                if (!SelectedTile.Selected)
+                if (!SelectedTile.IsSelected)
                 {
                     if (SelectedTile.Entity != null)
                     {
                         Mineable mineable = SelectedTile.Entity.Get<Mineable>();
                         if (mineable != null)
                         {
-                            SelectedTile.Selected = true;
-                            GamePlayState.JobList.Add(new Job(SelectedTile, JobType.CHOP, 1));
+                            SelectedTile.IsSelected = true;
+                            GamePlayState.JobList.Add(new Job(SelectedTile, JobType.CHOP));
                         }
                     }
                 }
@@ -307,68 +327,81 @@ namespace MountPRG
         {
             if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
             {
-                if (!SelectedTile.Selected)
+                if (!SelectedTile.IsSelected)
                 {
                     if (SelectedTile.BuildingLayerId == TileMap.STONE_1_BLOCK || SelectedTile.BuildingLayerId == TileMap.STONE_2_BLOCK)
                     {
-                        SelectedTile.Selected = true;
-                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.MINE, 2));
+                        SelectedTile.IsSelected = true;
+                        GamePlayState.JobList.Add(new Job(SelectedTile, JobType.MINE));
                     }
                 }
             }
         }
 
-        //private void MakeBuilding()
-        //{
-        //    Entity entity = GUIManager.ActionPanelUI.CurrentBuilding;
-        //    entity.X = camera.GetCellX() * TileMap.TILE_SIZE;
-        //    entity.Y = camera.GetCellY() * TileMap.TILE_SIZE;
+        private void MakeBuilding()
+        {
+            if (CurrentBuilding != null)
+            {
+                CurrentBuilding.X = camera.GetCellX() * TileMap.TILE_SIZE;
+                CurrentBuilding.Y = camera.GetCellY() * TileMap.TILE_SIZE;
 
-        //    Building building = entity.Get<Building>();
-        //    Sprite sprite = entity.Get<Sprite>();
+                BuildingCmp building = CurrentBuilding.Get<BuildingCmp>();
+                SpriteCmp sprite = CurrentBuilding.Get<SpriteCmp>();
 
-        //    bool validToBuild = true;
+                bool validToBuild = true;
 
-        //    for (int i = camera.GetCellX(); i < camera.GetCellX() + building.Columns; i++)
-        //    {
-        //        for (int j = camera.GetCellY(); j < camera.GetCellY() + building.Rows; j++)
-        //        {
-        //            Tile tile = GamePlayState.TileMap.GetTile(i, j);
-        //            if (tile == null || tile.BuildingLayerId != -1 || tile.Entity != null)
-        //            {
-        //                validToBuild = false;
-        //                break;
-        //            }
-        //        }
-        //    }
+                for (int i = camera.GetCellX(); i < camera.GetCellX() + building.Columns; i++)
+                {
+                    for (int j = camera.GetCellY(); j < camera.GetCellY() + building.Rows; j++)
+                    {
+                        Tile tile = GamePlayState.TileMap.GetTile(i, j);
+                        if (tile == null || tile.BuildingLayerId != -1 || tile.Entity != null)
+                        {
+                            validToBuild = false;
+                            break;
+                        }
+                    }
+                }
 
-        //    sprite.Color = (validToBuild ? Color.Green : Color.Red) * 0.5f;
+                sprite.Color = (validToBuild ? Color.Green : Color.Red) * 0.5f;
 
-        //    if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
-        //    {
-        //        if (validToBuild)
-        //        {
-        //            List<Tile> tiles = new List<Tile>();
-        //            for (int i = camera.GetCellX(); i < camera.GetCellX() + building.Columns; i++)
-        //            {
-        //                for (int j = camera.GetCellY(); j < camera.GetCellY() + building.Rows; j++)
-        //                {
-        //                    Tile tile = GamePlayState.TileMap.GetTile(i, j);
-        //                    tile.Entity = GUIManager.ActionPanelUI.CurrentBuilding;
-        //                    tile.Walkable = false;
-        //                    tiles.Add(tile);
-        //                }
-        //            }
+                if (InputManager.GetMouseButtonDown(MouseInput.LeftButton))
+                {
+                    if (validToBuild)
+                    {
+                        List<Tile> tiles = new List<Tile>();
+                        for (int i = camera.GetCellX(); i < camera.GetCellX() + building.Columns; i++)
+                        {
+                            for (int j = camera.GetCellY(); j < camera.GetCellY() + building.Rows; j++)
+                            {
+                                Tile tile = GamePlayState.TileMap.GetTile(i, j);
+                                tile.Entity = CurrentBuilding;
+                                tile.Walkable = false;
+                                tile.GroundLayerId = TileMap.DIRT_TILE;
+                                tiles.Add(tile);
+                            }
+                        }
 
-        //            if (GUIManager.ActionPanelUI.CurrentBuilding is Hut)
-        //                GUIManager.ActionPanelUI.CurrentBuilding.Get<HutCmp>().AddTiles(tiles);
+                        building.AddTiles(tiles);
 
-        //            sprite.Color = Color.White;
-        //            GUIManager.ActionPanelUI.CurrentBuilding = null;
-        //            GUIManager.ActionPanelUI.CurrentJobType = JobType.NONE;
-        //        }
-        //    }
-        //}
+                        // Создаём работу по доставке ресурсов на место строительства
+                        for(int i = 0; i < building.RequiredResources.Count; i++)
+                        {
+                            for(int j = 0; j < building.RequiredResources[i].Count; j++)
+                            {
+                                GamePlayState.JobList.Add(new Job(building.RequiredResources[i].Item, tiles[0], JobType.SUPPLY));
+                            }
+                        }
+
+                        sprite.Color = Color.White;
+
+                        CurrentBuilding.Visible = false;
+                        CurrentBuilding = null;
+                        GUIManager.ActionPanelUI.UnselectLastButton();
+                    }
+                }
+            }
+        }
 
         private void MakePlantJob()
         {

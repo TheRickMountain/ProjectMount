@@ -9,7 +9,6 @@ namespace MountPRG
     public class Storage : Component
     {
 
-
         public int Rows
         {
             get;
@@ -43,5 +42,9 @@ namespace MountPRG
             MathUtils.Populate(Count, 0);
         }
 
+        public override Component Clone()
+        {
+            throw null;
+        }
     }
 }

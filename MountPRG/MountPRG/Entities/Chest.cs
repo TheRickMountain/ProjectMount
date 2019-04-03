@@ -15,7 +15,7 @@ namespace MountPRG
         public Chest()
             : base()
         {
-            Add(new Sprite(ResourceBank.Sprites["chest"], false));
+            Add(new SpriteCmp(ResourceBank.Sprites["chest"], false));
             Add(new Storage(3, 3));
             Walkable = false;
         }

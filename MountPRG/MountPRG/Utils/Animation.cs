@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 
 namespace MountPRG
 {
-    public enum AnimationKey { Down, Left, Right, Up }
+    public enum AnimationKey { Down, Left, Right, Up, Sleep }
 
     public class Animation : ICloneable
     {
@@ -56,7 +56,7 @@ namespace MountPRG
             get { return frameHeight; }
         }
 
-        public Animation(int frameCount, int defaultFrame, int frameWidth, int frameHeight, int xOffset, int yOffset)
+        public Animation(int frameCount, int defaultFrame, int frameWidth, int frameHeight, int xOffset, int yOffset, int speed = 5)
         {
             frames = new Rectangle[frameCount];
             this.defaultFrame = defaultFrame;
@@ -70,7 +70,7 @@ namespace MountPRG
                     yOffset,
                     frameWidth, frameHeight);
             }
-            FramesPerSecond = 5;
+            FramesPerSecond = speed;
             Reset();
         }
 

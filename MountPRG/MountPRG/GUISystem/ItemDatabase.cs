@@ -55,7 +55,7 @@ namespace MountPRG
         public int Id { get; private set; }
         public string Name { get; private set; }
         public bool Stackable { get; private set; }
-        public Sprite Sprite { get; private set; }
+        public SpriteCmp Sprite { get; private set; }
         public bool Consumable { get; private set; }
         public int FoodValue { get; private set; }
         public bool Weapon { get; private set; }
@@ -74,7 +74,7 @@ namespace MountPRG
             Id = id;
             Name = name;
             Stackable = stackable;
-            Sprite = new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[id], 16, 16, true);
+            Sprite = new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[id], 16, 16, true);
             Consumable = consumable;
             FoodValue = foodValue;
             Weapon = weapon;

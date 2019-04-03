@@ -19,11 +19,12 @@ namespace MountPRG
 
         private ItemDatabase itemDatabase;
 
-        public static DayNightSystemUI DayNightSystemUI;
+        public static TimeSystemUI DayNightSystemUI;
         public static ActionPanelUI ActionPanelUI;
         public static StockpileUI StockpileUI;
         public static HutUI HutUI;
         public static FarmUI FarmUI;
+        public static BuildUI BuildUI;
 
         public static bool MouseOnUI { get; set; }
 
@@ -31,7 +32,7 @@ namespace MountPRG
         {
             itemDatabase = new ItemDatabase();
 
-            DayNightSystemUI = new DayNightSystemUI();
+            DayNightSystemUI = new TimeSystemUI();
             guiElements.Add(DayNightSystemUI);
 
             ActionPanelUI = new ActionPanelUI();
@@ -44,6 +45,7 @@ namespace MountPRG
 
             HutUI = new HutUI();
             FarmUI = new FarmUI();
+            BuildUI = new BuildUI();
         }
 
         public void Update(GameTime gameTime)
@@ -61,6 +63,8 @@ namespace MountPRG
                 HutUI.Update(gameTime);
             else if (FarmUI.Active)
                 FarmUI.Update(gameTime);
+            else if (BuildUI.Active)
+                BuildUI.Update(gameTime);
 
             for (int i = 0; i < guiElements.Count; i++)
             {
@@ -81,6 +85,8 @@ namespace MountPRG
                 HutUI.Draw(spriteBatch);
             else if (FarmUI.Active)
                 FarmUI.Draw(spriteBatch);
+            else if (BuildUI.Active)
+                BuildUI.Draw(spriteBatch);
         }
     }
 }

@@ -11,8 +11,8 @@ namespace MountPRG
 
         public Wheat()
         {
-            Add(new Sprite(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.WHEAT], 16, 16, true));
-            Add(new Gatherable(ItemDatabase.GetItemById(TileMap.WHEAT_SEED), 1));
+            Add(new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.WHEAT], 16, 16, true));
+            Add(new GatherableCmp(ItemDatabase.GetItemById(TileMap.WHEAT_SEED), 1));
         }
 
     }

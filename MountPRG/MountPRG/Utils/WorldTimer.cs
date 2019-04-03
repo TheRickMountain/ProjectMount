@@ -18,7 +18,7 @@ namespace MountPRG
 
         public WorldTimer()
         {
-            TimeOfDay = 20;
+            
         }
 
         public void Update(GameTime gameTime)
@@ -28,6 +28,11 @@ namespace MountPRG
             if (TimeOfDay >= 360)
                 TimeOfDay = 0;
             
+        }
+
+        public void SetTime(float time)
+        {
+            TimeOfDay = MathHelper.Clamp(time, 0, 359);
         }
     }
 }

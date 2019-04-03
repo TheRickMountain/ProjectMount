@@ -29,8 +29,6 @@ namespace MountPRG
 
         public static List<Settler> Settlers;
 
-        public static List<HutCmp> Huts;
-
         public static JobList JobList;
         public static StockpileList StockpileList;
         public static FarmList FarmList;
@@ -46,10 +44,12 @@ namespace MountPRG
 
         public override void Initialize()
         {
+            Settlers = new List<Settler>();
             Camera = new Camera();
             WorldManager = new WorldManager(Camera);
 
             WorldTimer = new WorldTimer();
+            WorldTimer.SetTime(90);
 
             TileSet = new TileSet(ResourceBank.Sprites["tileset"]);
             TileMap = new TileMap(32, 32, TileSet);
@@ -172,24 +172,21 @@ namespace MountPRG
             TileMap.AddEntity(14, 33, new Wheat());
             TileMap.AddEntity(15, 33, new Wheat());
 
-            Settlers = new List<Settler>();
-
             Settler settler = new Settler(Engine.ToWorldPos(18), Engine.ToWorldPos(15));
             Entities.Add(settler);
             Settlers.Add(settler);
 
-            settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
-            Entities.Add(settler);
-            Settlers.Add(settler);
+            //settler = new Settler(Engine.ToWorldPos(14), Engine.ToWorldPos(15));
+            //Entities.Add(settler);
+            //Settlers.Add(settler);
 
-            settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
-            Entities.Add(settler);
-            Settlers.Add(settler);
+            //settler = new Settler(Engine.ToWorldPos(16), Engine.ToWorldPos(18));
+            //Entities.Add(settler);
+            //Settlers.Add(settler);
 
             JobList = new JobList();
             StockpileList = new StockpileList();
             FarmList = new FarmList();
-            Huts = new List<HutCmp>();
 
             effect = ResourceBank.Effects["File"];
 

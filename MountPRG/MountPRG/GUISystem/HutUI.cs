@@ -15,9 +15,7 @@ namespace MountPRG
         private List<TextUI> names = new List<TextUI>();
         private List<CheckboxUI> checkboxes = new List<CheckboxUI>();
 
-        private List<SettlerController> settlers;
-
-        private HutCmp hut;
+        private List<SettlerControllerCmp> settlers;
 
         private const int AVATAR_SIZE = 48;
         private const int TEXT_WIDTH = 80;
@@ -42,7 +40,7 @@ namespace MountPRG
             panel.X = Game1.ScreenRectangle.Width - panel.Width;
             panel.Y = Game1.ScreenRectangle.Height - panel.Height;
 
-            settlers = new List<SettlerController>();
+            settlers = new List<SettlerControllerCmp>();
 
             for(int i = 0; i < ELEMENTS_COUNT; i++)
             {
@@ -79,11 +77,11 @@ namespace MountPRG
                             {
                                 if (!checkboxes[i].Marked)
                                 {
-                                    hut.SetOwner((Settler)settlers[i + scrollPos].Parent);
+                                    //hut.SetOwner((Settler)settlers[i + scrollPos].Parent);
                                 }
                                 else
                                 {
-                                    hut.SetOwner(null);
+                                    //hut.SetOwner(null);
                                 }
                             }
 }
@@ -96,8 +94,8 @@ namespace MountPRG
                     names[i].Text = settlers[i + scrollPos].Name;
 
                     checkboxes[i].Marked = false;
-                    if (settlers[i + scrollPos].Parent.Equals(hut.Owner))
-                        checkboxes[i].Marked = true;
+                    //if (settlers[i + scrollPos].Parent.Equals(hut.Owner))
+                        //checkboxes[i].Marked = true;
                 }
             }
         }
@@ -118,21 +116,21 @@ namespace MountPRG
         }
 
       
-        public void Open(HutCmp hut, List<Settler> stl)
+        public void Open(List<Settler> stl)
         {
             Active = true;
 
-            this.hut = hut;
+            //this.hut = hut;
 
             for (int i = 0; i < stl.Count; i++)
-                settlers.Add(stl[i].Get<SettlerController>());
+                settlers.Add(stl[i].Get<SettlerControllerCmp>());
         }
 
         public void Close()
         {
             Active = false;
 
-            hut = null;
+            //hut = null;
 
             settlers.Clear();
         }

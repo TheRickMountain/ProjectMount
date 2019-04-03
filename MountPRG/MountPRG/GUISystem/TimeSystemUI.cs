@@ -4,7 +4,7 @@ using System;
 
 namespace MountPRG
 {
-    public class DayNightSystemUI : UI
+    public class TimeSystemUI : UI
     {
         private Texture2D circle;
         private Texture2D arrow;
@@ -32,7 +32,7 @@ namespace MountPRG
             get; private set;
         }
 
-        public DayNightSystemUI()
+        public TimeSystemUI()
         {
             circle = ResourceBank.Sprites["day_night"];
             arrow = ResourceBank.Sprites["arrow"];

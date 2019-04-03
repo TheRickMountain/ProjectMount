@@ -16,22 +16,46 @@ namespace MountPRG
         BUILD,
         FISH,
         PLANT,
+        SUPPLY,
         NONE
+    }
+
+    public enum JobState
+    {
+        AVAILABLE, 
+        UNAVAILABLE,
+        COMPLETED
     }
 
     public class Job
     {
-
+        public Item Item { get; private set; }
         public Tile Tile { get; private set; }
-        public float JobTime { get; private set; }
         public JobType JobType { get; private set; }
+        public JobState JobState { get; protected set; }
         public Settler Owner { get; set; }
 
-        public Job(Tile tile, JobType jobType, float jobTime = 1f)
+        public Job(Tile tile, JobType jobType)
+            : this(null, tile, jobType)
         {
+            
+        }
+
+        public Job(Item item, Tile tile, JobType jobType)
+        {
+            Item = item;
             Tile = tile;
             JobType = jobType;
-            JobTime = jobTime;
+        }
+
+        public virtual void DoJob(SettlerControllerCmp settler)
+        {
+            
+        }
+
+        public virtual bool CheckJob(SettlerControllerCmp settler)
+        {
+            return false;
         }
 
     }

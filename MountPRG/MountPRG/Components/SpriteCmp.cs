@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class Sprite : Component
+    public class SpriteCmp : Component
     {
         public Texture2D Texture;
         public Rectangle Destination;
@@ -21,26 +21,24 @@ namespace MountPRG
         public SpriteEffects Effects = SpriteEffects.None;
         public float Alpha = 1.0f;
 
-        public Sprite(Texture2D texture, bool active)
+        public SpriteCmp(Texture2D texture, bool active)
             : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), texture.Width, texture.Height, active)
         {
         }
 
-        public Sprite(Texture2D texture, int width, int height, bool active)
+        public SpriteCmp(Texture2D texture, int width, int height, bool active)
             : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), width, height, active)
         {
 
         }
 
-        public Sprite(Texture2D texture, Rectangle source, int width, int height, bool active)
+        public SpriteCmp(Texture2D texture, Rectangle source, int width, int height, bool active)
             : base(active, true)
         {
             Texture = texture;
             Source = source;
             Destination = new Rectangle(0, 0, width, height);
         }
-
-        
 
         public override void Draw(SpriteBatch spriteBatch)
         {
@@ -63,5 +61,9 @@ namespace MountPRG
             return false;
         }
 
+        public override Component Clone()
+        {
+            return new SpriteCmp(Texture, Source, Destination.Width, Destination.Height, Active);
+        }
     }
 }

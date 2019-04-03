@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class AnimatedSprite : Sprite
+    public class AnimatedSpriteCmp : SpriteCmp
     {   
         public bool IsAnimating { get; set; }
 
@@ -18,7 +18,7 @@ namespace MountPRG
         public AnimationKey CurrentAnimation { get; set; }
 
 
-        public AnimatedSprite(Texture2D texture, int width, int height)
+        public AnimatedSpriteCmp(Texture2D texture, int width, int height)
             : base(texture, width, height, true)
         {
             Animations = new Dictionary<AnimationKey, Animation>();
@@ -46,6 +46,11 @@ namespace MountPRG
 
             spriteBatch.Draw(Texture, Destination, Animations[CurrentAnimation].CurrentFrameRect,
                 Color, Rotation, Vector2.Zero, Effects, 0);
+        }
+
+        public override Component Clone()
+        {
+            throw null;
         }
     }
 }

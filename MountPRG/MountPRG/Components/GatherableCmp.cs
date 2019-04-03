@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class Gatherable : Component
+    public class GatherableCmp : Component
     {
 
         private Action cbCountEqualsZero;
@@ -35,7 +35,7 @@ namespace MountPRG
             get; private set;
         }
 
-        public Gatherable(Item item, int count, bool itemHolder = false) : base(false, false)
+        public GatherableCmp(Item item, int count, bool itemHolder = false) : base(false, false)
         {
             Item = item;
             Count = count;
@@ -47,5 +47,9 @@ namespace MountPRG
             cbCountEqualsZero += cb;
         }
 
+        public override Component Clone()
+        {
+            throw null;
+        }
     }
 }

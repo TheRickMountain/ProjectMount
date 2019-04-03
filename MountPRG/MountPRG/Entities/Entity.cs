@@ -10,13 +10,12 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public abstract class Entity
+    public class Entity
     {
         public int Id { get; protected set; }
         public bool Active = true;
         public bool Visible = true;
         public bool Walkable = true;
-        public string Tag = "";
 
         internal int depth = 0;
         internal int actualDepth = 0;
@@ -104,6 +103,16 @@ namespace MountPRG
                 return true;
 
             return false;
+        }
+
+        public Entity Clone()
+        {
+            Entity entity = new Entity();
+
+            for (int i = 0; i < Components.Count; i++)
+                entity.Add(Components[i].Clone());
+
+            return entity;
         }
     }
 }
