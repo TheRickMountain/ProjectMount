@@ -11,7 +11,7 @@ namespace MountPRG
 
         public Barley()
         {
-            Add(new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.BARLEY], 16, 16, true));
+            Add(new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.BARLEY], 16, 16));
             Add(new GatherableCmp(ItemDatabase.GetItemById(TileMap.BARLEY_SEED), 1));
         }
 

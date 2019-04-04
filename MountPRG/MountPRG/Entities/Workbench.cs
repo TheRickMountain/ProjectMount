@@ -13,8 +13,10 @@ namespace MountPRG
 
         public Workbench()
         {
-            Add(new SpriteCmp(GamePlayState.TileSet.Texture, new Rectangle(32, 16, 32, 32), 32, 32, true));
-            Add(new BuildingCmp(2, 2));
+            Add(new SpriteCmp(GamePlayState.TileSet.Texture, new Rectangle(32, 16, 32, 32), 32, 32));
+            BuildingCmp buildingCmp = new BuildingCmp(2, 2);
+            buildingCmp.AddRequiredResource(ItemDatabase.GetItemById(TileMap.WOOD), 1);
+            Add(buildingCmp);
         }
 
     }

@@ -21,10 +21,45 @@ namespace MountPRG
             {
                 case TaskType.MOVE_TO_TILE:
                     {
-                        if(settler.MoveTo(CurrentTask.Tile, gameTime))
+                        if (settler.RebuildPath && settler.CurrentTile.Equals(settler.NextTile))
                         {
-                            Tasks.Remove(CurrentTask);
-                            CurrentTask = Tasks[0];
+                            TargetTile.walkable = true;
+                            PathAStar pathAStar = new PathAStar(settler.CurrentTile, TargetTile, TargetTile.Tilemap.GetTileGraph().Nodes, TargetTile.Tilemap);
+                            TargetTile.walkable = false;
+                            if (pathAStar.Length != -1)
+                            {
+                                List<Tile> path = pathAStar.GetList();
+                                if (path.Count > 1)
+                                {
+                                    CurrentTask.Tile = path[path.Count - 2];
+                                    settler.SetDestTile(CurrentTask.Tile);
+                                }
+                                else
+                                {
+                                    Tasks.Remove(CurrentTask);
+                                    CurrentTask = Tasks[0];
+                                    settler.PathAStar = null;
+                                    settler.AnimationState = AnimationState.IDLE;
+                                }
+                            }
+                            else
+                            {
+                                JobState = JobState.AVAILABLE;
+                                settler.SettlerState = SettlerState.WAITING;
+                                settler.AnimationState = AnimationState.IDLE;
+                                settler.MyJob = null;
+                                settler.PathAStar = null;
+                            }
+
+                            settler.RebuildPath = false;
+                        }
+                        else
+                        {
+                            if (settler.MoveTo(CurrentTask.Tile, gameTime))
+                            {
+                                Tasks.Remove(CurrentTask);
+                                CurrentTask = Tasks[0];
+                            }
                         }
                     }
                     break;

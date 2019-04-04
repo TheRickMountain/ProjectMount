@@ -21,19 +21,18 @@ namespace MountPRG
         public SpriteEffects Effects = SpriteEffects.None;
         public float Alpha = 1.0f;
 
-        public SpriteCmp(Texture2D texture, bool active)
-            : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), texture.Width, texture.Height, active)
+        public SpriteCmp(Texture2D texture)
+            : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), texture.Width, texture.Height)
         {
         }
 
-        public SpriteCmp(Texture2D texture, int width, int height, bool active)
-            : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), width, height, active)
+        public SpriteCmp(Texture2D texture, int width, int height)
+            : this(texture, new Rectangle(0, 0, texture.Width, texture.Height), width, height)
         {
 
         }
 
-        public SpriteCmp(Texture2D texture, Rectangle source, int width, int height, bool active)
-            : base(active, true)
+        public SpriteCmp(Texture2D texture, Rectangle source, int width, int height)
         {
             Texture = texture;
             Source = source;
@@ -59,7 +58,7 @@ namespace MountPRG
 
         public override Component Clone()
         {
-            return new SpriteCmp(Texture, Source, Destination.Width, Destination.Height, Active);
+            return new SpriteCmp(Texture, Source, Destination.Width, Destination.Height);
         }
     }
 }

@@ -62,6 +62,7 @@
     <Compile Include="Entities\Workbench.cs" />
     <Compile Include="Entities\Tree.cs" />
     <Compile Include="Entities\Wheat.cs" />
+    <Compile Include="Graphics\NewTileset.cs" />
     <Compile Include="GUISystem\BuildUI.cs" />
     <Compile Include="GUISystem\ButtonUI.cs" />
     <Compile Include="Entities\Campfire.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="JobSystem\JobList.cs" />
     <Compile Include="JobSystem\MineJob.cs" />
     <Compile Include="JobSystem\PlantJob.cs" />
+    <Compile Include="JobSystem\SleepJob.cs" />
     <Compile Include="JobSystem\SupplyJob.cs" />
     <Compile Include="JobSystem\Task.cs" />
     <Compile Include="JobSystem\WorldManager.cs" />
@@ -113,11 +115,12 @@
     <Compile Include="TileEngine\Tile.cs" />
     <Compile Include="TileEngine\TileMap.cs" />
     <Compile Include="TileEngine\Engine.cs" />
-    <Compile Include="TileEngine\TileSet.cs" />
+    <Compile Include="Graphics\TileSet.cs" />
     <Compile Include="Utils\Animation.cs" />
     <Compile Include="Utils\Circle.cs" />
     <Compile Include="Utils\MathUtils.cs" />
     <Compile Include="Utils\MyRandom.cs" />
+    <Compile Include="Graphics\MyTexture.cs" />
     <Compile Include="Utils\NameGenerator.cs" />
     <Compile Include="Utils\ResourceBank.cs" />
     <Compile Include="Utils\Timer.cs" />

@@ -37,6 +37,11 @@ namespace MountPRG
 
         private Effect effect;
 
+        public Texture2D lightMask;
+        public Effect lighting;
+        RenderTarget2D lightsTarget;
+        RenderTarget2D mainTarget;
+
         public GamePlayState(Game game) : base(game)
         {
 
@@ -49,7 +54,7 @@ namespace MountPRG
             WorldManager = new WorldManager(Camera);
 
             WorldTimer = new WorldTimer();
-            WorldTimer.SetTime(90);
+            WorldTimer.SetTime(0);
 
             TileSet = new TileSet(ResourceBank.Sprites["tileset"]);
             TileMap = new TileMap(32, 32, TileSet);
@@ -116,7 +121,7 @@ namespace MountPRG
             TileMap.GetTile(18, 6).GroundLayerId = TileMap.WATER_1_TILE;
             TileMap.GetTile(18, 6).Walkable = false;
 
-            //AddEntityToTileMap(17, 15, new Campfire());
+            TileMap.AddEntity(16, 15, new Campfire(), false);
             TileMap.AddEntity(6, 4, new Tree(), false);
 
             TileMap.AddEntity(6, 9, new Tree(), false);
@@ -145,27 +150,21 @@ namespace MountPRG
             TileMap.AddEntity(15, 20, new Wheat());
             TileMap.AddEntity(14, 21, new Wheat());
             TileMap.AddEntity(15, 21, new Wheat());
+
             TileMap.AddEntity(14, 22, new Wheat());
             TileMap.AddEntity(15, 22, new Wheat());
             TileMap.AddEntity(14, 23, new Wheat());
             TileMap.AddEntity(15, 23, new Wheat());
-            TileMap.AddEntity(14, 24, new Wheat());
-            TileMap.AddEntity(15, 24, new Wheat());
-            TileMap.AddEntity(14, 25, new Wheat());
-            TileMap.AddEntity(15, 25, new Wheat());
-            TileMap.AddEntity(14, 26, new Wheat());
-            TileMap.AddEntity(15, 26, new Wheat());
 
-            TileMap.AddEntity(14, 27, new Barley());
-            TileMap.AddEntity(15, 27, new Barley());
-            TileMap.AddEntity(14, 28, new Barley());
-            TileMap.AddEntity(15, 28, new Barley());
-            TileMap.AddEntity(14, 29, new Barley());
-            TileMap.AddEntity(15, 29, new Barley());
-            TileMap.AddEntity(14, 30, new Barley());
-            TileMap.AddEntity(15, 30, new Barley());
-            TileMap.AddEntity(14, 31, new Barley());
-            TileMap.AddEntity(15, 31, new Barley());
+            TileMap.AddEntity(16, 20, new Barley());
+            TileMap.AddEntity(17, 20, new Barley());
+            TileMap.AddEntity(16, 21, new Barley());
+            TileMap.AddEntity(17, 21, new Barley());
+
+            TileMap.AddEntity(16, 22, new Barley());
+            TileMap.AddEntity(17, 22, new Barley());
+            TileMap.AddEntity(16, 23, new Barley());
+            TileMap.AddEntity(17, 23, new Barley());
 
 
             Settler settler = new Settler(Engine.ToWorldPos(18), Engine.ToWorldPos(15));
@@ -185,6 +184,14 @@ namespace MountPRG
             Farms = new List<Farm>();
 
             effect = ResourceBank.Effects["File"];
+
+            lightMask = ResourceBank.Sprites["lightmask"];
+            lighting = ResourceBank.Effects["Lighting"];
+            var pp = GraphicsDevice.PresentationParameters;
+            lightsTarget = new RenderTarget2D(
+                GraphicsDevice, Game1.ScreenRectangle.Width, Game1.ScreenRectangle.Height);
+            mainTarget = new RenderTarget2D(
+                GraphicsDevice, Game1.ScreenRectangle.Width, Game1.ScreenRectangle.Height);
 
             base.Initialize();
         }
@@ -214,13 +221,24 @@ namespace MountPRG
 
         public override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(lightsTarget);
+            GraphicsDevice.Clear(Color.Transparent);
             GameRef.SpriteBatch.Begin(
                 SpriteSortMode.Immediate,
                 BlendState.AlphaBlend,
                 SamplerState.PointClamp,
                 null, null, null, Camera.Transformation);
+            GameRef.SpriteBatch.Draw(lightMask, new Vector2((16 * TileMap.TILE_SIZE + 8) - lightMask.Width / 2, 
+                (15 * TileMap.TILE_SIZE + 8) - lightMask.Height / 2), Color.White);
+            GameRef.SpriteBatch.End();
 
-            effect.Parameters["ambientColor"].SetValue(GUIManager.DayNightSystemUI.CurrentColor.ToVector4());
+            GraphicsDevice.SetRenderTarget(mainTarget);
+            GameRef.SpriteBatch.Begin(
+                SpriteSortMode.Immediate,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                null, null, null, Camera.Transformation);
+            effect.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
             effect.CurrentTechnique.Passes[0].Apply();
 
@@ -228,18 +246,28 @@ namespace MountPRG
 
             Entities.Render(GameRef.SpriteBatch);
 
-            effect.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
+            GameRef.SpriteBatch.End();
 
-            effect.CurrentTechnique.Passes[0].Apply();
+            GraphicsDevice.SetRenderTarget(null);
+            GameRef.SpriteBatch.Begin(
+                SpriteSortMode.Immediate,
+                BlendState.AlphaBlend);
+            lighting.Parameters["lightMask"].SetValue(lightsTarget);
+            lighting.Parameters["ambient"].SetValue(GUIManager.DayNightSystemUI.CurrentColor.ToVector4());
+            lighting.Parameters["dayColor"].SetValue(GUIManager.DayNightSystemUI.DayColor.ToVector4());
+            lighting.CurrentTechnique.Passes[0].Apply();
+            GameRef.SpriteBatch.Draw(mainTarget, Vector2.Zero, Color.White);
+            //effect.Parameters["ambientColor"].SetValue(Color.White.ToVector4());
 
-            WorldManager.Draw(GameRef.SpriteBatch);
+            //effect.CurrentTechnique.Passes[0].Apply();
+
+            //WorldManager.Draw(GameRef.SpriteBatch);
 
             base.Draw(gameTime);
 
-            // GUI Renderer
-
             GameRef.SpriteBatch.End();
 
+            // GUI Renderer
             GameRef.SpriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
             guiManager.Draw(GameRef.SpriteBatch);

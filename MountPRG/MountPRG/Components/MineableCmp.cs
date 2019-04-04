@@ -20,7 +20,6 @@ namespace MountPRG
         }
 
         public Mineable(Item resource, int health)
-            : base(false, false)
         {
             Item = resource;
             Health = health;

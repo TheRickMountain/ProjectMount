@@ -34,6 +34,11 @@ namespace MountPRG
                         {
                             CurrentTask.Tile.Entity.Visible = true;
 
+                            for (int i = 0; i < CurrentTask.Tile.Entity.Get<BuildingCmp>().Tiles.Count; i++)
+                            {
+                                CurrentTask.Tile.Entity.Get<BuildingCmp>().Tiles[i].BuildingLayerId = -1;
+                            }
+
                             JobState = JobState.COMPLETED;
                             settler.SettlerState = SettlerState.WAITING;
                             settler.MyJob = null;

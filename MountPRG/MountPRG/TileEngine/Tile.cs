@@ -40,7 +40,7 @@ namespace MountPRG
         public int ItemToAddCount { get; set; } // количество предметов которые собираются добавить
         public int ItemToRemoveCount { get; set; } // количество предметов которые собираются забрать
 
-        private bool walkable;
+        public bool walkable;
 
         public bool Walkable
         {

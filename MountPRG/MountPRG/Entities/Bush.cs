@@ -12,7 +12,7 @@ namespace MountPRG
         public Bush()
         {
 
-            SpriteCmp sprite = new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.RASPBERRY_BUSH], 16, 16, true);
+            SpriteCmp sprite = new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.RASPBERRY_BUSH], 16, 16);
             Add(sprite);
 
             GatherableCmp gatherable = new GatherableCmp(ItemDatabase.GetItemById(TileMap.BERRY), 1, true);

@@ -19,6 +19,7 @@ namespace MountPRG
         FISH,
         PLANT,
         SUPPLY,
+        SLEEP,
         NONE
     }
 

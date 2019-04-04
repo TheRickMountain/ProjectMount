@@ -16,10 +16,10 @@ namespace MountPRG
         public bool Active;
         public bool Visible;
 
-        public Component(bool active, bool visible)
+        public Component() 
         {
-            Active = active;
-            Visible = visible;
+            Active = true;
+            Visible = true;
         }
 
         public virtual void Added(Entity entity)

@@ -110,7 +110,7 @@ namespace MountPRG
             if (TargetTile.BuildingLayerId == -1 && settler.IsWalkable(TargetTile))
             {
                 // Есть ли на складе необходимые семена
-                if (StockpilesContain(ItemDatabase.GetItemById(TileMap.WHEAT_SEED)))
+                if (StockpilesContain(Item))
                 {
                     Tile stockpileTile = GamePlayState.Stockpiles[stockpileCount].GetTiles()[stockpileTileCount];
 

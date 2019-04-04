@@ -76,7 +76,7 @@ namespace MountPRG
             Id = id;
             Name = name;
             Stackable = stackable;
-            Sprite = new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[id], 16, 16, true);
+            Sprite = new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[id], 16, 16);
             Consumable = consumable;
             FoodValue = foodValue;
             Weapon = weapon;

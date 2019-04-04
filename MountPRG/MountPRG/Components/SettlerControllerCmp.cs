@@ -31,15 +31,15 @@ namespace MountPRG
         }
 
         public Tile CurrentTile;
-        private Tile nextTile;
+        public Tile NextTile;
 
-        private PathAStar pathAStar;
+        public PathAStar PathAStar;
 
         private float movementPerc;
         private float speed = 6f;
 
-        private AnimatedSpriteCmp sprite;
-        private AnimationState animationState = AnimationState.IDLE;
+        public AnimatedSpriteCmp Sprite;
+        public AnimationState AnimationState = AnimationState.IDLE;
         public SettlerState SettlerState = SettlerState.WAITING;
 
         public Job MyJob;
@@ -67,9 +67,8 @@ namespace MountPRG
         public int JobTime = 2;
 
         public SettlerControllerCmp(AnimatedSpriteCmp sprite)
-            : base(true, true)
         {
-            this.sprite = sprite;
+            this.Sprite = sprite;
 
             Name = NameGenerator.GetInstance.GenerateMaleName();
 
@@ -82,7 +81,7 @@ namespace MountPRG
 
         public override void Initialize()
         {
-            CurrentTile = nextTile = GamePlayState.TileMap.GetTile((int)(Parent.X / TileMap.TILE_SIZE), (int)(Parent.Y / TileMap.TILE_SIZE));
+            CurrentTile = NextTile = GamePlayState.TileMap.GetTile((int)(Parent.X / TileMap.TILE_SIZE), (int)(Parent.Y / TileMap.TILE_SIZE));
         }
 
         public override void Update(GameTime gameTime)
@@ -93,79 +92,87 @@ namespace MountPRG
             {
                 case SettlerState.WAITING:
                     {
-                        /*if (MathUtils.InRange(GamePlayState.WorldTimer.TimeOfDay, 180, 359))
+                        if (MathUtils.InRange(GamePlayState.WorldTimer.TimeOfDay, 180, 359))
                         {
-                            // Получаем тайл путь к закрепленной хижине
-                            if (Hut != null)
-                            {
-                                Tile hutTile = Hut.Get<HutCmp>().Tiles[1];
-                                // Делаем его проходимым, чтобы получить доступ к его соседнему тайлу
-                                hutTile.Walkable = true;
-                                PathAStar pathAStar = new PathAStar(currTile, hutTile, hutTile.Tilemap.GetTileGraph().Nodes, hutTile.Tilemap);
-                                hutTile.Walkable = false;
-                                if (pathAStar.Length != -1)
-                                {
-                                    List<Tile> path = pathAStar.Path.ToList();
-                                    // Означает что тайл находится прямо рядом с поселенцем
-                                    if (path.Count > 1)
-                                        tasks.Add(new Task(TaskType.MOVE, path[path.Count - 2], 0));
-
-                                    tasks.Add(new Task(TaskType.SLEEP, hutTile, 0));
-                                    currentTask = tasks[0];
-
-                                    settlerState = SettlerState.WORKING;
-                                }
-                            }
-                            else
-                            {
-                                //SettlerState = SettlerState.WORKING;
-                                //Tasks.Add(new Task(TaskType.SLEEP, null, 0));
-                                //CurrentTask = Tasks[0];
-                            }
+                            MyJob = new SleepJob();
+                            SettlerState = SettlerState.CHECK_JOB;
                         }
-                        else if (satiety <= 50 && GamePlayState.StockpileList.Count > 0)
-                        {
-                            Tile tile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
+                            
 
-                            if (tile.Item != null && tile.Item.Consumable && IsWalkable(tile))
+                            /*if (MathUtils.InRange(GamePlayState.WorldTimer.TimeOfDay, 180, 359))
                             {
-                                SettlerState = SettlerState.WORKING;
-
-                                //float hunger = MAX_SATIETY - satiety;
-                                //int foodUnits = (int)Math.Round(hunger / tile.Item.FoodValue);
-
-                                //Tasks.Add(new Task(TaskType.MOVE, tile, 0));
-                                //Tasks.Add(new Task(TaskType.EAT, tile, 5));
-                                //CurrentTask = Tasks[0];
-
-                                ResetStockpileCounter();
-                            }
-                            else
-                            {
-                                stockpileTileX++;
-                                if (stockpileTileX == GamePlayState.StockpileList.Get(stockpileCount).GetLength(0))
+                                // Получаем тайл путь к закрепленной хижине
+                                if (Hut != null)
                                 {
-                                    stockpileTileY++;
-
-                                    if (stockpileTileY == GamePlayState.StockpileList.Get(stockpileCount).GetLength(1))
+                                    Tile hutTile = Hut.Get<HutCmp>().Tiles[1];
+                                    // Делаем его проходимым, чтобы получить доступ к его соседнему тайлу
+                                    hutTile.Walkable = true;
+                                    PathAStar pathAStar = new PathAStar(currTile, hutTile, hutTile.Tilemap.GetTileGraph().Nodes, hutTile.Tilemap);
+                                    hutTile.Walkable = false;
+                                    if (pathAStar.Length != -1)
                                     {
-                                        stockpileCount++;
-                                        if (stockpileCount == GamePlayState.StockpileList.Count)
-                                        {
-                                            // Если еды в складах нету, то поселенец продолжает работать
-                                            GetNewJob();
+                                        List<Tile> path = pathAStar.Path.ToList();
+                                        // Означает что тайл находится прямо рядом с поселенцем
+                                        if (path.Count > 1)
+                                            tasks.Add(new Task(TaskType.MOVE, path[path.Count - 2], 0));
 
-                                            stockpileCount = 0;
-                                        }
-                                        stockpileTileY = 0;
+                                        tasks.Add(new Task(TaskType.SLEEP, hutTile, 0));
+                                        currentTask = tasks[0];
+
+                                        settlerState = SettlerState.WORKING;
                                     }
-                                    stockpileTileX = 0;
+                                }
+                                else
+                                {
+                                    //SettlerState = SettlerState.WORKING;
+                                    //Tasks.Add(new Task(TaskType.SLEEP, null, 0));
+                                    //CurrentTask = Tasks[0];
                                 }
                             }
-                        }
-                        else*/
-                        //{
-                            GetNewJob();
+                            else if (satiety <= 50 && GamePlayState.StockpileList.Count > 0)
+                            {
+                                Tile tile = GamePlayState.StockpileList.Get(stockpileCount)[stockpileTileX, stockpileTileY];
+
+                                if (tile.Item != null && tile.Item.Consumable && IsWalkable(tile))
+                                {
+                                    SettlerState = SettlerState.WORKING;
+
+                                    //float hunger = MAX_SATIETY - satiety;
+                                    //int foodUnits = (int)Math.Round(hunger / tile.Item.FoodValue);
+
+                                    //Tasks.Add(new Task(TaskType.MOVE, tile, 0));
+                                    //Tasks.Add(new Task(TaskType.EAT, tile, 5));
+                                    //CurrentTask = Tasks[0];
+
+                                    ResetStockpileCounter();
+                                }
+                                else
+                                {
+                                    stockpileTileX++;
+                                    if (stockpileTileX == GamePlayState.StockpileList.Get(stockpileCount).GetLength(0))
+                                    {
+                                        stockpileTileY++;
+
+                                        if (stockpileTileY == GamePlayState.StockpileList.Get(stockpileCount).GetLength(1))
+                                        {
+                                            stockpileCount++;
+                                            if (stockpileCount == GamePlayState.StockpileList.Count)
+                                            {
+                                                // Если еды в складах нету, то поселенец продолжает работать
+                                                GetNewJob();
+
+                                                stockpileCount = 0;
+                                            }
+                                            stockpileTileY = 0;
+                                        }
+                                        stockpileTileX = 0;
+                                    }
+                                }
+                            }
+                            else*/
+                            //{
+                            AnimationState = AnimationState.IDLE;
+                        GetNewJob();
                         //}
                     }
                     break;
@@ -219,8 +226,8 @@ namespace MountPRG
                     break;
             }
 
-            if (animationState == AnimationState.IDLE)
-                sprite.ResetAnimation();
+            if (AnimationState == AnimationState.IDLE)
+                Sprite.ResetAnimation();
         }
 
 
@@ -289,18 +296,18 @@ namespace MountPRG
 
         public bool MoveTo(Tile destTile, GameTime gameTime)
         {
-            if (!CurrentTile.Equals(destTile) && pathAStar == null)
+            if (!CurrentTile.Equals(destTile) && PathAStar == null)
             {
                 SetDestTile(destTile);
             }
             else
             {
-                animationState = AnimationState.MOVE;
+                AnimationState = AnimationState.MOVE;
 
                 if (CurrentTile.Equals(destTile))
                 {
-                    pathAStar = null;
-                    animationState = AnimationState.IDLE;
+                    PathAStar = null;
+                    AnimationState = AnimationState.IDLE;
                     return true;
                 }
                 else
@@ -312,46 +319,47 @@ namespace MountPRG
             return false;
         }
 
-        private void SetDestTile(Tile destTile)
+        public void SetDestTile(Tile destTile)
         {
             if (destTile.Walkable)
             {
-                CurrentTile = nextTile = destTile.Tilemap.GetTile((int)(Parent.X / TileMap.TILE_SIZE), (int)(Parent.Y / TileMap.TILE_SIZE));
+                CurrentTile = NextTile = destTile.Tilemap.GetTile((int)(Parent.X / TileMap.TILE_SIZE), (int)(Parent.Y / TileMap.TILE_SIZE));
 
-                pathAStar = new PathAStar(CurrentTile, destTile, destTile.Tilemap.GetTileGraph().Nodes, destTile.Tilemap);
+                PathAStar = new PathAStar(CurrentTile, destTile, destTile.Tilemap.GetTileGraph().Nodes, destTile.Tilemap);
 
-                if (pathAStar.Length == -1)
-                    pathAStar = null;
+                if (PathAStar.Length == -1)
+                    PathAStar = null;
             }
         }
 
         private void MovementUpdate(GameTime gameTime)
         {
-            if (nextTile.Equals(CurrentTile))
+            if (NextTile.Equals(CurrentTile))
             {
-                nextTile = pathAStar.NextTile;
+                // Был поставлени/убран блок, необходимо перестроить путь
+                NextTile = PathAStar.NextTile;
 
-                if (CurrentTile.X > nextTile.X)
+                if (CurrentTile.X > NextTile.X)
                 {
-                    sprite.CurrentAnimation = AnimationKey.Left;
+                    Sprite.CurrentAnimation = AnimationKey.Left;
                 }
-                else if (CurrentTile.X < nextTile.X)
+                else if (CurrentTile.X < NextTile.X)
                 {
-                    sprite.CurrentAnimation = AnimationKey.Right;
+                    Sprite.CurrentAnimation = AnimationKey.Right;
                 }
 
-                if (CurrentTile.Y > nextTile.Y)
+                if (CurrentTile.Y > NextTile.Y)
                 {
-                    sprite.CurrentAnimation = AnimationKey.Up;
+                    Sprite.CurrentAnimation = AnimationKey.Up;
                 }
-                else if (CurrentTile.Y < nextTile.Y)
+                else if (CurrentTile.Y < NextTile.Y)
                 {
-                    sprite.CurrentAnimation = AnimationKey.Down;
+                    Sprite.CurrentAnimation = AnimationKey.Down;
                 }
             }
 
 
-            float distToTravel = MathUtils.Distance(CurrentTile.X, CurrentTile.Y, nextTile.X, nextTile.Y);
+            float distToTravel = MathUtils.Distance(CurrentTile.X, CurrentTile.Y, NextTile.X, NextTile.Y);
 
             float distThisFrame = speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -360,12 +368,12 @@ namespace MountPRG
             movementPerc += percThisFrame;
             if (movementPerc >= 1)
             {
-                CurrentTile = nextTile;
+                CurrentTile = NextTile;
                 movementPerc = 0;
             }
 
-            Parent.X = MathUtils.Lerp(CurrentTile.X, nextTile.X, movementPerc) * TileMap.TILE_SIZE;
-            Parent.Y = MathUtils.Lerp(CurrentTile.Y, nextTile.Y, movementPerc) * TileMap.TILE_SIZE;
+            Parent.X = MathUtils.Lerp(CurrentTile.X, NextTile.X, movementPerc) * TileMap.TILE_SIZE;
+            Parent.Y = MathUtils.Lerp(CurrentTile.Y, NextTile.Y, movementPerc) * TileMap.TILE_SIZE;
         }
 
         public bool IsWalkable(Tile destTile)
