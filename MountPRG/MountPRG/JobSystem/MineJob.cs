@@ -68,7 +68,7 @@ namespace MountPRG
                         if (settler.WorkProgress(2, gameTime))
                         {
                             CurrentTask.Tile.Selected = false;
-                            CurrentTask.Tile.AddItem(ItemDatabase.GetItemById(TileMap.STONE), 1);
+                            CurrentTask.Tile.AddItem(GamePlayState.ItemDatabase[Item.STONE], 1);
                             Tasks.Clear();
 
                             JobState = JobState.COMPLETED;

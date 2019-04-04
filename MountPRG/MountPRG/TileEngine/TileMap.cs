@@ -63,7 +63,7 @@ namespace MountPRG
 
         public const int TILE_SIZE = 16;
 
-        private TileSet tileSet;
+        private NewTileset tileset;
 
         private Tile[] tiles;
 
@@ -88,9 +88,9 @@ namespace MountPRG
             return tileGraph;
         }
 
-        public TileMap(int width, int height, TileSet tileSet)
+        public TileMap(int width, int height, NewTileset tileSet)
         {
-            this.tileSet = tileSet;
+            this.tileset = tileSet;
             Width = width;
             Height = height;
 
@@ -201,30 +201,17 @@ namespace MountPRG
                     // -1 говорит об отсутствии текстуры
                     if (groundIndex != -1)
                     {
-
-                        spriteBatch.Draw(
-                            tileSet.Texture,
-                            destination,
-                            tileSet.SourceRectangles[groundIndex],
-                            tile.GroundLayerColor);
+                        tileset[groundIndex].Draw(spriteBatch, destination, tile.GroundLayerColor);
                     }
 
                     if (edgeIndex != -1)
                     {
-                        spriteBatch.Draw(
-                            tileSet.Texture,
-                            destination,
-                            tileSet.SourceRectangles[edgeIndex],
-                            tile.EdgeLayerColor);
+                        tileset[edgeIndex].Draw(spriteBatch, destination, tile.EdgeLayerColor);
                     }
 
                     if (buildingIndex != -1)
                     {
-                        spriteBatch.Draw(
-                            tileSet.Texture,
-                            destination,
-                            tileSet.SourceRectangles[buildingIndex],
-                            tile.BuildingLayerColor);
+                        tileset[buildingIndex].Draw(spriteBatch, destination, tile.BuildingLayerColor);
                     }
 
                     if (tile.Selected)

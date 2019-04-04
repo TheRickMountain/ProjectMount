@@ -28,6 +28,7 @@ namespace MountPRG
         public AnimationKey CurrentAnimation { get; set; }
 
         public AnimatedSpriteCmp(Texture2D texture, int width, int height)
+            : base(true, true)
         {
             Animations = new Dictionary<AnimationKey, Animation>();
             Texture = texture;

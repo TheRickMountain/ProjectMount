@@ -9,11 +9,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace MountPRG
 {
-    public class Newtileset
+    public class NewTileset
     {
         private MyTexture[,] tiles;
 
-        public Newtileset(Texture2D texture, int tileWidth, int tileHeight)
+        public NewTileset(Texture2D texture, int tileWidth, int tileHeight)
         {
             Texture = texture;
             TileWidth = tileWidth;

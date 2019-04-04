@@ -69,7 +69,7 @@ namespace MountPRG
                             {
                                 for(int i = 0; i < GamePlayState.Settlers.Count; i++)
                                 {
-                                    SpriteCmp settlerSprite = GamePlayState.Settlers[i].Get<SpriteCmp>();
+                                    AnimatedSpriteCmp settlerSprite = GamePlayState.Settlers[i].Get<AnimatedSpriteCmp>();
                                     if(settlerSprite.Intersects(camera.GetX(), camera.GetY()))
                                     {
                                         GUIManager.FarmUI.Close();

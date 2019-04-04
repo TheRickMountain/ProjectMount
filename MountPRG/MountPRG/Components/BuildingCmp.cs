@@ -48,6 +48,7 @@ namespace MountPRG
         }
 
         public BuildingCmp(int rows, int columns)
+            : base(false, false)
         {
             Rows = rows;
             Columns = columns;

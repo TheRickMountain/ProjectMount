@@ -15,7 +15,7 @@ namespace MountPRG
         {
             Add(new SpriteCmp(GamePlayState.TileSet.Texture, new Rectangle(32, 16, 32, 32), 32, 32));
             BuildingCmp buildingCmp = new BuildingCmp(2, 2);
-            buildingCmp.AddRequiredResource(ItemDatabase.GetItemById(TileMap.WOOD), 1);
+            buildingCmp.AddRequiredResource(GamePlayState.ItemDatabase[Item.WOOD], 1);
             Add(buildingCmp);
         }
 

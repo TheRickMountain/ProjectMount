@@ -15,7 +15,7 @@ namespace MountPRG
             SpriteCmp sprite = new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[TileMap.RASPBERRY_BUSH], 16, 16);
             Add(sprite);
 
-            GatherableCmp gatherable = new GatherableCmp(ItemDatabase.GetItemById(TileMap.BERRY), 1, true);
+            GatherableCmp gatherable = new GatherableCmp(GamePlayState.ItemDatabase[Item.BERRY], 1, true);
             Add(gatherable);
             gatherable.OnCountEqualsZeroCallback(delegate
             {

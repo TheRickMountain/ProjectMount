@@ -17,8 +17,6 @@ namespace MountPRG
 
         private List<UI> guiElements = new List<UI>();
 
-        private ItemDatabase itemDatabase;
-
         public static TimeSystemUI DayNightSystemUI;
         public static ActionPanelUI ActionPanelUI;
         public static StockpileUI StockpileUI;
@@ -31,8 +29,6 @@ namespace MountPRG
 
         public GUIManager(Game game)
         {
-            itemDatabase = new ItemDatabase();
-
             DayNightSystemUI = new TimeSystemUI();
             guiElements.Add(DayNightSystemUI);
 

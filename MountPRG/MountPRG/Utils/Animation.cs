@@ -16,52 +16,48 @@ namespace MountPRG
         int framesPerSecond;
         TimeSpan frameLength;
         TimeSpan frameTimer;
-        int currentFrame;
-        int defaultFrame;
-        int frameWidth;
-        int frameHeight;
 
         public int FramesPerSecond
         {
             get { return framesPerSecond; }
             set
             {
-                framesPerSecond = (int)MathHelper.Clamp(value, 1, 60);
+                framesPerSecond = MathHelper.Clamp(value, 1, 60);
                 frameLength = TimeSpan.FromSeconds(1 / (double)framesPerSecond);
             }
         }
 
         public Rectangle CurrentFrameRect
         {
-            get { return frames[currentFrame]; }
+            get { return frames[CurrentFrame]; }
         }
 
         public int CurrentFrame
         {
-            get { return currentFrame; }
+            get; private set;
         }
 
         public int DefaultFrame
         {
-            get { return defaultFrame; }
+            get; private set;
         }
 
         public int FrameWidth
         {
-            get { return frameWidth; }
+            get; private set;
         }
 
         public int FrameHeight
         {
-            get { return frameHeight; }
+            get; private set;
         }
 
         public Animation(int frameCount, int defaultFrame, int frameWidth, int frameHeight, int xOffset, int yOffset, int speed = 5)
         {
             frames = new Rectangle[frameCount];
-            this.defaultFrame = defaultFrame;
-            this.frameWidth = frameWidth;
-            this.frameHeight = frameHeight;
+            DefaultFrame = defaultFrame;
+            FrameWidth = frameWidth;
+            FrameHeight = frameHeight;
 
             for (int i = 0; i < frameCount; i++)
             {
@@ -87,13 +83,13 @@ namespace MountPRG
             if (frameTimer >= frameLength)
             {
                 frameTimer = TimeSpan.Zero;
-                currentFrame = (currentFrame + 1) % frames.Length;
+                CurrentFrame = (CurrentFrame + 1) % frames.Length;
             }
         }
 
         public void Reset()
         {
-            currentFrame = defaultFrame;
+            CurrentFrame = DefaultFrame;
             frameTimer = TimeSpan.Zero;
         }
 
@@ -101,9 +97,9 @@ namespace MountPRG
         {
             Animation animationClone = new Animation(this);
 
-            animationClone.defaultFrame = this.defaultFrame;
-            animationClone.frameWidth = this.frameWidth;
-            animationClone.frameHeight = this.frameHeight;
+            animationClone.DefaultFrame = DefaultFrame;
+            animationClone.FrameWidth = FrameWidth;
+            animationClone.FrameHeight = FrameHeight;
             animationClone.Reset();
 
             return animationClone;

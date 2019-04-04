@@ -80,6 +80,7 @@
     <Compile Include="GUISystem\GUIManager.cs" />
     <Compile Include="GUISystem\FarmUI.cs" />
     <Compile Include="GUISystem\HutUI.cs" />
+    <Compile Include="GUISystem\Item.cs" />
     <Compile Include="GUISystem\SliderUI.cs" />
     <Compile Include="GUISystem\SpriteUI.cs" />
     <Compile Include="GUISystem\StatusUI.cs" />

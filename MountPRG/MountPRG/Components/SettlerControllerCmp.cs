@@ -67,6 +67,7 @@ namespace MountPRG
         public int JobTime = 2;
 
         public SettlerControllerCmp(AnimatedSpriteCmp sprite)
+            : base(true, true)
         {
             this.Sprite = sprite;
 

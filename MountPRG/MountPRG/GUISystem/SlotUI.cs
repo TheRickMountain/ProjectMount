@@ -25,7 +25,7 @@ namespace MountPRG
         private Texture2D background;
         private Rectangle dest;
 
-        private SpriteCmp itemSprite;
+        private MyTexture itemIcon;
 
         public bool HasItem
         {
@@ -78,8 +78,8 @@ namespace MountPRG
         {
             spriteBatch.Draw(background, dest, Color.White);
             if(HasItem)
-                spriteBatch.Draw(itemSprite.Texture, new Rectangle(dest.X + 4, dest.Y + 4,
-                    dest.Width - 8, dest.Height - 8), itemSprite.Source, Color.White);
+                itemIcon.Draw(spriteBatch, new Rectangle(dest.X + 4, dest.Y + 4,
+                    dest.Width - 8, dest.Height - 8), Color.White);
             if (Count > 1)
                 spriteBatch.DrawString(font, "" + Count, new Vector2(dest.X + 2, dest.Y), Color.White);
         }
@@ -94,7 +94,7 @@ namespace MountPRG
             Item = item;
             Count = count;
 
-            itemSprite = item.Sprite;
+            itemIcon = item.Icon;
             HasItem = true;
         }
 
@@ -103,7 +103,7 @@ namespace MountPRG
             Item = null;
             Count = 0;
 
-            itemSprite = null;
+            itemIcon = null;
             HasItem = false;
         }
         

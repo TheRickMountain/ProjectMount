@@ -9,7 +9,7 @@ namespace MountPRG
 {
     public class ItemDatabase
     {
-        private static Dictionary<int, Item> items = new Dictionary<int, Item>();
+        private List<Item> items = new List<Item>();
 
         public ItemDatabase()
         {
@@ -28,58 +28,14 @@ namespace MountPRG
             AddItem(TileMap.BARLEY_SEED, "Barley seed", true, false, 0, false);
         }
 
-        public static Item GetItemById(int id)
+        public Item this[int index]
         {
-            if (items.ContainsKey(id))
-                return items[id];
-
-            return null;
+            get { return items[index]; }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id">ID</param>
-        /// <param name="name">Name</param>
-        /// <param name="stackable">Stackable</param>
-        /// <param name="consumable">Consumable</param>
-        /// <param name="foodValue">Food value</param>
-        /// <param name="weapon">Weapon</param>
         private void AddItem(int id, string name, bool stackable, bool consumable, int foodValue, bool weapon)
         {
-            items.Add(id, new Item(id, name, stackable, consumable, foodValue, weapon));
-        }
-
-    }
-
-    public class Item
-    {
-        public int Id { get; private set; }
-        public string Name { get; private set; }
-        public bool Stackable { get; private set; }
-        public SpriteCmp Sprite { get; private set; }
-        public bool Consumable { get; private set; }
-        public int FoodValue { get; private set; }
-        public bool Weapon { get; private set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="id">ID</param>
-        /// <param name="name">Name</param>
-        /// <param name="stackable">Stackable</param>
-        /// <param name="consumable">Consumable</param>
-        /// <param name="foodValue">Food value</param>
-        /// <param name="weapon">Weapon</param>
-        public Item(int id, string name, bool stackable, bool consumable, int foodValue, bool weapon)
-        {
-            Id = id;
-            Name = name;
-            Stackable = stackable;
-            Sprite = new SpriteCmp(GamePlayState.TileSet.Texture, GamePlayState.TileSet.SourceRectangles[id], 16, 16);
-            Consumable = consumable;
-            FoodValue = foodValue;
-            Weapon = weapon;
+            items.Add(new Item(id, name, stackable, consumable, foodValue, weapon));
         }
 
     }

@@ -44,13 +44,13 @@ namespace MountPRG
                     case Plant.WHEAT:
                         for (int i = 0; i < tiles.Count; i++)
                         {
-                            GamePlayState.JobList.Add(new PlantJob(ItemDatabase.GetItemById(TileMap.WHEAT_SEED), tiles[i]));
+                            GamePlayState.JobList.Add(new PlantJob(GamePlayState.ItemDatabase[Item.WHEAT_SEED], tiles[i]));
                         }
                         break;
                     case Plant.BARLEY:
                         for (int i = 0; i < tiles.Count; i++)
                         {
-                            GamePlayState.JobList.Add(new PlantJob(ItemDatabase.GetItemById(TileMap.BARLEY_SEED), tiles[i]));
+                            GamePlayState.JobList.Add(new PlantJob(GamePlayState.ItemDatabase[Item.BARLEY_SEED], tiles[i]));
                         }
                         break;
                     case Plant.NONE:

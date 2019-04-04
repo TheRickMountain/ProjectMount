@@ -36,7 +36,7 @@ namespace MountPRG
                         {
                             Tile tile = CurrentTask.Tile;
                             tile.Selected = false;
-                            settler.Cargo = ItemDatabase.GetItemById(TileMap.FISH);
+                            settler.Cargo = GamePlayState.ItemDatabase[Item.FISH];
                             settler.CargoCount = 1;
 
                             Tasks.Remove(CurrentTask);
@@ -89,10 +89,10 @@ namespace MountPRG
             {
                 Tile stockpileTile = GamePlayState.Stockpiles[stockpileCount].GetTiles()[stockpileTileCount];
 
-                if (StockpileIsAvailableFor(stockpileTile, ItemDatabase.GetItemById(TileMap.FISH)) &&
+                if (StockpileIsAvailableFor(stockpileTile, GamePlayState.ItemDatabase[Item.FISH]) &&
                     settler.IsWalkable(stockpileTile))
                 {
-                    stockpileTile.ItemToAdd = ItemDatabase.GetItemById(TileMap.FISH);
+                    stockpileTile.ItemToAdd = GamePlayState.ItemDatabase[Item.FISH];
                     stockpileTile.ItemToAddCount++;
 
                     settler.SettlerState = SettlerState.WORKING;

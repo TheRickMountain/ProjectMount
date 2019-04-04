@@ -33,21 +33,25 @@ namespace MountPRG
         }
 
         public SpriteCmp(Texture2D texture, Rectangle source, int width, int height)
+            : base(true, true)
         {
             Texture = texture;
             Source = source;
             Destination = new Rectangle(0, 0, width, height);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void Update(GameTime gameTime)
         {
             if (Parent != null)
             {
                 Destination.X = (int)(Parent.X - Origin.X);
                 Destination.Y = (int)(Parent.Y - Origin.Y);
-                Parent.Depth = Destination.Bottom;   
+                Parent.Depth = Destination.Bottom;
             }
+        }
 
+        public override void Draw(SpriteBatch spriteBatch)
+        {
             spriteBatch.Draw(Texture, Destination, Source, Color, Rotation, Vector2.Zero, Effects, 0);
         }
 

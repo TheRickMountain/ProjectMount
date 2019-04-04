@@ -32,8 +32,8 @@ namespace MountPRG
             panel.X = Game1.ScreenRectangle.Width - panel.Width;
             panel.Y = Game1.ScreenRectangle.Height - panel.Height;
 
-            AddElement(ItemDatabase.GetItemById(TileMap.WHEAT), Plant.WHEAT);
-            AddElement(ItemDatabase.GetItemById(TileMap.BARLEY), Plant.BARLEY);
+            AddElement(GamePlayState.ItemDatabase[Item.WHEAT], Plant.WHEAT);
+            AddElement(GamePlayState.ItemDatabase[Item.BARLEY], Plant.BARLEY);
         }
 
         public void Update(GameTime gameTime)
@@ -95,7 +95,7 @@ namespace MountPRG
 
         private void AddElement(Item item, Plant targetPlant)
         {
-            ElementUI element = new ElementUI(item.Sprite, item.Name);
+            ElementUI element = new ElementUI(item.Icon, item.Name);
             element.X = panel.InnerX;
             element.Y = panel.InnerY + (elements.Count * GUIManager.CHECKBOX_SIZE + elements.Count * GUIManager.OFFSET);
 
@@ -156,10 +156,10 @@ namespace MountPRG
             public const int TEXT_WIDTH = 200;
             public const int ICON_SIZE = 16;
 
-            public ElementUI(SpriteCmp spriteCmp, string name)
+            public ElementUI(MyTexture icon, string name)
             {
                 Checkbox = new CheckboxUI();
-                sprite = new SpriteUI(spriteCmp.Texture, spriteCmp.Source, ICON_SIZE, ICON_SIZE);
+                sprite = new SpriteUI(icon.Texture, icon.ClipRect, ICON_SIZE, ICON_SIZE);
                 text = new TextUI(ResourceBank.Fonts["mountFont"], name);
 
                 dest = new Rectangle(0, 0, GUIManager.CHECKBOX_SIZE +  GUIManager.OFFSET + ICON_SIZE + GUIManager.OFFSET + TEXT_WIDTH, ICON_SIZE);

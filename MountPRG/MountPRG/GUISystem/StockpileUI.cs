@@ -58,7 +58,7 @@ namespace MountPRG
                 Tile tile = tiles[i];
                 if(tile.Item != null)
                 {  
-                    ElementUI element = new ElementUI(tile.Item.Sprite, tile.Item.Name, tile.ItemCount);
+                    ElementUI element = new ElementUI(tile.Item.Icon, tile.Item.Name, tile.ItemCount);
                     element.X = panel.InnerX;
                     element.Y = panel.InnerY + count * ElementUI.ICON_SIZE + count * GUIManager.OFFSET;
                     elements.Add(element);
@@ -116,11 +116,11 @@ namespace MountPRG
             }
 
             public const int TEXT_WIDTH = 200;
-            public const int ICON_SIZE = 16;
+            public const int ICON_SIZE = 24;
 
-            public ElementUI(SpriteCmp spriteCmp, string name, int count)
+            public ElementUI(MyTexture icon, string name, int count)
             {
-                sprite = new SpriteUI(spriteCmp.Texture, spriteCmp.Source, ICON_SIZE, ICON_SIZE);
+                sprite = new SpriteUI(icon.Texture, icon.ClipRect, ICON_SIZE, ICON_SIZE);
                 text = new TextUI(ResourceBank.Fonts["mountFont"], name + " " + count);
 
                 dest = new Rectangle(0, 0, ICON_SIZE + GUIManager.OFFSET + TEXT_WIDTH, ICON_SIZE);

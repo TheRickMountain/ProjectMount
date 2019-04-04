@@ -20,6 +20,8 @@ namespace MountPRG
 
         public static WorldTimer WorldTimer;
 
+        public static ItemDatabase ItemDatabase;
+        public static NewTileset NewTileset;
         public static TileSet TileSet;
         public static TileMap TileMap;
 
@@ -49,15 +51,17 @@ namespace MountPRG
 
         public override void Initialize()
         {
+            NewTileset = new NewTileset(ResourceBank.Sprites["tileset"], TileMap.TILE_SIZE, TileMap.TILE_SIZE);
+            ItemDatabase = new ItemDatabase();
             Settlers = new List<Settler>();
             Camera = new Camera();
             WorldManager = new WorldManager(Camera);
 
             WorldTimer = new WorldTimer();
             WorldTimer.SetTime(0);
-
+            
             TileSet = new TileSet(ResourceBank.Sprites["tileset"]);
-            TileMap = new TileMap(32, 32, TileSet);
+            TileMap = new TileMap(32, 32, NewTileset);
 
             guiManager = new GUIManager(GameRef);
 
@@ -126,15 +130,15 @@ namespace MountPRG
 
             TileMap.AddEntity(6, 9, new Tree(), false);
 
-            TileMap.GetTile(10, 17).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
-            TileMap.GetTile(10, 18).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
-            TileMap.GetTile(10, 19).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
-            TileMap.GetTile(10, 20).AddItem(ItemDatabase.GetItemById(TileMap.FLINT), 1);
+            TileMap.GetTile(10, 17).AddItem(ItemDatabase[Item.FLINT], 1);
+            TileMap.GetTile(10, 18).AddItem(ItemDatabase[Item.FLINT], 1);
+            TileMap.GetTile(10, 19).AddItem(ItemDatabase[Item.FLINT], 1);
+            TileMap.GetTile(10, 20).AddItem(ItemDatabase[Item.FLINT], 1);
 
-            TileMap.GetTile(11, 17).AddItem(ItemDatabase.GetItemById(TileMap.STICK), 1);
-            TileMap.GetTile(11, 18).AddItem(ItemDatabase.GetItemById(TileMap.STICK), 1);
-            TileMap.GetTile(11, 19).AddItem(ItemDatabase.GetItemById(TileMap.STICK), 1);
-            TileMap.GetTile(11, 20).AddItem(ItemDatabase.GetItemById(TileMap.STICK), 1);
+            TileMap.GetTile(11, 17).AddItem(ItemDatabase[Item.STICK], 1);
+            TileMap.GetTile(11, 18).AddItem(ItemDatabase[Item.STICK], 1);
+            TileMap.GetTile(11, 19).AddItem(ItemDatabase[Item.STICK], 1);
+            TileMap.GetTile(11, 20).AddItem(ItemDatabase[Item.STICK], 1);
 
             TileMap.AddEntity(12, 17, new Grass());
             TileMap.AddEntity(12, 18, new Grass());

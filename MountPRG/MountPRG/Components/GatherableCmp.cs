@@ -36,6 +36,7 @@ namespace MountPRG
         }
 
         public GatherableCmp(Item item, int count, bool itemHolder = false)
+            : base(false, false)
         {
             Item = item;
             Count = count;

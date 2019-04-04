@@ -15,7 +15,7 @@ namespace MountPRG
             sprite.Origin.X = 8;
             sprite.Origin.Y = 32;
             Add(sprite);
-            Add(new Mineable(ItemDatabase.GetItemById(TileMap.WOOD), 1));
+            Add(new Mineable(GamePlayState.ItemDatabase[Item.WOOD], 1));
             Walkable = false;
         }
 

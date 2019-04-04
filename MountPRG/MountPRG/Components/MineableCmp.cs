@@ -14,22 +14,16 @@ namespace MountPRG
             get; private set;
         }
 
-        public int Health
+        public int Count
         {
             get; private set;
         }
 
-        public Mineable(Item resource, int health)
+        public Mineable(Item item, int count)
+            : base(false, false)
         {
-            Item = resource;
-            Health = health;
-        }
-
-        public void ReduceHealth(int damage)
-        {
-            Health -= damage;
-            Health = Health < 0 ? 0 : Health;
-            ResourceBank.SoundEffects["chop"].Play();
+            Item = item;
+            Count = count;
         }
 
         public override Component Clone()
